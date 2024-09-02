@@ -4,8 +4,8 @@ import { getPostDataInclude, PostsPage } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
+
 
 // Initialize Redis client
 const redis = Redis.fromEnv();

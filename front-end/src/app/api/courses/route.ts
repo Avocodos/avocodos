@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { courseSchema } from "@/lib/validation";
 import { Redis } from "@upstash/redis";
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
+
 
 const redis = Redis.fromEnv();
 

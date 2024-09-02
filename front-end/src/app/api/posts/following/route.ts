@@ -9,8 +9,8 @@ const redis = Redis.fromEnv();
 const CACHE_TTL = 60 * 5; // 5 minutes
 const PAGE_SIZE = 10;
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
+
 
 export async function GET(req: NextRequest) {
   try {

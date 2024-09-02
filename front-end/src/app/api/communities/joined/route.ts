@@ -3,8 +3,8 @@ import prisma from '@/lib/prisma';
 import { validateRequest } from '@/auth';
 import { Redis } from '@upstash/redis';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+
+
 
 const redis = Redis.fromEnv();
 const CACHE_TTL = 60 * 5; // 5 minutes
