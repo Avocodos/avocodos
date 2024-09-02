@@ -3,6 +3,7 @@ html {
   scroll-behavior: smooth !important;
   scroll-padding-top: 60px;
   word-break: normal;
+  text-wrap: pretty;
 }
 
 ::selection {

@@ -31,7 +31,7 @@ export default function OTPDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[330px]">
+      <DialogContent className="max-w-[330px]" disableCloseButton={true}>
         <DialogHeader>
           <DialogTitle asChild>
             <h5>Verify Your Email</h5>
@@ -62,6 +62,14 @@ export default function OTPDialog({
             </InputOTPGroup>
           </InputOTP>
           {error && <p className="text-destructive">{error}</p>}
+          <p>
+            <span className="text-pretty text-destructive">
+              Please do not close this window, it will automatically close once
+              you have verified your email. Closing this window will result in
+              you having to go through the verification process again, with
+              another email.
+            </span>
+          </p>
           {attemptsLeft > 0 && (
             <p className="max-w-[300px] text-pretty text-sm text-foreground/80">
               You have {attemptsLeft} attempts left.
