@@ -1,0 +1,324 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // uses connection pooling
+  directUrl = env("DIRECT_DATABASE_URL") // uses a direct connection
+}
+
+model User {
+  id                    String          @id
+  username              String          @unique
+  displayName           String
+  email                 String?         @unique
+  passwordHash          String?
+  googleId              String?         @unique
+  avatarUrl             String?
+  walletAddress         String?         @unique
+  walletName            String?
+  walletLink            String?
+  walletPublicKey       String?
+  emailVerified         Boolean         @default(false)
+  emailVerifyToken      String?
+  emailVerifyExpires    DateTime?
+  bio                   String?
+  sessions              Session[]
+  posts                 Post[]
+  following             Follow[]        @relation("Following")
+  followers             Follow[]        @relation("Followers")
+  likes                 Like[]
+  bookmarks             Bookmark[]
+  comments              Comment[]
+  receivedNotifications Notification[]  @relation("Recipient")
+  issuedNotifications   Notification[]  @relation("Issuer")
+  coursesCreated        Course[]
+  createdAt             DateTime        @default(now())
+  Enrollment            Enrollment[]
+  Review                Review[]
+  createdCommunities    Community[]     @relation("CreatedCommunities")
+  joinedCommunities     Community[]     @relation("CommunityMembers")
+  moderatedCommunities  Community[]     @relation("CommunityModerators")
+  assignedRoles         CommunityRole[] @relation("AssignedRole")
+  communityRoles        CommunityRole[] @relation("UserRoles")
+  assets                Asset[]
+
+  @@map("users")
+}
+
+model Asset {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: NoAction)
+  type             AssetType
+  url              String
+  name             String
+  createdAt        DateTime  @default(now())
+  txnHash          String?
+  tokenId          String?
+  chain            String?
+  collection       String?
+  metadata         Json? // Changed from String? to Json?
+  metadataUrl      String?
+  description      String?
+  aptosExplorerUrl String?
+  courseId         String? // New field
+  course           Course?   @relation(fields: [courseId], references: [id])
+
+  @@map("assets")
+}
+
+enum AssetType {
+  NFT
+  PHOTO
+  VIDEO
+  AUDIO
+  DOCUMENT
+  OTHER
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Follow {
+  followerId  String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Post {
+  id                  String          @id @default(cuid())
+  content             String
+  userId              String
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments         Media[]
+  likes               Like[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  linkedNotifications Notification[]
+  communityName       String?
+  community           Community?      @relation(fields: [communityName], references: [name])
+  createdAt           DateTime        @default(now())
+  CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
+  communityBadgeId    String?
+  badgeId             String?
+  badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id])
+
+  @@map("posts")
+}
+
+model Media {
+  id     String    @id @default(cuid())
+  postId String?
+  post   Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
+  type   MediaType
+  url    String
+
+  createdAt DateTime @default(now())
+
+  @@map("post_media")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model Comment {
+  id      String @id @default(cuid())
+  content String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("comments")
+}
+
+model Like {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model Bookmark {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId    String
+  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  postId      String?
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  read        Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+model Course {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  price           Int
+  imageUrl        String
+  instructorId    String
+  instructor      User      @relation(fields: [instructorId], references: [id])
+  category        String
+  level           String
+  duration        Int // in minutes
+  enrollmentCount Int       @default(0)
+  rating          Float?
+  isPublished     Boolean   @default(false)
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  reviews     Review[]
+  assets      Asset[] // New relation
+
+  @@map("courses")
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  order     Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("lessons")
+}
+
+model Enrollment {
+  id       String           @id @default(cuid())
+  userId   String
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress Int              @default(0)
+  status   EnrollmentStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model Review {
+  id       String @id @default(cuid())
+  content  String
+  rating   Int
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+  @@map("reviews")
+}
+
+model CommunityRole {
+  id            String    @id @default(cuid())
+  name          String
+  color         String
+  communityName String
+  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
+  users         User[]    @relation("UserRoles")
+  assignedTo    User[]    @relation("AssignedRole")
+
+  @@unique([name, communityName])
+  @@map("community_roles")
+}
+
+model CommunityBadge {
+  id            String    @id @default(cuid())
+  name          String
+  color         String
+  communityName String
+  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
+  posts         Post[]    @relation("PostCommunityBadge")
+  badgePosts    Post[]    @relation("PostBadge")
+
+  @@unique([name, communityName])
+  @@map("community_badges")
+}
+
+model Community {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  creatorId   String
+  creator     User             @relation("CreatedCommunities", fields: [creatorId], references: [id])
+  members     User[]           @relation("CommunityMembers")
+  posts       Post[]
+  moderators  User[]           @relation("CommunityModerators")
+  roles       CommunityRole[]
+  badges      CommunityBadge[]
+  isPrivate   Boolean          @default(false)
+
+  @@map("communities")
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+}
+
+enum NotificationType {
+  LIKE
+  FOLLOW
+  COMMENT
+}

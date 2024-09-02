@@ -1,0 +1,180 @@
+@tailwind base;
+html {
+  scroll-behavior: smooth !important;
+  scroll-padding-top: 60px;
+  word-break: normal;
+}
+
+::selection {
+  /* color: hsl(var(--foreground) / 0.95); */
+  background: hsl(var(--primary) / 0.2);
+}
+
+* {
+  scrollbar-width: auto !important;
+  scrollbar-color: hsl(var(--primary) / 0.9) hsl(var(--background)) !important;
+}
+
+*::-webkit-scrollbar {
+  width: 24px !important;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--accent));
+  border-radius: 24px;
+  border: 3px solid hsl(var(--primary));
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@import "~stream-chat-react/dist/css/v2/index.css";
+
+@layer base {
+  :root {
+    --background: 120 27% 97%;
+    --foreground: 0 0% 5%;
+
+    --card: 120 10% 95.5%;
+    --card-foreground: 0 0% 5%;
+
+    --popover: 120 10% 96%;
+    --popover-foreground: 0 0% 5%;
+
+    --primary: 110 82% 41%;
+    --primary-foreground: 0 0% 2%;
+
+    --secondary: 120 7% 93.5%;
+    --secondary-foreground: 0 0% 5%;
+
+    --muted: 120 15% 93%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 5%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 92%;
+    --input: 0 0% 85%;
+    --ring: 0 0% 76%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 120 2% 6.5%;
+    --foreground: 0 0% 98%;
+
+    --card: 120 2% 8.3%;
+    --card-foreground: hsl(var(--foreground));
+
+    --popover: 120 2% 8.3%;
+    --popover-foreground: hsl(var(--foreground));
+
+    --primary: 111 88% 52%;
+    --primary-foreground: 0 0% 2%;
+
+    --secondary: 120 5% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 110 5% 15%;
+    --muted-foreground: 110 5% 49%;
+
+    --accent: 111 45% 14%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 100 5% 12%;
+    --input: 120 4% 18%;
+    --ring: 110 88% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  * {
+    @apply !scroll-smooth border-border sm:!scroll-mt-[80px] md:!scroll-mt-[80px] lg:!scroll-mt-[80px] xl:!scroll-mt-[80px];
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+  h1 {
+    @apply !text-4xl !font-extrabold tracking-tighter sm:!text-5xl lg:!text-5xl xl:!text-6xl;
+  }
+  h2 {
+    @apply !text-3xl !font-extrabold tracking-tighter sm:!text-4xl lg:!text-4xl xl:!text-4xl;
+  }
+  h3 {
+    @apply !text-2xl !font-extrabold tracking-tighter sm:!text-3xl lg:!text-3xl xl:!text-3xl;
+  }
+  h4 {
+    @apply !text-xl !font-extrabold tracking-tight sm:!text-2xl lg:!text-2xl xl:!text-3xl;
+  }
+  h5 {
+    @apply !text-lg !font-extrabold tracking-tight sm:!text-xl lg:!text-xl xl:!text-2xl;
+  }
+  h6 {
+    @apply !text-base !font-extrabold tracking-tight sm:!text-lg lg:!text-lg xl:!text-xl;
+  }
+
+  .str-chat {
+    --str-chat__font-family: inherit;
+    --str-chat__primary-color: theme(colors.primary.DEFAULT);
+    --str-chat__on-primary-color: theme(colors.primary.foreground);
+    --str-chat__active-primary-color: theme(colors.primary.foreground);
+    --str-chat__primary-color-low-emphasis: color-mix(
+      in hsl,
+      hsl(var(--primary)) 10%,
+      transparent
+    );
+    --str-chat__background-color: theme(colors.card.DEFAULT);
+    --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
+    --str-chat__message-textarea-background-color: theme(colors.background);
+    --str-chat__channel-preview-active-background-color: theme(
+      colors.accent.DEFAULT
+    );
+    --str-chat__channel-preview-hover-background-color: var(
+      --str-chat__channel-preview-active-background-color
+    );
+    --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
+    --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
+    --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
+    --str-chat__primary-surface-color-low-emphasis: var(
+      --str-chat__primary-color-low-emphasis
+    );
+    --str-chat__disabled-color: theme(colors.muted.DEFAULT);
+    --str-chat__cta-button-border-radius: var(--radius);
+  }
+
+  .str-chat-channel-list {
+    border-right: none;
+  }
+
+  .str-chat__channel-list-react .str-chat__channel-list-messenger-react {
+    padding-bottom: 0;
+  }
+
+  .str-chat__channel-search-bar-button--exit-search {
+    display: none;
+  }
+}
