@@ -32,7 +32,7 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
     new PontemWallet() as Wallet,
     new TrustWallet() as Wallet,
     new OKXWallet() as Wallet
-  ];
+  ] as const;
 
   return (
     <AptosWalletAdapterProvider
