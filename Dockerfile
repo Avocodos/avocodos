@@ -4,13 +4,15 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /front-end
 
-COPY package*.json ./
-RUN npm ci
+COPY /front-end/package*.json ./
+COPY /front-end/prisma ./prisma
+RUN ls
+RUN npm install --legacy-peer-deps
 
 FROM base AS builder
 WORKDIR /front-end
 COPY --from=deps /front-end/node_modules ./node_modules
-COPY . .
+COPY /front-end .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
