@@ -1,0 +1,12 @@
+{
+    "description": "Official Avocodos NFT Collection on Aptos Network.",
+    "image": "",
+    "name": "Avocodos NFT 2",
+    "external_url": "https://avocodos.com",
+    "attributes": [
+        {
+            "trait_type": "optional_trait",
+            "value": "2"
+        }
+    ]
+}
