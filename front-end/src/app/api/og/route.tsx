@@ -202,13 +202,7 @@ export async function GET(req: NextRequest) {
           </div>
         </div>
         <p tw="flex-grow text-2xl text-[#fafafa]/90 max-w-[800px] -mt-6 break-words">
-          {post.content} Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Eveniet praesentium repellendus ipsam officiis adipisci dolor
-          consequuntur fugit qui, earum iure deleniti impedit ipsa eligendi
-          autem, pariatur distinctio, eius porro et dolores laborum quos! Quos
-          obcaecati excepturi a consectetur, ipsa, veritatis esse nisi harum
-          vero necessitatibus reprehenderit non iusto totam quo culpa incidunt?
-          Libero illum maxime odit,
+          {post.content}
         </p>
         <div tw="flex text-xl text-[#fafafa]/90">Post on Avocodos</div>
       </div>

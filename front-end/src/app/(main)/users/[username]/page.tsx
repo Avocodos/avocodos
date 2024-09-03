@@ -108,7 +108,8 @@ export async function generateMetadata(
       url: `https://avocodos.com/users/${user.username}`,
       siteName: "Avocodos",
       images: [
-        user.avatarUrl || `/api/og?username=${user.username}`,
+        `/api/og?username=${user.username}`,
+        user.avatarUrl ?? `/api/og?username=${user.username}`,
         ...previousImages
       ],
       locale: "en_US",
@@ -119,7 +120,10 @@ export async function generateMetadata(
       title: `${user.displayName} (@${user.username})`,
       description,
       creator: "@HarjjotSinghh",
-      images: [user.avatarUrl || `/api/og?username=${user.username}`]
+      images: [
+        `/api/og?username=${user.username}`,
+        user.avatarUrl ?? `/api/og?username=${user.username}`
+      ]
     },
     category: "Web3 Social Platform",
     keywords: [
@@ -201,11 +205,19 @@ export async function generateMetadata(
       }
     },
     icons: {
-      icon: [{ url: "/favicon.ico" }, { url: "/icon.png" }],
-      apple: [{ url: "/apple-icon.png" }],
+      icon: [{ url: "/favicon.ico" }, { url: "/icon.svg" }],
+      apple: [{ url: "/apple-touch-icon.png" }],
       other: [
-        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-        { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
+        {
+          url: "/android-chrome-192x192.png",
+          sizes: "192x192",
+          type: "image/png"
+        },
+        {
+          url: "/android-chrome-512x512.png",
+          sizes: "512x512",
+          type: "image/png"
+        }
       ]
     }
   };
