@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import { withUt } from "uploadthing/tw";
 import plugin from 'tailwindcss/plugin'
-
+import { default as flattenColorPalette } from 'tailwindcss/lib/util/flattenColorPalette';
 
 const config = {
   darkMode: ["class"],
@@ -33,6 +33,17 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          '50': '#ecffe6',
+          '100': '#d4ffc8',
+          '200': '#abff97',
+          '300': '#76fb5b',
+          '400': '#3bf019',
+          '500': '#27d70b',
+          '600': '#19ac04',
+          '700': '#158308',
+          '800': '#16670d',
+          '900': '#155710',
+          '950': '#043102',
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -86,12 +97,22 @@ const config = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        "skeleton": {
+          '0%': { backgroundPosition: '-1000px 0' },
+          '100%': { backgroundPosition: '1000px 0' },
+        },
+        "bg": {
+          "0%,100%": { backgroundPosition: "0 0" },
+          "50%": { backgroundPosition: "1000% 1000%" },
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "shine": "shine 8s ease-in-out infinite",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "skeleton": "skeleton 5s infinite",
+        "bg": "bg 10s ease-in-out infinite",
       },
     },
   },
@@ -113,7 +134,18 @@ const config = {
         'background-position': '0 0, 27.5px 27.5px, 0 0, 27.5px 27.5px',
       }
     })
-  })],
+  }), addVariablesForColors],
 } satisfies Config;
 
 export default withUt(config);
+
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ":root": newVars,
+  });
+}

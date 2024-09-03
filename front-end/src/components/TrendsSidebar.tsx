@@ -68,12 +68,6 @@ async function WhoToFollow() {
               </div>
             </Link>
           </UserTooltip>
-          {
-            console.log(
-              "user.followers TrendsSidebar",
-              user.followers
-            ) as React.ReactNode
-          }
           <FollowButton
             userId={user.id}
             initialState={{

@@ -97,3 +97,14 @@ export async function isUserFollowed(userId: string, followerId: string): Promis
   });
   return !!follower;
 }
+
+export const checkIfRewardIsClaimed = async (userId: string, rewardId: string): Promise<boolean> => {
+  const userReward = await prisma?.userReward.findFirst({
+    where: {
+      userId,
+      rewardId,
+    },
+    cacheStrategy: { ttl: 60 },
+  });
+  return !!userReward;
+};

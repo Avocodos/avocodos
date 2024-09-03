@@ -1,6 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { LikeInfo } from "@/lib/types";
+import { updateRewardProgress } from "@/lib/updateRewardProgress";
 
 export async function GET(
   req: Request,
@@ -64,6 +65,12 @@ export async function POST(
       where: { id: postId },
       select: {
         userId: true,
+        communityName: true,
+        community: {
+          select: {
+            id: true,
+          }
+        }
       },
       cacheStrategy: { ttl: 60 },
     });
@@ -83,6 +90,7 @@ export async function POST(
         create: {
           userId: loggedInUser.id,
           postId,
+          communityName: post.communityName,
         },
         update: {},
       }),
@@ -99,6 +107,12 @@ export async function POST(
         ]
         : []),
     ]);
+
+    // Update reward progress
+    await updateRewardProgress(loggedInUser.id, "LIKES");
+    if (post.communityName) {
+      await updateRewardProgress(loggedInUser.id, "COMMUNITY_LIKES");
+    }
 
     return new Response();
   } catch (error) {
@@ -122,6 +136,7 @@ export async function DELETE(
       where: { id: postId },
       select: {
         userId: true,
+        communityName: true,
       },
       cacheStrategy: { ttl: 60 },
     });
@@ -147,9 +162,16 @@ export async function DELETE(
       }),
     ]);
 
+    // Update reward progress (decrease by 1)
+    await updateRewardProgress(loggedInUser.id, "LIKES", -1);
+    if (post.communityName) {
+      await updateRewardProgress(loggedInUser.id, "COMMUNITY_LIKES", -1);
+    }
+
     return new Response();
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+

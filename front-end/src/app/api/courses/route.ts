@@ -5,9 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { courseSchema } from "@/lib/validation";
 import { Redis } from "@upstash/redis";
 
-
-
-
 const redis = Redis.fromEnv();
 
 export async function POST(req: NextRequest) {
@@ -53,7 +50,7 @@ export async function GET(req: NextRequest) {
         // Try to get results from Redis cache
         const cachedResults = await redis.get<string>(cacheKey);
         if (cachedResults) {
-            return Response.json(JSON.parse(cachedResults));
+            return Response.json(JSON.parse(JSON.stringify(cachedResults)));
         }
 
         const courses = await prisma?.course.findMany({

@@ -6,7 +6,7 @@ import TrendsSidebar from "@/components/TrendsSidebar";
 import UserAvatar from "@/components/UserAvatar";
 import prisma from "@/lib/prisma";
 import { FollowerInfo, getUserDataSelect, UserData } from "@/lib/types";
-import { formatNumber } from "@/lib/utils";
+import { formatDatePretty, formatNumber } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,12 +15,18 @@ import EditProfileButton from "./EditProfileButton";
 import UserPosts from "./UserPosts";
 import PostsCount from "@/components/PostsCount";
 import { User } from "lucia";
+import { Clock } from "lucide-react";
+import RewardsButton from "@/components/RewardsButton";
 
 interface PageProps {
   params: { username: string };
 }
 
 export async function generateStaticParams() {
+  if (process.env.NODE_ENV === "development") {
+    return [];
+  }
+
   const users = await prisma?.user.findMany({
     select: { username: true }
   });
@@ -89,7 +95,6 @@ export default async function Page({ params: { username } }: PageProps) {
       </p>
     );
   }
-  console.log("username", username);
   const user = await getUser(decodeURI(username), loggedInUser.id);
 
   return (
@@ -130,34 +135,48 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
         size={250}
         className="mx-auto size-full max-h-60 max-w-60 rounded-full"
       />
-      <div className="flex flex-wrap gap-3 sm:flex-nowrap">
-        <div className="me-auto space-y-3">
-          <div>
-            <h5 className="text-3xl font-bold">{user.displayName}</h5>
-            <div className="text-foreground/80">@{user.username}</div>
+      <div className="flex w-full flex-wrap gap-3 sm:flex-nowrap">
+        <div className="me-auto w-full space-y-3">
+          <div className="w-full">
+            <h5 className="inline-flex w-full items-center justify-between">
+              <div className="flex flex-col gap-2">
+                {user.displayName}
+                <p className="-mt-1.5 text-sm font-normal text-foreground/80">
+                  @{user.username}
+                </p>
+                <p className="mt-1.5 flex items-center gap-0.5 text-xs font-normal text-foreground/80">
+                  <Clock className="size-3" /> Member since{" "}
+                  {formatDatePretty(user.createdAt)}
+                </p>
+              </div>
+              {user.id === loggedInUserId ? (
+                <div className="grid grid-cols-1 gap-2">
+                  <EditProfileButton user={user} />
+                  <RewardsButton user={user} />
+                </div>
+              ) : (
+                <FollowButton userId={user.id} initialState={followerInfo} />
+              )}
+            </h5>
+
+            {user.bio && (
+              <>
+                <hr className="my-2 h-[1.5px] w-full bg-foreground/30" />
+                <Linkify>
+                  <div className="overflow-hidden whitespace-pre-line break-words">
+                    {user.bio}
+                  </div>
+                </Linkify>
+              </>
+            )}
           </div>
-          <div>Member since {formatDate(user.createdAt, "MMM d, yyyy")}</div>
+
           <div className="grid grid-cols-2 gap-3">
             <PostsCount count={user._count.posts} />
             <FollowerCount userId={user.id} initialState={followerInfo} />
           </div>
         </div>
-        {user.id === loggedInUserId ? (
-          <EditProfileButton user={user} />
-        ) : (
-          <FollowButton userId={user.id} initialState={followerInfo} />
-        )}
       </div>
-      {user.bio && (
-        <>
-          <hr />
-          <Linkify>
-            <div className="overflow-hidden whitespace-pre-line break-words">
-              {user.bio}
-            </div>
-          </Linkify>
-        </>
-      )}
     </div>
   );
 }

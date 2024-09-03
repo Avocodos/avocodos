@@ -3,9 +3,6 @@ import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
-
-
-
 const redis = Redis.fromEnv();
 
 // Handle GET requests
@@ -79,6 +76,39 @@ export async function GET(req: NextRequest) {
         await redis.set(cacheKey, JSON.stringify(data), { ex: 300 }); // Cache for 5 minutes
 
         return NextResponse.json(data);
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}
+
+// Handle POST requests
+export async function POST(req: NextRequest) {
+    try {
+        const { user } = await validateRequest();
+
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { name, description, isPrivate } = await req.json();
+
+        const community = await prisma?.community.create({
+            data: {
+                name,
+                description,
+                isPrivate,
+                communityName: name,
+                creatorId: user.id,
+                members: {
+                    connect: {
+                        id: user.id
+                    }
+                }
+            },
+        });
+
+        return NextResponse.json(community);
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

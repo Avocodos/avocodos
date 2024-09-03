@@ -4,8 +4,6 @@ import { validateRequest } from '@/auth';
 import { Redis } from '@upstash/redis';
 
 
-
-
 const redis = Redis.fromEnv();
 const CACHE_TTL = 60 * 5; // 5 minutes
 
@@ -52,9 +50,7 @@ export async function GET(req: NextRequest) {
                 },
             },
         });
-
         // Cache the results in Redis
-        console.log("Stringified data:", JSON.stringify(joinedCommunities));
         await redis.set(cacheKey, JSON.stringify(joinedCommunities), { ex: CACHE_TTL });
 
         return NextResponse.json(joinedCommunities);

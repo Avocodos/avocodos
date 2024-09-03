@@ -111,6 +111,7 @@ export function getPostDataInclude(loggedInUserId: string) {
     community: {
       select: {
         name: true,
+        id: true,
         description: true,
       },
     },
@@ -125,6 +126,7 @@ export function getPostDataInclude(loggedInUserId: string) {
         }
       },
     },
+
   } satisfies Prisma.PostInclude;
 }
 
@@ -141,6 +143,15 @@ export function getCommentDataInclude(loggedInUserId: string) {
   return {
     user: {
       select: getUserDataSelect(loggedInUserId),
+    },
+    post: {
+      select: {
+        community: {
+          select: {
+            name: true,
+          },
+        },
+      },
     },
   } satisfies Prisma.CommentInclude;
 }

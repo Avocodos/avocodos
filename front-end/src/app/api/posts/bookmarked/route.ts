@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     // Try to get results from Redis cache
     const cachedResults = await redis.get<string>(cacheKey);
     if (cachedResults) {
-      return Response.json(JSON.parse(cachedResults));
+      return Response.json(JSON.parse(JSON.stringify(cachedResults)));
     }
 
     const bookmarks = await prisma?.bookmark.findMany({

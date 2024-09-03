@@ -178,4 +178,10 @@ html {
   .str-chat__channel-search-bar-button--exit-search {
     display: none;
   }
+  .makeStyles-title-2 {
+    display: none !important;
+  }
+  [data-testid="title"] {
+    display: none !important;
+  }
 }

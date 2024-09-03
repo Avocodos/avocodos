@@ -2,6 +2,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { User } from "@prisma/client";
 
 
 
@@ -16,10 +17,8 @@ export async function GET(
   { params }: { params: { username: string } }
 ) {
   try {
-    console.log("params", params);
     const { user: currentUser } = await validateRequest();
     const username = decodeURI(params.username);
-    console.log("username", username);
     if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -31,7 +30,7 @@ export async function GET(
     const cachedUser = await redis.get<string>(cacheKey);
     if (cachedUser) {
       try {
-        const userData = JSON.parse(cachedUser);
+        const userData = JSON.parse(JSON.stringify(cachedUser));
         userData.isFollowedByUser = await checkFollowStatus(currentUser.id, userData.id);
         return NextResponse.json(userData);
       } catch (e) {
@@ -96,7 +95,7 @@ export async function GET(
     // Cache the user data
     await redis.set(cacheKey, JSON.stringify(userData), { ex: CACHE_TTL });
 
-    return NextResponse.json(userData);
+    return NextResponse.json(userData as User);
   } catch (error) {
     console.error('Error fetching user data:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

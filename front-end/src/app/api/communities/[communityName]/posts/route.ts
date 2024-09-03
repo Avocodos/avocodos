@@ -43,8 +43,6 @@ export async function POST(
         const community = await prisma?.community.findUnique({
             where: { name: communityName },
             include: { members: true },
-            cacheStrategy: { ttl: 60 },
-
         });
 
         if (!community) return Response.json({ error: "Community not found" }, { status: 404 });
@@ -79,7 +77,6 @@ export async function DELETE(
         const post = await prisma?.post.findUnique({
             where: { id: postId },
             include: { community: { include: { moderators: true } } },
-            cacheStrategy: { ttl: 60 },
         });
 
         if (!post) return Response.json({ error: "Post not found" }, { status: 404 });
@@ -109,7 +106,6 @@ export async function PATCH(
 
         const post = await prisma?.post.findUnique({
             where: { id: postId },
-            cacheStrategy: { ttl: 60 },
         });
 
         if (!post) return Response.json({ error: "Post not found" }, { status: 404 });

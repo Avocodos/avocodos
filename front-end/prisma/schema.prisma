@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
@@ -11,45 +5,50 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL") // uses connection pooling
-  directUrl = env("DIRECT_DATABASE_URL") // uses a direct connection
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
-  id                    String          @id
-  username              String          @unique
+  id                    String               @id
+  username              String               @unique
   displayName           String
-  email                 String?         @unique
+  email                 String?              @unique
   passwordHash          String?
-  googleId              String?         @unique
+  googleId              String?              @unique
   avatarUrl             String?
-  walletAddress         String?         @unique
-  walletName            String?
-  walletLink            String?
-  walletPublicKey       String?
-  emailVerified         Boolean         @default(false)
-  emailVerifyToken      String?
-  emailVerifyExpires    DateTime?
   bio                   String?
-  sessions              Session[]
-  posts                 Post[]
-  following             Follow[]        @relation("Following")
-  followers             Follow[]        @relation("Followers")
-  likes                 Like[]
+  createdAt             DateTime             @default(now())
+  walletAddress         String?              @unique
+  walletLink            String?
+  walletName            String?
+  walletPublicKey       String?
+  emailVerified         Boolean              @default(false)
+  emailVerifyExpires    DateTime?
+  emailVerifyToken      String?
+  communityId           String?
+  userRewards           UserReward[]
+  assets                Asset[]
   bookmarks             Bookmark[]
   comments              Comment[]
-  receivedNotifications Notification[]  @relation("Recipient")
-  issuedNotifications   Notification[]  @relation("Issuer")
+  createdCommunities    Community[]          @relation("CreatedCommunities")
+  Community             Community[]
+  CommunityMember       CommunityMember[]
+  CommunityModerator    CommunityModerator[]
   coursesCreated        Course[]
-  createdAt             DateTime        @default(now())
   Enrollment            Enrollment[]
+  following             Follow[]             @relation("Following")
+  followers             Follow[]             @relation("Followers")
+  likes                 Like[]
+  issuedNotifications   Notification[]       @relation("Issuer")
+  receivedNotifications Notification[]       @relation("Recipient")
+  posts                 Post[]
   Review                Review[]
-  createdCommunities    Community[]     @relation("CreatedCommunities")
-  joinedCommunities     Community[]     @relation("CommunityMembers")
-  moderatedCommunities  Community[]     @relation("CommunityModerators")
-  assignedRoles         CommunityRole[] @relation("AssignedRole")
-  communityRoles        CommunityRole[] @relation("UserRoles")
-  assets                Asset[]
+  sessions              Session[]
+  assignedRoles         CommunityRole[]      @relation("AssignedRole")
+  joinedCommunities     Community[]          @relation("CommunityMembers")
+  moderatedCommunities  Community[]          @relation("CommunityModerators")
+  communityRoles        CommunityRole[]      @relation("UserRoles")
 
   @@map("users")
 }
@@ -57,7 +56,6 @@ model User {
 model Asset {
   id               String    @id @default(cuid())
   userId           String
-  user             User      @relation(fields: [userId], references: [id], onDelete: NoAction)
   type             AssetType
   url              String
   name             String
@@ -66,23 +64,15 @@ model Asset {
   tokenId          String?
   chain            String?
   collection       String?
-  metadata         Json? // Changed from String? to Json?
+  metadata         Json?
   metadataUrl      String?
   description      String?
   aptosExplorerUrl String?
-  courseId         String? // New field
+  courseId         String?
   course           Course?   @relation(fields: [courseId], references: [id])
+  user             User      @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@map("assets")
-}
-
-enum AssetType {
-  NFT
-  PHOTO
-  VIDEO
-  AUDIO
-  DOCUMENT
-  OTHER
 }
 
 model Session {
@@ -96,8 +86,8 @@ model Session {
 
 model Follow {
   followerId  String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
   followingId String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
   following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
@@ -108,71 +98,67 @@ model Post {
   id                  String          @id @default(cuid())
   content             String
   userId              String
-  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attachments         Media[]
-  likes               Like[]
+  createdAt           DateTime        @default(now())
+  badgeId             String?
+  communityBadgeId    String?
+  communityName       String?
   bookmarks           Bookmark[]
   comments            Comment[]
+  likes               Like[]
   linkedNotifications Notification[]
-  communityName       String?
-  community           Community?      @relation(fields: [communityName], references: [name])
-  createdAt           DateTime        @default(now())
-  CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
-  communityBadgeId    String?
-  badgeId             String?
+  attachments         Media[]
   badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id])
+  CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
+  community           Community?      @relation(fields: [communityName], references: [name])
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
 
 model Media {
-  id     String    @id @default(cuid())
-  postId String?
-  post   Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
-  type   MediaType
-  url    String
-
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  postId    String?
+  type      MediaType
+  url       String
+  createdAt DateTime  @default(now())
+  post      Post?     @relation(fields: [postId], references: [id])
 
   @@map("post_media")
 }
 
-enum MediaType {
-  IMAGE
-  VIDEO
-}
-
 model Comment {
-  id      String @id @default(cuid())
-  content String
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId  String
-  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
+  id            String     @id @default(cuid())
+  content       String
+  userId        String
+  postId        String
+  createdAt     DateTime   @default(now())
+  communityName String?
+  community     Community? @relation(fields: [communityName], references: [name])
+  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
 
 model Like {
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId        String
+  postId        String
+  communityName String?
+  community     Community? @relation(fields: [communityName], references: [name])
+  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@map("likes")
 }
 
 model Bookmark {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@map("bookmarks")
@@ -181,43 +167,40 @@ model Bookmark {
 model Notification {
   id          String           @id @default(cuid())
   recipientId String
-  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
   issuerId    String
-  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
   postId      String?
-  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
   type        NotificationType
   read        Boolean          @default(false)
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime         @default(now())
+  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
 
 model Course {
-  id              String    @id @default(cuid())
+  id              String       @id @default(cuid())
   title           String
   description     String
   price           Int
   imageUrl        String
   instructorId    String
-  instructor      User      @relation(fields: [instructorId], references: [id])
   category        String
   level           String
-  duration        Int // in minutes
-  enrollmentCount Int       @default(0)
+  duration        Int
+  enrollmentCount Int          @default(0)
   rating          Float?
-  isPublished     Boolean   @default(false)
+  isPublished     Boolean      @default(false)
   startDate       DateTime?
   endDate         DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // Relations
-  lessons     Lesson[]
-  enrollments Enrollment[]
-  reviews     Review[]
-  assets      Asset[] // New relation
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  assets          Asset[]
+  instructor      User         @relation(fields: [instructorId], references: [id])
+  enrollments     Enrollment[]
+  lessons         Lesson[]
+  reviews         Review[]
 
   @@map("courses")
 }
@@ -228,40 +211,38 @@ model Lesson {
   content   String
   order     Int
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@map("lessons")
 }
 
 model Enrollment {
-  id       String           @id @default(cuid())
-  userId   String
-  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId String
-  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  progress Int              @default(0)
-  status   EnrollmentStatus @default(ACTIVE)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String           @id @default(cuid())
+  userId    String
+  courseId  String
+  progress  Int              @default(0)
+  status    EnrollmentStatus @default(ACTIVE)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@map("enrollments")
 }
 
 model Review {
-  id       String @id @default(cuid())
-  content  String
-  rating   Int
-  userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
+  id        String   @id @default(cuid())
+  content   String
+  rating    Int
+  userId    String
+  courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@map("reviews")
@@ -273,8 +254,8 @@ model CommunityRole {
   color         String
   communityName String
   community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
-  users         User[]    @relation("UserRoles")
   assignedTo    User[]    @relation("AssignedRole")
+  users         User[]    @relation("UserRoles")
 
   @@unique([name, communityName])
   @@map("community_roles")
@@ -286,29 +267,100 @@ model CommunityBadge {
   color         String
   communityName String
   community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
-  posts         Post[]    @relation("PostCommunityBadge")
   badgePosts    Post[]    @relation("PostBadge")
+  posts         Post[]    @relation("PostCommunityBadge")
 
   @@unique([name, communityName])
   @@map("community_badges")
 }
 
 model Community {
-  id          String           @id @default(cuid())
-  name        String           @unique
-  description String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  creatorId   String
-  creator     User             @relation("CreatedCommunities", fields: [creatorId], references: [id])
-  members     User[]           @relation("CommunityMembers")
-  posts       Post[]
-  moderators  User[]           @relation("CommunityModerators")
-  roles       CommunityRole[]
-  badges      CommunityBadge[]
-  isPrivate   Boolean          @default(false)
+  id                 String               @id @default(cuid())
+  name               String               @unique
+  description        String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  creatorId          String
+  isPrivate          Boolean              @default(false)
+  communityName      String?              @default(dbgenerated("name"))
+  userId             String?
+  Comment            Comment[]
+  creator            User                 @relation("CreatedCommunities", fields: [creatorId], references: [id])
+  User               User?                @relation(fields: [userId], references: [id])
+  badges             CommunityBadge[]
+  CommunityMember    CommunityMember[]
+  CommunityModerator CommunityModerator[]
+  roles              CommunityRole[]
+  Like               Like[]
+  posts              Post[]
+  members            User[]               @relation("CommunityMembers")
+  moderators         User[]               @relation("CommunityModerators")
 
   @@map("communities")
+}
+
+model CommunityMember {
+  id            String    @id @default(cuid())
+  userId        String
+  communityName String
+  communityId   String
+  Community     Community @relation(fields: [communityId], references: [id])
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, communityName])
+  @@map("community_members")
+}
+
+model CommunityModerator {
+  id            String    @id @default(cuid())
+  userId        String
+  communityName String
+  communityId   String
+  Community     Community @relation(fields: [communityId], references: [id])
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, communityName])
+  @@map("community_moderators")
+}
+
+model Reward {
+  id              String                @id @default(cuid())
+  name            String
+  description     String
+  requirement     Int
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  requirementType RewardRequirementType
+  userRewards     UserReward[]
+}
+
+model UserReward {
+  id        String   @id @default(cuid())
+  userId    String
+  rewardId  String
+  progress  Int      @default(0)
+  claimed   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reward    Reward   @relation(fields: [rewardId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, rewardId])
+  @@index([userId, rewardId])
+}
+
+enum AssetType {
+  NFT
+  PHOTO
+  VIDEO
+  AUDIO
+  DOCUMENT
+  OTHER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
 }
 
 enum EnrollmentStatus {
@@ -321,4 +373,17 @@ enum NotificationType {
   LIKE
   FOLLOW
   COMMENT
+}
+
+enum RewardRequirementType {
+  POSTS
+  COMMENTS
+  LIKES
+  FOLLOWS
+  ENROLLMENTS
+  REVIEWS
+  COMMUNITY_JOINS
+  COMMUNITY_POSTS
+  COMMUNITY_COMMENTS
+  COMMUNITY_LIKES
 }

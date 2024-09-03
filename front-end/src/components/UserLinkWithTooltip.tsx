@@ -18,9 +18,6 @@ export default function UserLinkWithTooltip({
   username
 }: UserLinkWithTooltipProps) {
   const { user: loggedInUser } = useSession();
-
-  console.log("UserLinkWithTooltip render for username:", username);
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["user-data", username],
     queryFn: async () => {
@@ -34,7 +31,6 @@ export default function UserLinkWithTooltip({
             }
           })
           .json<UserData>();
-        console.log("Fetched data for username:", username, userData);
         return userData;
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -50,15 +46,6 @@ export default function UserLinkWithTooltip({
     staleTime: Infinity,
     enabled: !!loggedInUser?.id // Only run the query if loggedInUser.id is available
   });
-
-  console.log(
-    "UserLinkWithTooltip data",
-    data,
-    "isLoading",
-    isLoading,
-    "error",
-    error
-  );
 
   if (isLoading) {
     return <span>{children}</span>;

@@ -1,5 +1,6 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
+import { updateRewardProgress } from "@/lib/updateRewardProgress";
 import { NextRequest } from "next/server";
 
 export async function POST(
@@ -36,12 +37,28 @@ export async function POST(
             data: {
                 members: {
                     connect: { id: user.id }
+                },
+                CommunityMember: {
+                    create: {
+                        userId: user.id,
+                        communityName: communityName,
+                    }
                 }
             },
             include: {
                 members: true
             }
         });
+
+        await prisma?.communityMember.create({
+            data: {
+                userId: user.id,
+                communityName: communityName,
+                communityId: community.id,
+            }
+        });
+
+        await updateRewardProgress(user.id, "COMMUNITY_JOINS", 1);
 
         return Response.json({
             message: "Successfully joined the community",
@@ -85,12 +102,36 @@ export async function DELETE(
             data: {
                 members: {
                     disconnect: { id: user.id }
+                },
+                CommunityMember: {
+                    delete: {
+                        userId_communityName: {
+                            userId: user.id,
+                            communityName: communityName
+                        }
+                    }
                 }
             },
             include: {
                 members: true
             }
         });
+
+        await prisma?.communityModerator.deleteMany({
+            where: {
+                userId: user.id,
+                communityName: communityName
+            }
+        });
+
+        await prisma?.communityMember.deleteMany({
+            where: {
+                userId: user.id,
+                communityName: communityName
+            }
+        });
+
+        await updateRewardProgress(user.id, "COMMUNITY_JOINS", -1);
 
         return Response.json({
             message: "Successfully left the community",

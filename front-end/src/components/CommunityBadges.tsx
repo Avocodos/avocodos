@@ -57,7 +57,7 @@ export default function CommunityBadges({
           <BadgeCheck className="size-5" />
           <span>Community Badges</span>
         </h5>
-        <ul className="mt-4 flex flex-col gap-2">
+        <ul className="mt-4 flex flex-row flex-wrap gap-2">
           {visibleBadges?.map((badge) => (
             <li key={badge.id} className="flex items-center space-x-2">
               <Badge

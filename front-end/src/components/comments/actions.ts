@@ -24,6 +24,7 @@ export async function submitComment({
         content: contentValidated,
         postId: post.id,
         userId: user.id,
+        communityName: post.communityName,
       },
       include: getCommentDataInclude(user.id),
     }),

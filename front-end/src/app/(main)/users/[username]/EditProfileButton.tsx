@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserData } from "@/lib/types";
 import { useState } from "react";
 import EditProfileDialog from "./EditProfileDialog";
+import { Edit } from "lucide-react";
 
 interface EditProfileButtonProps {
   user: UserData;
@@ -14,7 +15,13 @@ export default function EditProfileButton({ user }: EditProfileButtonProps) {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setShowDialog(true)}>
+      <Button
+        variant="outline"
+        className="inline-flex items-center gap-2 text-sm"
+        onClick={() => setShowDialog(true)}
+        size="sm"
+      >
+        <Edit className="size-3.5" />
         Edit profile
       </Button>
       <EditProfileDialog

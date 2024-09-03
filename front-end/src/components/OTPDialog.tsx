@@ -72,8 +72,10 @@ export default function OTPDialog({
           </p>
           {attemptsLeft > 0 && (
             <p className="max-w-[300px] text-pretty text-sm text-foreground/80">
-              You have {attemptsLeft} attempts left.
-              <br /> Failing to verify your email will result in an IP ban.
+              You have <strong>{attemptsLeft}</strong> attempts left to verify
+              your email.
+              <br /> Failing to verify your email will result in a permanent IP
+              ban.
             </p>
           )}
           <LoadingButton

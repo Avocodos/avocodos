@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     if (cachedResults) {
       try {
-        return NextResponse.json(JSON.parse(cachedResults));
+        return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
       } catch (e) {
         console.error("Failed to parse cachedResults:", e);
         console.log("Fetching fresh data due to cache parsing error");

@@ -45,7 +45,10 @@ export default function RootLayout({
             disableTransitionOnChange={false}
           >
             {/* <StarrySkyBG /> */}
-            <main className="relative bg-cross">{children}</main>
+            <main className="relative">
+              <div className="absolute left-0 top-0 -z-20 h-full w-full bg-background bg-cross"></div>
+              {children}
+            </main>
             <Toaster />
           </ThemeProvider>
         </ReactQueryProvider>
