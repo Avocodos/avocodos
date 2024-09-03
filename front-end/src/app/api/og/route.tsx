@@ -2,6 +2,11 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { ReactNode } from "react";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+
+const CACHE_DURATION = 60 * 60 * 24 * 0.5;
 
 const interRegular = fetch(
   new URL("https://www.gl-tch.org/assets/fonts/inter/Inter-Regular.ttf")
@@ -16,6 +21,7 @@ export async function GET(req: NextRequest) {
     interBold
   ]);
   const baseURL = req.nextUrl.origin;
+  console.log(baseURL);
 
   const { searchParams } = new URL(req.url);
   const communityName = searchParams.get("communityName");
@@ -26,6 +32,15 @@ export async function GET(req: NextRequest) {
   let imageContent;
 
   if (communityName) {
+    const cachedCommunityKey = `og:community:${communityName}`;
+    const cachedCommunity = await redis.get<string>(cachedCommunityKey);
+
+    if (cachedCommunity) {
+      return new Response(JSON.parse(JSON.stringify(cachedCommunity)), {
+        headers: { "Content-Type": "image/png" }
+      });
+    }
+
     const community = await prisma?.community.findUnique({
       where: { name: communityName },
       include: { _count: { select: { members: true, posts: true } } }
@@ -34,6 +49,10 @@ export async function GET(req: NextRequest) {
     if (!community) {
       return new Response("Community not found", { status: 404 });
     }
+
+    await redis.set(cachedCommunityKey, JSON.stringify(community), {
+      ex: CACHE_DURATION
+    });
 
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
@@ -52,7 +71,7 @@ export async function GET(req: NextRequest) {
           }}
         />
         <img
-          src={`${baseURL}/bg.png`}
+          src={`https://avocodos.com/bg.png`}
           width={"1920"}
           height={"1080"}
           style={{
@@ -102,6 +121,15 @@ export async function GET(req: NextRequest) {
       </div>
     );
   } else if (postId) {
+    const cachedPostKey = `og:post:${postId}`;
+    const cachedPost = await redis.get<string>(cachedPostKey);
+
+    if (cachedPost) {
+      return new Response(JSON.parse(JSON.stringify(cachedPost)), {
+        headers: { "Content-Type": "image/png" }
+      });
+    }
+
     const post = await prisma?.post.findUnique({
       where: { id: postId },
       include: { user: true }
@@ -111,10 +139,14 @@ export async function GET(req: NextRequest) {
       return new Response("Post not found", { status: 404 });
     }
 
+    await redis.set(cachedPostKey, JSON.stringify(post), {
+      ex: CACHE_DURATION
+    });
+
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`${baseURL}/bg.png`}
+          src={`https://avocodos.com/bg.png`}
           width={"1920"}
           height={"1080"}
           style={{
@@ -182,6 +214,15 @@ export async function GET(req: NextRequest) {
       </div>
     );
   } else if (username) {
+    const cachedUserKey = `og:user:${username}`;
+    const cachedUser = await redis.get<string>(cachedUserKey);
+
+    if (cachedUser) {
+      return new Response(JSON.parse(JSON.stringify(cachedUser)), {
+        headers: { "Content-Type": "image/png" }
+      });
+    }
+
     const user = await prisma?.user.findUnique({
       where: { username },
       include: {
@@ -193,12 +234,14 @@ export async function GET(req: NextRequest) {
       return new Response("User not found", { status: 404 });
     }
 
-    console.log(user.avatarUrl);
+    await redis.set(cachedUserKey, JSON.stringify(user), {
+      ex: CACHE_DURATION
+    });
 
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`${baseURL}/bg.png`}
+          src={`https://avocodos.com/bg.png`}
           width={"1920"}
           height={"1080"}
           style={{
@@ -275,6 +318,15 @@ export async function GET(req: NextRequest) {
       </div>
     );
   } else if (rewardId) {
+    const cachedRewardKey = `og:reward:${rewardId}`;
+    const cachedReward = await redis.get<string>(cachedRewardKey);
+
+    if (cachedReward) {
+      return new Response(JSON.parse(JSON.stringify(cachedReward)), {
+        headers: { "Content-Type": "image/png" }
+      });
+    }
+
     const reward = await prisma?.reward.findUnique({
       where: { id: rewardId },
       include: { userRewards: { include: { user: true }, take: 1 } }
@@ -284,12 +336,16 @@ export async function GET(req: NextRequest) {
       return new Response("Reward not found", { status: 404 });
     }
 
+    await redis.set(cachedRewardKey, JSON.stringify(reward), {
+      ex: CACHE_DURATION
+    });
+
     const claimedBy = reward.userRewards[0]?.user;
 
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`${baseURL}/bg.png`}
+          src={`https://avocodos.com/bg.png`}
           width={"1920"}
           height={"1080"}
           style={{
