@@ -93,10 +93,6 @@ export function generateViewport(): Viewport {
   };
 }
 
-export const metadata: Metadata = {
-  title: "Bookmarks"
-};
-
 export default function Page() {
   return (
     <main className="flex w-full min-w-0 gap-5">

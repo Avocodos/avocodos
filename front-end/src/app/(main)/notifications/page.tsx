@@ -4,10 +4,6 @@ import Notifications from "./Notifications";
 import { Bell } from "lucide-react";
 import { Viewport } from "next";
 
-export const metadata: Metadata = {
-  title: "Notifications"
-};
-
 export function generateMetadata(): Metadata {
   return {
     title: "Notifications",

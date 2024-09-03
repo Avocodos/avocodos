@@ -5,10 +5,6 @@ import SignUpForm from "./SignUpForm";
 import authImage from "@/assets/auth.webp";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-export const metadata: Metadata = {
-  title: "Sign Up"
-};
-
 export default function Page() {
   return (
     <main className="flex h-screen items-center justify-center">
