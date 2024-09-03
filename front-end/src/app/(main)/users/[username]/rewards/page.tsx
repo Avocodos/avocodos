@@ -6,6 +6,7 @@ import { validateRequest } from "@/auth";
 import { getUserDataSelect } from "@/lib/types";
 import RewardsGrid from "@/components/RewardsGrid";
 import { Stars } from "lucide-react";
+import Link from "next/link";
 
 interface PageProps {
   params: { username: string };
@@ -49,7 +50,11 @@ export default async function UserRewardsPage({
   if (!loggedInUser) {
     return (
       <p className="text-destructive">
-        You&apos;re not authorized to view this page.
+        You&apos;re not authorized to view this page. Please{" "}
+        <Link className="underline" href="/login">
+          login
+        </Link>{" "}
+        to view this page.
       </p>
     );
   }
@@ -67,7 +72,7 @@ export default async function UserRewardsPage({
   if (!user) notFound();
 
   const userRewards = await prisma?.userReward.findMany({
-    where: { userId: user.id },
+    where: { userId: user.id, claimed: true },
     include: { reward: true }
   });
 
