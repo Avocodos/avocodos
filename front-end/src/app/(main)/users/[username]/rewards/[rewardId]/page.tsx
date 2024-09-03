@@ -40,18 +40,40 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params
 }: PageProps): Promise<Metadata> {
+  const user = await prisma?.user.findFirst({
+    where: { username: params.username },
+    select: {
+      displayName: true,
+      username: true
+    }
+  });
+
   const reward = await prisma?.reward.findFirst({
     where: { id: params.rewardId }
   });
 
-  if (!reward) return {};
+  if (!user || !reward) return {};
 
   return {
-    title: `${reward.name} Reward`,
-    description: `Check out the ${reward.name} reward on Avocodos!`,
+    title: `${reward.name} | ${user.displayName}'s Reward`,
+    description: `Check out ${user.displayName}'s "${reward.name}" reward on Avocodos!`,
     openGraph: {
-      images: [`/api/og?rewardId=${reward.id}`]
-    }
+      images: [`/api/og?username=${user.username}&rewardId=${reward.id}`]
+    },
+    keywords: [
+      reward.name,
+      `${reward.name} reward`,
+      `${reward.name} on Avocodos`,
+      `${user.displayName} ${reward.name}`,
+      `${user.displayName} ${reward.name} reward`,
+      `${user.displayName} ${reward.name} on Avocodos`,
+      `${user.displayName} rewards`,
+      `${user.displayName} reward`,
+      `${user.displayName} reward on Avocodos`,
+      `${user.displayName} ${reward.name}`,
+      `${user.displayName} ${reward.name} reward`,
+      `${user.displayName} ${reward.name} on Avocodos`
+    ]
   };
 }
 

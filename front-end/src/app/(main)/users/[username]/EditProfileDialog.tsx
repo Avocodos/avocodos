@@ -57,7 +57,7 @@ export default function EditProfileDialog({
 
   async function onSubmit(values: UpdateUserProfileValues) {
     const newAvatarFile = croppedAvatar
-      ? new File([croppedAvatar], `avatar_${user.id}.webp`)
+      ? new File([croppedAvatar], `avatar_${user.id}.png`)
       : undefined;
 
     mutation.mutate(
@@ -152,7 +152,7 @@ function AvatarInput({ src, onImageCropped }: AvatarInputProps) {
       image,
       1024,
       1024,
-      "WEBP",
+      "PNG",
       100,
       0,
       (uri) => setImageToCrop(uri as File),

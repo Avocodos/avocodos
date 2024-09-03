@@ -6,6 +6,12 @@ const nextConfig = {
       static: 180
     }
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = { fs: false, path: false };
+    }
+    return config;
+  },
   swcMinify: false,
   // serverExternalPackages: ["@node-rs/argon2"],
   images: {
@@ -14,6 +20,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "utfs.io",
         pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`
+      },
+      {
+        protocol: "https",
+        hostname: "i.ibb.co",
+        pathname: "/C8gQZyG/*"
       }
     ]
   },

@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "./ui/dialog";
 
 interface CropImageDialogProps {
@@ -21,14 +21,14 @@ export default function CropImageDialog({
   src,
   cropAspectRatio,
   onCropped,
-  onClose,
+  onClose
 }: CropImageDialogProps) {
   const cropperRef = useRef<ReactCropperElement>(null);
 
   function crop() {
     const cropper = cropperRef.current?.cropper;
     if (!cropper) return;
-    cropper.getCroppedCanvas().toBlob((blob) => onCropped(blob), "image/webp");
+    cropper.getCroppedCanvas().toBlob((blob) => onCropped(blob), "image/png");
     onClose();
   }
 
