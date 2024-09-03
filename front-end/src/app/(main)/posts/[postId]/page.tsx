@@ -7,7 +7,7 @@ import UserTooltip from "@/components/UserTooltip";
 import prisma from "@/lib/prisma";
 import { getPostDataInclude, UserData } from "@/lib/types";
 import Spinner from "@/components/Spinner";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata, Viewport } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache, ReactNode, Suspense } from "react";
@@ -52,7 +52,14 @@ export async function generateMetadata(
       user: {
         select: {
           displayName: true,
-          username: true
+          username: true,
+          avatarUrl: true
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          comments: true
         }
       }
     }
@@ -62,12 +69,177 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
+  const description = `${post.content.slice(0, 150)}... | ${post._count.likes} likes, ${post._count.comments} comments.`;
+
   return {
     title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
-    description: post.content.slice(0, 200),
+    description,
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: `/posts/${post.id}`
+    },
     openGraph: {
-      images: [`/api/og?postId=${post.id}`, ...previousImages]
+      title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+      description,
+      url: `https://avocodos.com/posts/${post.id}`,
+      siteName: "Avocodos",
+      images: [
+        post.user.avatarUrl || `/api/og?postId=${post.id}`,
+        ...previousImages
+      ],
+      locale: "en_US",
+      type: "article"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+      description,
+      creator: "@HarjjotSinghh",
+      images: [post.user.avatarUrl || `/api/og?postId=${post.id}`]
+    },
+    category: "Web3 Social Platform",
+    keywords: [
+      post.user.displayName,
+      post.user.username,
+      "Avocodos",
+      "Web3 Post",
+      "Blockchain Social",
+      "Crypto Content",
+      "NFT Discussion",
+      "Digital Assets",
+      "Decentralized Social",
+      "DeFi Post",
+      "Crypto Social Network",
+      "Web3 Content",
+      "Blockchain Discussion",
+      "Crypto Community Post",
+      "NFT Social",
+      "Digital Identity Post",
+      "Web3 User Content",
+      "Blockchain User Post",
+      "Crypto Social Engagement",
+      "Decentralized Content",
+      "Web3 Social Media Post",
+      "Blockchain Social Platform Content",
+      "Crypto Influencer Post",
+      "Web3 Community Discussion",
+      "Blockchain Identity Post",
+      "Crypto Profile Content",
+      "Web3 Account Post",
+      "Blockchain Account Content",
+      "Decentralized Identity Post",
+      "Crypto Social Graph Content",
+      "Web3 Social Graph Post",
+      "Blockchain Social Graph Content",
+      "Crypto Networking Post",
+      "Web3 Networking Content",
+      "Blockchain Networking Post",
+      "Decentralized Social Network Content",
+      "Crypto Social Platform Post",
+      "Web3 Social Platform Content",
+      "Blockchain Social Media Post",
+      "Crypto User Profile Content",
+      "Web3 User Profile Post",
+      "Blockchain User Profile Content",
+      "Decentralized User Profile Post",
+      "Crypto Social Identity Content",
+      "Web3 Social Identity Post",
+      "Blockchain Social Identity Content",
+      "Decentralized Social Identity Post",
+      "Crypto Community Engagement",
+      "Web3 Community Interaction",
+      "Blockchain Community Discussion",
+      "NFT Conversation",
+      "Digital Asset Dialogue",
+      "DeFi Discussion",
+      "Crypto Market Talk",
+      "Web3 Technology Debate",
+      "Blockchain Innovation Chat",
+      "Cryptocurrency Trends",
+      "NFT Market Insights",
+      "Web3 Development News",
+      "Blockchain Use Cases",
+      "Crypto Adoption Stories",
+      "Decentralized Finance Updates",
+      "NFT Artist Spotlight",
+      "Crypto Regulation Discussion",
+      "Web3 Gaming Conversation",
+      "Blockchain Environmental Impact",
+      "Crypto Education Post",
+      "NFT Collecting Strategies",
+      "Web3 Privacy Concerns",
+      "Blockchain Scalability Solutions",
+      "Crypto Mining Debate",
+      "Decentralized Autonomous Organizations",
+      "NFT Royalties Discussion",
+      "Web3 Interoperability",
+      "Blockchain Governance Models",
+      "Crypto Wallet Security",
+      "NFT Utility Beyond Art",
+      "Web3 Social Impact",
+      "Blockchain in Supply Chain",
+      "Crypto Economic Models",
+      "Decentralized Identity Solutions",
+      "NFT Fractionalization",
+      "Web3 User Experience",
+      "Blockchain Energy Consumption",
+      "Crypto Mass Adoption Challenges",
+      "NFT in Gaming",
+      "Web3 Infrastructure",
+      "Blockchain in Healthcare",
+      "Crypto Lending Platforms",
+      "Decentralized Storage Solutions",
+      "NFT Marketplaces Comparison",
+      "Web3 Job Opportunities",
+      "Blockchain Voting Systems",
+      "Crypto Portfolio Strategies",
+      "NFT Environmental Concerns",
+      "Web3 Data Ownership",
+      "Blockchain in Real Estate",
+      "Crypto Tax Implications",
+      "Decentralized Exchange Pros and Cons",
+      "NFT Authentication Methods",
+      "Web3 Browser Extensions",
+      "Blockchain in Education",
+      "Crypto Staking Rewards",
+      "NFT Curation and Discovery"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
     }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
   };
 }
 

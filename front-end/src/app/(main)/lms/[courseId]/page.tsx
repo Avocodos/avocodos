@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 import ClientSideNFTButton from "./ClientSideNFTButton";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata, Viewport } from "next";
 
 interface PageProps {
   params: { courseId: string };
@@ -23,14 +23,98 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({
-  params
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const course = await getCourse(params.courseId);
+
+  const previousImages = (await parent).openGraph?.images || [];
+
+  const description = `Learn ${course.title} on Avocodos LMS. ${course.description || ""}`;
 
   return {
     title: `${course.title} | Avocodos LMS`,
-    description: `Learn ${course.title} with Avocodos LMS`
+    description,
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: `/lms/${course.id}`
+    },
+    openGraph: {
+      title: `${course.title} | Avocodos LMS`,
+      description,
+      url: `https://avocodos.com/lms/${course.id}`,
+      siteName: "Avocodos",
+      images: [`/api/og?courseId=${course.id}`, ...previousImages],
+      locale: "en_US",
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${course.title} | Avocodos LMS`,
+      description,
+      creator: "@HarjjotSinghh",
+      images: [`/api/og?courseId=${course.id}`]
+    },
+    category: "Web3 Education",
+    keywords: [
+      course.title,
+      "Avocodos LMS",
+      "Web3 Course",
+      "Blockchain Education",
+      "Crypto Learning",
+      "Aptos Development",
+      "Decentralized Learning",
+      "DeFi Education",
+      "NFT Course",
+      "Web3 Skills",
+      "Blockchain Technology",
+      "Crypto Education",
+      "Aptos Smart Contracts",
+      "Decentralized Finance",
+      "Web3 Career",
+      "Blockchain Certification",
+      "Crypto Training",
+      "Aptos Ecosystem",
+      "Web3 Programming",
+      "Blockchain Fundamentals"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
+    }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
   };
 }
 

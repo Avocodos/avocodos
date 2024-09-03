@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import SignUpForm from "./SignUpForm";
@@ -66,4 +66,93 @@ export default function Page() {
       </div>
     </main>
   );
+}
+
+export function generateMetadata(): Metadata {
+  return {
+    title: "Sign Up",
+    description:
+      "Join Avocodos - The Web3 Social Platform For Aspiring Developers. Connect, share, and learn in the world of blockchain and cryptocurrency.",
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: "/signup"
+    },
+    openGraph: {
+      title: "Sign Up for Avocodos",
+      description:
+        "Join the Avocodos community and start your Web3 journey on the Aptos blockchain.",
+      url: "https://avocodos.com/signup",
+      siteName: "Avocodos",
+      images: ["/api/og?page=signup"],
+      locale: "en_US",
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Sign Up for Avocodos",
+      description:
+        "Join the Avocodos community and start your Web3 journey on the Aptos blockchain.",
+      creator: "@HarjjotSinghh",
+      images: ["/api/og?page=signup"]
+    },
+    category: "Web3 Social Platform",
+    keywords: [
+      "Avocodos",
+      "Sign Up",
+      "Register",
+      "Web3 Social",
+      "Aptos Blockchain",
+      "Cryptocurrency",
+      "Blockchain Community",
+      "Decentralized Social Network",
+      "Crypto Social Platform",
+      "Web3 Account Creation",
+      "Aptos Ecosystem",
+      "Blockchain Social Media",
+      "DeFi Community",
+      "NFT Social Network",
+      "Crypto Enthusiasts",
+      "Web3 Networking",
+      "Blockchain Education",
+      "Aptos Development",
+      "Decentralized Identity",
+      "Crypto Content Creation"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
+    }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
+  };
 }

@@ -13,7 +13,7 @@ import {
 } from "@/lib/types";
 import { formatDatePretty, formatNumber } from "@/lib/utils";
 import { formatDate } from "date-fns";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import EditProfileButton from "./EditProfileButton";
@@ -75,7 +75,15 @@ export async function generateMetadata(
     select: {
       displayName: true,
       username: true,
-      bio: true
+      bio: true,
+      avatarUrl: true,
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+          posts: true
+        }
+      }
     }
   });
 
@@ -83,12 +91,136 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
+  const description = `Check out ${user.displayName}'s profile on Avocodos. ${user.bio || ""} Followers: ${user._count.followers}, Following: ${user._count.following}, Posts: ${user._count.posts}`;
+
   return {
     title: `${user.displayName} (@${user.username})`,
-    description: user.bio || `Profile of ${user.displayName}`,
+    description,
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: `/users/${user.username}`
+    },
     openGraph: {
-      images: [`/api/og?username=${user.username}`, ...previousImages]
+      title: `${user.displayName} (@${user.username})`,
+      description,
+      url: `https://avocodos.com/users/${user.username}`,
+      siteName: "Avocodos",
+      images: [
+        user.avatarUrl || `/api/og?username=${user.username}`,
+        ...previousImages
+      ],
+      locale: "en_US",
+      type: "profile"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${user.displayName} (@${user.username})`,
+      description,
+      creator: "@HarjjotSinghh",
+      images: [user.avatarUrl || `/api/og?username=${user.username}`]
+    },
+    category: "Web3 Social Platform",
+    keywords: [
+      user.displayName,
+      user.username,
+      "Avocodos",
+      "Web3",
+      "Social Media",
+      "Blockchain",
+      "Cryptocurrency",
+      "NFT",
+      "Digital Assets",
+      "Decentralized",
+      "DeFi",
+      "Crypto Social",
+      "Blockchain Social",
+      "User Profile",
+      "Social Network",
+      "Web3 Profile",
+      "Crypto Influencer",
+      "Blockchain Community",
+      "Digital Identity",
+      "Crypto Enthusiast",
+      "Web3 User",
+      "Blockchain User",
+      "Crypto Social Network",
+      "Decentralized Social",
+      "Web3 Social Media",
+      "Blockchain Social Platform",
+      "Crypto Content Creator",
+      "Web3 Influencer",
+      "Blockchain Influencer",
+      "Crypto Community Member",
+      "Web3 Community",
+      "Blockchain Identity",
+      "Crypto Profile",
+      "Web3 Account",
+      "Blockchain Account",
+      "Decentralized Identity",
+      "Crypto Social Graph",
+      "Web3 Social Graph",
+      "Blockchain Social Graph",
+      "Crypto Networking",
+      "Web3 Networking",
+      "Blockchain Networking",
+      "Decentralized Social Network",
+      "Crypto Social Platform",
+      "Web3 Social Platform",
+      "Blockchain Social Media",
+      "Crypto User Profile",
+      "Web3 User Profile",
+      "Blockchain User Profile",
+      "Decentralized User Profile",
+      "Crypto Social Identity",
+      "Web3 Social Identity",
+      "Blockchain Social Identity",
+      "Decentralized Social Identity"
+      // Add more relevant keywords here...
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
+    },
+    icons: {
+      icon: [{ url: "/favicon.ico" }, { url: "/icon.png" }],
+      apple: [{ url: "/apple-icon.png" }],
+      other: [
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
+      ]
     }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
   };
 }
 

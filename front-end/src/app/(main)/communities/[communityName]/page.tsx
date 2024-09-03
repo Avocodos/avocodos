@@ -1,8 +1,7 @@
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import CommunityPage from "./CommunityPage";
-import { Community } from "@prisma/client";
 
 interface PageProps {
   params: { communityName: string };
@@ -26,9 +25,13 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const community = await prisma?.community.findUnique({
     where: { name: params.communityName },
-    select: {
-      name: true,
-      description: true
+    include: {
+      _count: {
+        select: {
+          members: true,
+          posts: true
+        }
+      }
     }
   });
 
@@ -36,13 +39,100 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
+  const description = `Join the ${community.name} community on Avocodos. ${community.description || ""} Members: ${community._count.members}, Posts: ${community._count.posts}`;
+
   return {
     title: `${community.name} Community`,
-    description:
-      community.description || `Community page for ${community.name}`,
+    description,
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: `/communities/${community.name}`
+    },
     openGraph: {
-      images: [`/api/og?communityName=${community.name}`, ...previousImages]
+      title: `${community.name} Community`,
+      description,
+      url: `https://avocodos.com/communities/${community.name}`,
+      siteName: "Avocodos",
+      images: [`/api/og?communityName=${community.name}`, ...previousImages],
+      locale: "en_US",
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${community.name} Community`,
+      description,
+      creator: "@HarjjotSinghh",
+      images: [`/api/og?communityName=${community.name}`]
+    },
+    category: "Web3 Social Platform",
+    keywords: [
+      community.name,
+      "Avocodos",
+      "Web3 Community",
+      "Blockchain Social",
+      "Crypto Discussion",
+      "Aptos Ecosystem",
+      "Decentralized Community",
+      "DeFi Forum",
+      "Aptos Network",
+      "Web3 Social Platform",
+      "Blockchain Discussion",
+      "Crypto Community",
+      "Aptos Development",
+      "Digital Asset Community",
+      "Web3 User Group",
+      "Blockchain Enthusiasts",
+      "Crypto Social Network",
+      "Aptos Blockchain",
+      "Decentralized Social",
+      "Web3 Networking",
+      "Blockchain Technology",
+      "Crypto Education",
+      "Aptos Smart Contracts",
+      "NFT Community",
+      "Web3 Innovation",
+      "Blockchain Governance",
+      "Crypto Market Analysis",
+      "Aptos DApps",
+      "Decentralized Finance",
+      "Web3 Infrastructure"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
     }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
   };
 }
 

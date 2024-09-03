@@ -1,5 +1,5 @@
 import React from "react";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata, Viewport } from "next";
 import prisma from "@/lib/prisma";
 import SpinningImageDialog from "@/components/SpinningImageDialog";
 import { notFound } from "next/navigation";
@@ -17,62 +17,121 @@ interface PageProps {
   params: { username: string; rewardId: string };
 }
 
-export async function generateStaticParams() {
-  const userRewards = await prisma?.userReward.findMany({
-    select: {
+async function getReward(username: string, rewardId: string) {
+  const reward = await prisma?.userReward.findFirst({
+    where: { id: rewardId },
+    include: {
       user: {
         select: {
-          username: true
+          username: true,
+          displayName: true,
+          avatarUrl: true
         }
-      },
-      rewardId: true
+      }
     }
   });
 
-  return (
-    userRewards?.map((userReward) => ({
-      username: userReward.user.username,
-      rewardId: userReward.rewardId
-    })) ?? []
-  );
+  if (!reward || reward.user.username !== username) notFound();
+
+  const reward_ = await prisma?.reward.findFirst({
+    where: { id: reward.rewardId }
+  });
+
+  return { ...reward, reward: reward_ };
 }
 
-export async function generateMetadata({
-  params
-}: PageProps): Promise<Metadata> {
-  const user = await prisma?.user.findFirst({
-    where: { username: params.username },
-    select: {
-      displayName: true,
-      username: true
-    }
-  });
-
-  const reward = await prisma?.reward.findFirst({
-    where: { id: params.rewardId }
-  });
-
-  if (!user || !reward) return {};
+export async function generateMetadata(
+  { params: { username, rewardId } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const reward = await getReward(username, rewardId);
+  const previousImages = (await parent).openGraph?.images || [];
+  const description = `${reward.user.displayName} earned the ${reward.reward?.name} reward on Avocodos. ${reward.reward?.description || ""}`;
 
   return {
-    title: `${reward.name} | ${user.displayName}'s Reward`,
-    description: `Check out ${user.displayName}'s "${reward.name}" reward on Avocodos!`,
-    openGraph: {
-      images: [`/api/og?username=${user.username}&rewardId=${reward.id}`]
+    title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
+
+    description,
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: `/users/${username}/rewards/${rewardId}`
     },
+    openGraph: {
+      title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
+
+      description,
+      url: `https://avocodos.com/users/${username}/rewards/${rewardId}`,
+      siteName: "Avocodos",
+      images: [`/api/og?rewardId=${rewardId}`, ...previousImages],
+      locale: "en_US",
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
+
+      description,
+      creator: "@HarjjotSinghh",
+      images: [`/api/og?rewardId=${rewardId}`]
+    },
+    category: "Web3 Social Platform",
     keywords: [
-      reward.name,
-      `${reward.name} reward`,
-      `${reward.name} on Avocodos`,
-      `${user.displayName} ${reward.name}`,
-      `${user.displayName} ${reward.name} reward`,
-      `${user.displayName} ${reward.name} on Avocodos`,
-      `${user.displayName} rewards`,
-      `${user.displayName} reward`,
-      `${user.displayName} reward on Avocodos`,
-      `${user.displayName} ${reward.name}`,
-      `${user.displayName} ${reward.name} reward`,
-      `${user.displayName} ${reward.name} on Avocodos`
+      reward.reward?.name ?? "",
+      reward.user.displayName,
+      "Avocodos",
+      "Web3 Rewards",
+      "Blockchain Achievements",
+      "Crypto Rewards",
+      "Aptos Ecosystem",
+      "Decentralized Social Network",
+      "Web3 Gamification",
+      "Blockchain Incentives",
+      "Crypto Social Platform",
+      "Web3 User Engagement",
+      "Blockchain Social Media",
+      "DeFi Rewards",
+      "NFT Achievements",
+      "Web3 User Recognition",
+      "Blockchain Community Rewards",
+      "Crypto Loyalty Program",
+      "Aptos Network Rewards",
+      "Decentralized Identity Achievements"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1
+      }
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
+    }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
     ]
   };
 }
