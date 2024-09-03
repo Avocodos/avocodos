@@ -5,7 +5,12 @@ import Linkify from "@/components/Linkify";
 import TrendsSidebar from "@/components/TrendsSidebar";
 import UserAvatar from "@/components/UserAvatar";
 import prisma from "@/lib/prisma";
-import { FollowerInfo, getUserDataSelect, UserData } from "@/lib/types";
+import {
+  FollowerInfo,
+  FollowingInfo,
+  getUserDataSelect,
+  UserData
+} from "@/lib/types";
 import { formatDatePretty, formatNumber } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { Metadata, ResolvingMetadata } from "next";
@@ -17,6 +22,7 @@ import PostsCount from "@/components/PostsCount";
 import { User } from "lucia";
 import { Clock } from "lucide-react";
 import RewardsButton from "@/components/RewardsButton";
+import FollowingCount from "@/components/FollowingCount";
 
 interface PageProps {
   params: { username: string };
@@ -104,7 +110,7 @@ export default async function Page({ params: { username } }: PageProps) {
           user={user as unknown as UserData}
           loggedInUserId={loggedInUser.id}
         />
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
           <h4 className="text-center text-2xl font-bold">
             {user.displayName}&apos;s posts
           </h4>
@@ -129,7 +135,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
   };
 
   return (
-    <div className="h-fit w-full space-y-5 rounded-2xl bg-card p-5 shadow-sm">
+    <div className="h-fit w-full space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
       <UserAvatar
         avatarUrl={user.avatarUrl}
         size={250}
@@ -138,13 +144,13 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
       <div className="flex w-full flex-wrap gap-3 sm:flex-nowrap">
         <div className="me-auto w-full space-y-3">
           <div className="w-full">
-            <h5 className="inline-flex w-full items-center justify-between">
+            <h5 className="inline-flex w-full items-start justify-between">
               <div className="flex flex-col gap-2">
                 {user.displayName}
                 <p className="-mt-1.5 text-sm font-normal text-foreground/80">
                   @{user.username}
                 </p>
-                <p className="mt-1.5 flex items-center gap-0.5 text-xs font-normal text-foreground/80">
+                <p className="-mt-1.5 flex items-center gap-0.5 text-xs font-normal text-foreground/80">
                   <Clock className="size-3" /> Member since{" "}
                   {formatDatePretty(user.createdAt)}
                 </p>
@@ -171,9 +177,15 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             <PostsCount count={user._count.posts} />
             <FollowerCount userId={user.id} initialState={followerInfo} />
+            <FollowingCount
+              userId={user.id}
+              initialState={{
+                followingCount: user.following.length
+              }}
+            />
           </div>
         </div>
       </div>

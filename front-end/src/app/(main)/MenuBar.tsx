@@ -29,7 +29,12 @@ export default async function MenuBar({ className }: MenuBarProps) {
   ]);
 
   return (
-    <div className={cn("[&>*]:!px-2 lg:[&>*]:!px-4", className)}>
+    <div
+      className={cn(
+        "border-2 border-muted [&>*]:!px-2 lg:[&>*]:!px-4",
+        className
+      )}
+    >
       <Button
         variant="ghost"
         className={cn("flex items-center justify-start gap-3")}

@@ -151,7 +151,7 @@ export default function PostEditor({
   }
 
   return (
-    <div className="mb-4 flex flex-col gap-5 rounded-2xl bg-card p-5 shadow-sm md:p-6">
+    <div className="mb-4 flex flex-col gap-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm md:p-6">
       <div className="flex gap-5">
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
         <div {...rootProps} className="w-full max-w-full">

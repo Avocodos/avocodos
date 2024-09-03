@@ -15,7 +15,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 }) => {
   return (
     <div className="w-full">
-      <div className="overflow-hidden rounded-xl bg-card avocodos-transition avocodos-shadow-lg">
+      <div className="overflow-hidden rounded-2xl border-2 border-muted bg-card avocodos-transition avocodos-shadow-lg">
         <img
           src={imgSrc}
           alt="Course Image"

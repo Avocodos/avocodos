@@ -53,7 +53,7 @@ export function Courses({
 function CourseCard({ course }: { course: Course }) {
   return (
     <Link href={`/courses/${course.id}`}>
-      <Card className="w-full overflow-hidden rounded-2xl border-2 avocodos-transition hover:border-primary/15">
+      <Card className="w-full overflow-hidden rounded-2xl border-2 border-muted avocodos-transition hover:border-primary/25">
         <div className="overflow-hidden rounded-t-xl">
           <img
             src={course.imageUrl}

@@ -124,7 +124,13 @@ const config = {
         'transition-duration': '300ms'
       },
       '.avocodos-shadow-lg': {
-        'box-shadow': '0px 0px 50px 0px hsl(var(--primary)/0.02)'
+        'box-shadow': '0px 0px 50px 0px hsl(var(--primary)/0.04)'
+      },
+      '.avocodos-shadow-md': {
+        'box-shadow': '0px 0px 30px 0px hsl(var(--primary)/0.20)'
+      },
+      '.avocodos-shadow-sm': {
+        'box-shadow': '0px 0px 20px 0px hsl(var(--primary)/0.15)'
       },
       '.bg-cross': {
         'background-color': 'hsl(var(--background))',

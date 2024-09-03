@@ -13,7 +13,7 @@ import Spinner from "./Spinner";
 
 export default function TrendsSidebar() {
   return (
-    <div className="sticky top-[6.5em] hidden h-fit w-72 flex-none space-y-5 md:block lg:w-80">
+    <div className="sticky top-[6.5em] ml-3 hidden h-fit w-72 flex-none space-y-5 md:block lg:w-80">
       <Suspense fallback={<Spinner />}>
         <WhoToFollow />
         <TrendingTopics />
@@ -44,7 +44,7 @@ async function WhoToFollow() {
   });
 
   return (
-    <div className="space-y-5 rounded-2xl bg-card p-5 shadow-sm">
+    <div className="space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
       <div className="inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
         {" "}
         <Rss className="size-5" />
@@ -117,7 +117,7 @@ async function TrendingTopics() {
   const trendingTopics = await getTrendingTopics();
 
   return (
-    <div className="space-y-5 rounded-2xl bg-card p-5 shadow-sm">
+    <div className="space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
       <div className="inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
         {" "}
         <ChartNoAxesCombined className="size-5" />

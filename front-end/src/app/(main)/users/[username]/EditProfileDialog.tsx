@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -14,7 +14,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UserData } from "@/lib/types";
 import {
   updateUserProfileSchema,
-  UpdateUserProfileValues,
+  UpdateUserProfileValues
 } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera } from "lucide-react";
@@ -41,14 +41,14 @@ interface EditProfileDialogProps {
 export default function EditProfileDialog({
   user,
   open,
-  onOpenChange,
+  onOpenChange
 }: EditProfileDialogProps) {
   const form = useForm<UpdateUserProfileValues>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
       displayName: user.displayName,
-      bio: user.bio || "",
-    },
+      bio: user.bio || ""
+    }
   });
 
   const mutation = useUpdateProfileMutation();
@@ -63,14 +63,14 @@ export default function EditProfileDialog({
     mutation.mutate(
       {
         values,
-        avatar: newAvatarFile,
+        avatar: newAvatarFile
       },
       {
         onSuccess: () => {
           setCroppedAvatar(null);
           onOpenChange(false);
-        },
-      },
+        }
+      }
     );
   }
 
@@ -156,7 +156,7 @@ function AvatarInput({ src, onImageCropped }: AvatarInputProps) {
       100,
       0,
       (uri) => setImageToCrop(uri as File),
-      "file",
+      "file"
     );
   }
 
@@ -181,7 +181,8 @@ function AvatarInput({ src, onImageCropped }: AvatarInputProps) {
           height={150}
           className="size-32 flex-none rounded-full object-cover"
         />
-        <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white transition-colors duration-200 group-hover:bg-opacity-25">
+        <div className="absolute inset-0 size-full rounded-full bg-black bg-opacity-50 avocodos-transition group-hover:bg-opacity-15"></div>
+        <span className="absolute inset-0 m-auto flex size-12 items-center justify-center rounded-full bg-black bg-opacity-30 text-white avocodos-transition group-hover:bg-opacity-25">
           <Camera size={24} />
         </span>
       </button>

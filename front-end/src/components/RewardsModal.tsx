@@ -208,7 +208,7 @@ export default function RewardsModal({
             <DialogTitle asChild>
               <div className="flex items-center justify-between">
                 <h3 className="inline-flex items-center gap-3">
-                  <Stars className="size-7" /> Rewards Progress{" "}
+                  <Stars className="size-7" /> NFTs Progress{" "}
                   {/* <span className="text-lg font-semibold text-foreground/80">
                     (@{user.username})
                   </span> */}

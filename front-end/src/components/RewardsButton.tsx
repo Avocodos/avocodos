@@ -6,6 +6,7 @@ import { Stars, Trophy } from "lucide-react";
 import { User } from "@prisma/client";
 import { UserData } from "@/lib/types";
 import Link from "next/link";
+import { Badge } from "./ui/badge";
 
 interface RewardsButtonProps {
   user: UserData;
@@ -16,27 +17,25 @@ export default function RewardsButton({ user }: RewardsButtonProps) {
 
   return (
     <>
-      <Button
-        className="inline-flex w-full items-center gap-2 text-sm"
+      <Badge
+        className="inline-flex w-full cursor-pointer items-center gap-2 text-xs"
         onClick={() => setIsOpen(true)}
-        size="sm"
-        variant={"outline"}
+        variant={"button"}
       >
-        <Stars className="size-3.5" /> Rewards Progress
-      </Button>
+        <Stars className="size-3.5" /> NFTs Progress
+      </Badge>
       <RewardsModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         user={user}
       />
       <Link href={`/users/${user.username}/rewards`} passHref>
-        <Button
-          className="inline-flex w-full items-center gap-2 text-sm"
-          size="sm"
-          variant="outline"
+        <Badge
+          className="inline-flex w-full items-center gap-2 text-xs"
+          variant="button"
         >
-          <Trophy className="size-3.5" /> Rewards
-        </Button>
+          <Trophy className="size-3.5" /> NFT Rewards
+        </Badge>
       </Link>
     </>
   );

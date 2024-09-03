@@ -79,7 +79,7 @@ model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@map("sessions")
 }
@@ -87,8 +87,8 @@ model Session {
 model Follow {
   followerId  String
   followingId String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
-  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: NoAction)
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: NoAction)
 
   @@unique([followerId, followingId])
   @@map("follows")
@@ -110,7 +110,7 @@ model Post {
   badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id])
   CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
   community           Community?      @relation(fields: [communityName], references: [name])
-  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@map("posts")
 }
@@ -134,8 +134,8 @@ model Comment {
   createdAt     DateTime   @default(now())
   communityName String?
   community     Community? @relation(fields: [communityName], references: [name])
-  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post       @relation(fields: [postId], references: [id], onDelete: NoAction)
+  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@map("comments")
 }
@@ -145,8 +145,8 @@ model Like {
   postId        String
   communityName String?
   community     Community? @relation(fields: [communityName], references: [name])
-  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post       @relation(fields: [postId], references: [id], onDelete: NoAction)
+  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@unique([userId, postId])
   @@map("likes")
@@ -157,8 +157,8 @@ model Bookmark {
   userId    String
   postId    String
   createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@unique([userId, postId])
   @@map("bookmarks")
@@ -172,9 +172,9 @@ model Notification {
   type        NotificationType
   read        Boolean          @default(false)
   createdAt   DateTime         @default(now())
-  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
-  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
-  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: NoAction)
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: NoAction)
+  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: NoAction)
 
   @@map("notifications")
 }
@@ -213,7 +213,7 @@ model Lesson {
   courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: NoAction)
 
   @@map("lessons")
 }
@@ -226,8 +226,8 @@ model Enrollment {
   status    EnrollmentStatus @default(ACTIVE)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
-  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: NoAction)
+  user      User             @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@unique([userId, courseId])
   @@map("enrollments")
@@ -241,8 +241,8 @@ model Review {
   courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: NoAction)
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
 
   @@unique([userId, courseId])
   @@map("reviews")
@@ -253,7 +253,7 @@ model CommunityRole {
   name          String
   color         String
   communityName String
-  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
+  community     Community @relation(fields: [communityName], references: [name], onDelete: NoAction)
   assignedTo    User[]    @relation("AssignedRole")
   users         User[]    @relation("UserRoles")
 
@@ -266,7 +266,7 @@ model CommunityBadge {
   name          String
   color         String
   communityName String
-  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
+  community     Community @relation(fields: [communityName], references: [name], onDelete: NoAction)
   badgePosts    Post[]    @relation("PostBadge")
   posts         Post[]    @relation("PostCommunityBadge")
 
