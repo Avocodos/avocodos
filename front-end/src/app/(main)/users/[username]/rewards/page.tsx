@@ -11,6 +11,19 @@ interface PageProps {
   params: { username: string };
 }
 
+export async function generateStaticParams() {
+  const users = await prisma?.user.findMany({
+    select: {
+      username: true
+    }
+  });
+  return (
+    users?.map((user) => ({
+      username: user.username
+    })) ?? []
+  );
+}
+
 export async function generateMetadata({
   params
 }: PageProps): Promise<Metadata> {

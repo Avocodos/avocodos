@@ -17,6 +17,26 @@ interface PageProps {
   params: { username: string; rewardId: string };
 }
 
+export async function generateStaticParams() {
+  const userRewards = await prisma?.userReward.findMany({
+    select: {
+      user: {
+        select: {
+          username: true
+        }
+      },
+      rewardId: true
+    }
+  });
+
+  return (
+    userRewards?.map((userReward) => ({
+      username: userReward.user.username,
+      rewardId: userReward.rewardId
+    })) ?? []
+  );
+}
+
 export async function generateMetadata({
   params
 }: PageProps): Promise<Metadata> {
@@ -60,7 +80,6 @@ export default async function RewardPage({ params }: PageProps) {
       reward: true
     }
   });
-  console.log("userReward", userReward);
   if (!userReward) {
     return <p>Reward not found</p>;
   }
