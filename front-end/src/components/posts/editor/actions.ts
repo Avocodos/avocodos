@@ -22,7 +22,7 @@ export async function submitPost(input: {
   if (communityName) {
     const community = await prisma?.community.findUnique({
       where: { name: communityName },
-      cacheStrategy: { ttl: 60 },
+
 
     });
     if (!community) {

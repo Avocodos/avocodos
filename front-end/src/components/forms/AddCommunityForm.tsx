@@ -94,7 +94,6 @@ export default function AddCommunityForm() {
       }
 
       const createdCommunity: Community = await response.json();
-      console.log("Created community:", createdCommunity);
 
       toast({
         title: "Community created",

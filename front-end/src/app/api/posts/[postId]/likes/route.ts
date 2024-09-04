@@ -31,7 +31,7 @@ export async function GET(
           },
         },
       },
-      cacheStrategy: { ttl: 60 },
+
     });
 
     if (!post) {
@@ -72,7 +72,7 @@ export async function POST(
           }
         }
       },
-      cacheStrategy: { ttl: 60 },
+
     });
 
     if (!post) {
@@ -138,7 +138,7 @@ export async function DELETE(
         userId: true,
         communityName: true,
       },
-      cacheStrategy: { ttl: 60 },
+
     });
 
     if (!post) {

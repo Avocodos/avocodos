@@ -21,7 +21,6 @@ export default function UserLinkWithTooltip({
   const { data, isLoading, error } = useQuery({
     queryKey: ["user-data", username],
     queryFn: async () => {
-      console.log("Fetching data for username:", username);
       try {
         const userData = await kyInstance
           .get(`/api/users/username/${username}`, {

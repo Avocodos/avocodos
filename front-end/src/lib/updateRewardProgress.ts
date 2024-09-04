@@ -120,7 +120,6 @@ export async function initializeUserRewards(userId: string) {
 
 export async function getUserRewardCounts(userId: string) {
     try {
-        console.log("getUserRewardCounts called with userId:", userId);
         if (!prisma) {
             console.error("Prisma client is not initialized.");
             return;

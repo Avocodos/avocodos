@@ -18,7 +18,7 @@ export default function EditProfileButton({ user }: EditProfileButtonProps) {
     <>
       <Badge
         variant="button"
-        className="inline-flex cursor-pointer items-center justify-center gap-2 text-xs"
+        className="inline-flex w-fit cursor-pointer items-center justify-center gap-2 text-xs"
         onClick={() => setShowDialog(true)}
       >
         <Edit className="size-3.5" />

@@ -44,7 +44,6 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
-      // Remove cacheStrategy as we're implementing our own caching
     });
 
     if (!posts || posts.length === 0) {

@@ -36,7 +36,6 @@ export async function signUp(
           mode: "insensitive",
         },
       },
-      cacheStrategy: { ttl: 60 },
     });
 
     if (existingUsername) {
@@ -52,14 +51,12 @@ export async function signUp(
           mode: "insensitive",
         },
       },
-      cacheStrategy: { ttl: 60 },
     });
 
     const existingWallet = await prisma?.user.findFirst({
       where: {
         walletAddress: account?.address,
       },
-      cacheStrategy: { ttl: 60 },
     });
 
     if (existingWallet) {
@@ -118,7 +115,6 @@ export async function verifyOTP(userId: string, otp: string): Promise<{ success:
   const user = await prisma?.user.findUnique({
     where: { id: userId },
     select: { emailVerifyToken: true, emailVerifyExpires: true },
-    cacheStrategy: { ttl: 60 },
   });
 
   if (!user || user.emailVerifyToken !== otp) {

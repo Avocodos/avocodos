@@ -2,14 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import localFont from "next/font/local";
 import { extractRouterConfig } from "uploadthing/server";
 import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
-import { Archivo, Instrument_Sans } from "next/font/google";
-import StarrySkyBG from "@/components/StarrySkyBG";
-import Spinner from "@/components/Spinner";
+import { Archivo } from "next/font/google";
+import { startCronJobs } from "@/lib/cron";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -31,6 +29,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  startCronJobs();
   return (
     <html lang="en">
       <body

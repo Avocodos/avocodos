@@ -1,6 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
+import { getUserData } from "@/lib/utils";
 import { createUploadthing, FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 
@@ -8,7 +9,7 @@ const f = createUploadthing();
 
 export const fileRouter = {
   avatar: f({
-    image: { maxFileSize: "512KB" },
+    image: { maxFileSize: "1MB" },
   })
     .middleware(async () => {
       const { user } = await validateRequest();
@@ -73,6 +74,44 @@ export const fileRouter = {
       });
 
       return { mediaId: media?.id };
+    }),
+  // New banner upload type
+  banner: f({
+    image: { maxFileSize: "2MB" }, // Set your desired limits
+  })
+    .middleware(async () => {
+      const { user } = await validateRequest();
+
+      if (!user) throw new UploadThingError("Unauthorized");
+
+      return { user };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      const { user } = metadata;
+      if (!user) throw new UploadThingError("Unauthorized");
+      const userData = await getUserData({ userId: user.id });
+      if (!userData) throw new UploadThingError("User not found");
+
+      const newBannerUrl = file.url.replace(
+        "/f/",
+        `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+      );
+
+      const oldBannerUrl = userData.bannerUrl;
+
+      if (oldBannerUrl) {
+        const key = oldBannerUrl.split(
+          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+        )[1];
+
+        await new UTApi().deleteFiles(key);
+      }
+
+      await prisma?.user.update({
+        where: { id: user.id },
+        data: { bannerUrl: newBannerUrl },
+      });
+      return { bannerUrl: newBannerUrl };
     }),
 } satisfies FileRouter;
 

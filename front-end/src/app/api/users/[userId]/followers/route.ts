@@ -30,7 +30,7 @@ export async function GET(
           },
         },
       },
-      cacheStrategy: { ttl: 60 },
+
 
     });
 

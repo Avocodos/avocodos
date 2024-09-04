@@ -11,7 +11,7 @@ export async function deletePost(id: string) {
 
   const post = await prisma?.post.findUnique({
     where: { id },
-    cacheStrategy: { ttl: 60 },
+
   });
 
   if (!post) throw new Error("Post not found");

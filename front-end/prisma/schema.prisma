@@ -17,6 +17,7 @@ model User {
   passwordHash          String?
   googleId              String?              @unique
   avatarUrl             String?
+  bannerUrl             String?
   bio                   String?
   createdAt             DateTime             @default(now())
   walletAddress         String?              @unique
@@ -87,8 +88,8 @@ model Session {
 model Follow {
   followerId  String
   followingId String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: NoAction)
-  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: NoAction)
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
   @@map("follows")
@@ -165,16 +166,20 @@ model Bookmark {
 }
 
 model Notification {
-  id          String           @id @default(cuid())
-  recipientId String
-  issuerId    String
-  postId      String?
-  type        NotificationType
-  read        Boolean          @default(false)
-  createdAt   DateTime         @default(now())
-  issuer      User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: NoAction)
-  post        Post?            @relation(fields: [postId], references: [id], onDelete: NoAction)
-  recipient   User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: NoAction)
+  id                String           @id @default(cuid())
+  recipientId       String
+  recipientUsername String?
+  issuerId          String
+  postId            String?
+  type              NotificationType
+  read              Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+  issuer            User             @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  post              Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  recipient         User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  metadata          Json?
+  message           String?
+  imageUrl          String?
 
   @@map("notifications")
 }
@@ -373,6 +378,7 @@ enum NotificationType {
   LIKE
   FOLLOW
   COMMENT
+  REWARD_PROGRESS
 }
 
 enum RewardRequirementType {

@@ -116,8 +116,6 @@ export default function RewardsModal({
 
   const claimRewardMutation = useMutation({
     mutationFn: (rewardId: string) => {
-      console.log("rewardId", rewardId);
-      console.log("user.id", user.id);
       return kyInstance
         .post("/api/rewards/claim", { json: { rewardId, userId: user.id } })
         .json();

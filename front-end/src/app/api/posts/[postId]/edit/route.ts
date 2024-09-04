@@ -18,7 +18,7 @@ export async function PUT(
         const post = await prisma?.post.findUnique({
             where: { id: postId },
             select: { userId: true },
-            cacheStrategy: { ttl: 60 },
+
         });
 
         if (!post) {

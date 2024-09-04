@@ -1,4 +1,4 @@
-import { Asset, Community, CommunityRole, Course, Prisma } from "@prisma/client";
+import { Asset, Community, CommunityRole, Course, Notification, Prisma } from "@prisma/client";
 
 export function getUserDataSelect(loggedInUserId: string) {
   return {
@@ -6,6 +6,7 @@ export function getUserDataSelect(loggedInUserId: string) {
     username: true,
     displayName: true,
     avatarUrl: true,
+    bannerUrl: true,
     bio: true,
     createdAt: true,
     followers: {
@@ -56,13 +57,16 @@ export interface UserData {
   username: string;
   displayName: string;
   avatarUrl: string;
+  bannerUrl: string;
   bio: string;
   createdAt: Date;
   followers: {
     followerId: string;
+    follower: UserData;
   }[];
   following: {
     followingId: string;
+    following: UserData;
   }[];
   _count: {
     posts: number;
@@ -188,6 +192,8 @@ export interface NotificationsPage {
   notifications: NotificationData[];
   nextCursor: string | null;
 }
+
+export type NotificationType = Notification["type"];
 
 export interface FollowerInfo {
   followers: number;

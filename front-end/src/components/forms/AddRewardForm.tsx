@@ -86,7 +86,6 @@ export default function AddRewardForm() {
       }
 
       const createdReward = await response.json();
-      console.log("Created reward:", createdReward);
 
       toast({
         title: "Reward created",

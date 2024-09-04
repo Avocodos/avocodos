@@ -52,7 +52,7 @@ export async function deleteComment(id: string) {
 
   const comment = await prisma?.comment.findUnique({
     where: { id },
-    cacheStrategy: { ttl: 60 },
+
 
   });
 

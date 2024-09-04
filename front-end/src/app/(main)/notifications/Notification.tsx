@@ -2,7 +2,7 @@ import UserAvatar from "@/components/UserAvatar";
 import { NotificationData } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { NotificationType } from "@prisma/client";
-import { Heart, MessageCircle, User2 } from "lucide-react";
+import { Gift, Heart, MessageCircle, User2 } from "lucide-react";
 import Link from "next/link";
 
 interface NotificationProps {
@@ -15,7 +15,7 @@ export default function Notification({ notification }: NotificationProps) {
     { message: string; icon: JSX.Element; href: string }
   > = {
     FOLLOW: {
-      message: `${notification.issuer.displayName} followed you`,
+      message: `${notification.issuer.displayName} started following you`,
       icon: <User2 className="size-7 text-primary" />,
       href: `/users/${notification.issuer.username}`
     },
@@ -26,8 +26,13 @@ export default function Notification({ notification }: NotificationProps) {
     },
     LIKE: {
       message: `${notification.issuer.displayName} liked your post`,
-      icon: <Heart className="size-7 fill-red-500 text-red-500" />,
+      icon: <Heart className="size-7 text-primary" />,
       href: `/posts/${notification.postId}`
+    },
+    REWARD_PROGRESS: {
+      message: notification.message ?? "",
+      icon: <Gift className="size-7 text-primary" />,
+      href: `/users/${notification.recipientUsername}/rewards`
     }
   };
 

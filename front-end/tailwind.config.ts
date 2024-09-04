@@ -33,6 +33,7 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          '0': '#f7fff5',
           '50': '#ecffe6',
           '100': '#d4ffc8',
           '200': '#abff97',
@@ -44,6 +45,7 @@ const config = {
           '800': '#16670d',
           '900': '#155710',
           '950': '#043102',
+          '1000': '#011200'
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -130,7 +132,7 @@ const config = {
         'box-shadow': '0px 0px 30px 0px hsl(var(--primary)/0.20)'
       },
       '.avocodos-shadow-sm': {
-        'box-shadow': '0px 0px 20px 0px hsl(var(--primary)/0.15)'
+        'box-shadow': '0px 0px 20px 0px hsl(var(--primary)/0.10)'
       },
       '.bg-cross': {
         'background-color': 'hsl(var(--background))',

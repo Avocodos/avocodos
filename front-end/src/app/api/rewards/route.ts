@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
         }
 
         const rewards = await prisma?.reward.findMany({
-            // cacheStrategy: { ttl: 120 },
         });
 
         // Cache the rewards in Redis

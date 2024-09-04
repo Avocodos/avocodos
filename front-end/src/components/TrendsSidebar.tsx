@@ -10,10 +10,11 @@ import FollowButton from "./FollowButton";
 import UserAvatar from "./UserAvatar";
 import UserTooltip from "./UserTooltip";
 import Spinner from "./Spinner";
+import { Button } from "./ui/button";
 
 export default function TrendsSidebar() {
   return (
-    <div className="sticky top-[6.5em] ml-3 hidden h-fit w-72 flex-none space-y-5 md:block lg:w-80">
+    <div className="sticky top-[6.5em] ml-3 hidden h-fit w-72 flex-none space-y-8 md:block lg:w-80">
       <Suspense fallback={<Spinner />}>
         <WhoToFollow />
         <TrendingTopics />
@@ -39,8 +40,7 @@ async function WhoToFollow() {
       }
     },
     select: getUserDataSelect(user.id),
-    take: 5,
-    cacheStrategy: { ttl: 60 }
+    take: 5
   });
 
   return (
@@ -117,36 +117,42 @@ async function TrendingTopics() {
   const trendingTopics = await getTrendingTopics();
 
   return (
-    <div className="space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
-      <div className="inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
+    <div className="rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
+      <div className="mb-4 inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
         {" "}
         <ChartNoAxesCombined className="size-5" />
         Trending topics
       </div>
-      {trendingTopics.map(({ hashtag, count }) => {
-        const title = hashtag.split("#")[1];
-
-        return (
-          <Link
-            key={title}
-            href={`/hashtag/${title}`}
-            className="group block rounded-lg px-4 py-2 avocodos-transition hover:bg-primary/5"
-          >
-            <p
-              className="line-clamp-1 break-all font-semibold avocodos-transition group-hover:text-primary"
-              title={hashtag}
+      <div className="flex flex-col gap-2">
+        {trendingTopics.map(({ hashtag, count }) => {
+          const title = hashtag.split("#")[1];
+          return (
+            <Link
+              key={title}
+              href={`/hashtag/${title}`}
+              className="group block"
             >
-              {hashtag}
-            </p>
-            <p className="text-sm text-foreground/80">
-              {formatNumber(count)} {count === 1 ? "post" : "posts"}
-            </p>
-          </Link>
-        );
-      })}
+              <Button
+                variant="ghost"
+                className="flex h-full w-full flex-col items-start justify-start !pl-0 hover:bg-transparent"
+              >
+                <p
+                  className="line-clamp-1 break-all font-semibold avocodos-transition group-hover:text-primary"
+                  title={hashtag}
+                >
+                  {hashtag}
+                </p>
+                <p className="text-sm text-foreground/80">
+                  {formatNumber(count)} {count === 1 ? "post" : "posts"}
+                </p>
+              </Button>
+            </Link>
+          );
+        })}
+      </div>
       {trendingTopics.length === 0 && (
         <div className="text-center text-foreground/80">
-          No trending topics... yet! 🤔👀
+          No trending topics... yet! 👀
         </div>
       )}
     </div>

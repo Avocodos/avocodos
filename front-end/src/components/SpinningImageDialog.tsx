@@ -26,6 +26,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { cn, formatDatePretty } from "@/lib/utils";
 import { ShareSocial } from "react-share-social";
 import Link from "next/link";
+import { BASE_URL } from "@/lib/constants";
 
 interface SpinningImageDialogProps {
   isOpen: boolean;
@@ -184,7 +185,7 @@ function ShareDropdown({
   className?: string;
   rewardName: string;
 }) {
-  const shareUrl = `https://avocodos.com/users/${username}/rewards/${encodeURIComponent(rewardId)}`;
+  const shareUrl = `${BASE_URL}/users/${username}/rewards/${encodeURIComponent(rewardId)}`;
   const shareText = `Check out my "${rewardName}" reward on @avocodosglobal! Join the community and earn your own rewards by completing various exciting tasks! Get started now at https://avocodos.com!`;
 
   const style = {

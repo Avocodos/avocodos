@@ -13,7 +13,6 @@ interface PageProps {
 export async function generateStaticParams() {
   const courses = await prisma?.course.findMany({
     select: { id: true },
-    cacheStrategy: { ttl: 3600 } // Cache for 1 hour
   });
 
   if (!courses) return [];
@@ -131,7 +130,6 @@ async function getCourse(courseId: string) {
         orderBy: { order: "asc" }
       }
     },
-    cacheStrategy: { ttl: 60 }
   });
 
   if (!course) notFound();
@@ -143,7 +141,6 @@ export default async function LMSPage({ params: { courseId } }: PageProps) {
   const { user } = await validateRequest();
   const userData = await prisma?.user.findUnique({
     where: { id: user?.id },
-    cacheStrategy: { ttl: 60 }
   });
   if (!user || !userData) {
     redirect("/login");

@@ -22,7 +22,7 @@ const getPost = cache(async (postId: string, loggedInUserId: string) => {
       id: postId
     },
     include: getPostDataInclude(loggedInUserId),
-    cacheStrategy: { ttl: 60 }
+    : { ttl: 60 }
   });
 
   if (!post) notFound();

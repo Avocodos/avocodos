@@ -21,8 +21,6 @@ export async function GET(req: NextRequest) {
     interBold
   ]);
   const baseURL = req.nextUrl.origin;
-  console.log(baseURL);
-
   const { searchParams } = new URL(req.url);
   const communityName = searchParams.get("communityName");
   const postId = searchParams.get("postId");

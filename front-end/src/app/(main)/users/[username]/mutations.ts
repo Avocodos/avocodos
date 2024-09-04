@@ -19,18 +19,22 @@ export function useUpdateProfileMutation() {
   const queryClient = useQueryClient();
 
   const { startUpload: startAvatarUpload } = useUploadThing("avatar");
+  const { startUpload: startBannerUpload } = useUploadThing("banner");
 
   const mutation = useMutation({
     mutationFn: async ({
       values,
       avatar,
+      banner
     }: {
       values: UpdateUserProfileValues;
       avatar?: File;
+      banner?: File;
     }) => {
       return Promise.all([
         updateUserProfile(values),
         avatar && startAvatarUpload([avatar]),
+        banner && startBannerUpload([banner]),
       ]);
     },
     onSuccess: async ([updatedUser, uploadResult]) => {

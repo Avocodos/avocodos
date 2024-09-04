@@ -15,7 +15,7 @@ export async function POST(
         const community = await prisma?.community.findUnique({
             where: { name: communityName },
             include: { moderators: true },
-            cacheStrategy: { ttl: 60 },
+
 
         });
 

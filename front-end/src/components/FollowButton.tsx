@@ -6,6 +6,8 @@ import { FollowerInfo } from "@/lib/types";
 import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+import { Badge } from "./ui/badge";
+import { UserCheck, UserMinus, UserPlus } from "lucide-react";
 
 interface FollowButtonProps {
   userId: string;
@@ -14,7 +16,7 @@ interface FollowButtonProps {
 
 export default function FollowButton({
   userId,
-  initialState,
+  initialState
 }: FollowButtonProps) {
   const { toast } = useToast();
 
@@ -38,7 +40,7 @@ export default function FollowButton({
         followers:
           (previousState?.followers || 0) +
           (previousState?.isFollowedByUser ? -1 : 1),
-        isFollowedByUser: !previousState?.isFollowedByUser,
+        isFollowedByUser: !previousState?.isFollowedByUser
       }));
 
       return { previousState };
@@ -48,17 +50,23 @@ export default function FollowButton({
       console.error(error);
       toast({
         variant: "destructive",
-        description: "Something went wrong. Please try again.",
+        description: "Something went wrong. Please try again."
       });
-    },
+    }
   });
 
   return (
-    <Button
-      variant={data.isFollowedByUser ? "secondary" : "default"}
+    <Badge
+      variant={data.isFollowedByUser ? "button" : "button"}
       onClick={() => mutate()}
+      className="inline-flex cursor-pointer items-center gap-2 text-xs"
     >
+      {data.isFollowedByUser ? (
+        <UserMinus className="size-3.5" />
+      ) : (
+        <UserPlus className="size-3.5" />
+      )}
       {data.isFollowedByUser ? "Unfollow" : "Follow"}
-    </Button>
+    </Badge>
   );
 }

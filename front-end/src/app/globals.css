@@ -38,13 +38,13 @@ html {
 
 @layer base {
   :root {
-    --background: 120 27% 97%;
+    --background: 120 27% 100%;
     --foreground: 0 0% 5%;
 
-    --card: 120 10% 95.5%;
+    --card: 120 10% 99.5%;
     --card-foreground: 0 0% 5%;
 
-    --popover: 120 10% 96%;
+    --popover: 120 10% 99.5%;
     --popover-foreground: 0 0% 5%;
 
     --primary: 110 82% 41%;

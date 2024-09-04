@@ -80,7 +80,6 @@ export default function AddCourseForm() {
       }
 
       const createdCourse = await response.json();
-      console.log("Created course:", createdCourse);
 
       toast({
         title: "Course created",

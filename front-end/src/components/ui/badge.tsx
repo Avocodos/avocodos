@@ -18,7 +18,7 @@ const badgeVariants = cva(
         light:
           "border-primary/10 bg-primary/5 text-foreground/80 hover:bg-primary/20 hover:bg-primary/10 hover:text-foreground avocados-transition px-3",
         button:
-          "px-5 py-1.5 text-xs font-medium bg-gradient-to-br dark:from-primary/5 dark:to-primary/20 from-primary/5 to-primary/30 border-2 border-primary/10 hover:border-primary/30 avocados-transition hover:avocodos-shadow-sm"
+          "px-5 py-1.5 text-xs font-medium bg-gradient-to-br dark:from-primary/5 dark:to-primary/20 from-primary/5 to-primary/30 border-2 border-primary/10 hover:border-primary/30 avocados-transition hover:avocodos-shadow-sm [box-shadow:0_0_15px_0px_hsl(var(--primary)/0.06)]"
       }
     },
     defaultVariants: {

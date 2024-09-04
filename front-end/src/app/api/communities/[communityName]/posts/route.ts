@@ -15,7 +15,7 @@ export async function GET(
             where: { communityName },
             include: getPostDataInclude(user.id),
             orderBy: { createdAt: "desc" },
-            cacheStrategy: { ttl: 60 },
+
         });
 
 

@@ -19,19 +19,23 @@ interface PageProps {
 
 async function getReward(username: string, rewardId: string) {
   const reward = await prisma?.userReward.findFirst({
-    where: { id: rewardId },
+    where: {
+      id: rewardId
+    },
     include: {
-      user: {
-        select: {
-          username: true,
-          displayName: true,
-          avatarUrl: true
-        }
-      }
+      user: true
     }
   });
 
-  if (!reward || reward.user.username !== username) notFound();
+  console.log("reward", reward);
+  console.log("username", username);
+  console.log("reward.user.username", reward?.user.username);
+  console.log("reward.user", reward?.user);
+
+  if (!reward || reward.user.username !== username) {
+    console.log("here");
+    notFound();
+  }
 
   const reward_ = await prisma?.reward.findFirst({
     where: { id: reward.rewardId }
@@ -150,12 +154,10 @@ const getUserIdFromUsername = async (username: string) => {
 
 export default async function RewardPage({ params }: PageProps) {
   const userId = await getUserIdFromUsername(params.username);
-  console.log("userId", userId);
-  console.log("params.rewardId", params.rewardId);
   const userReward = await prisma?.userReward.findFirst({
     where: {
-      rewardId: decodeURI(params.rewardId),
-      userId
+      rewardId: params.rewardId,
+      userId: userId
     },
     include: {
       reward: true

@@ -24,7 +24,7 @@ export async function GET(
       orderBy: { createdAt: "desc" },
       take: pageSize + 1,
       cursor: cursor ? { id: cursor } : undefined,
-      cacheStrategy: { ttl: 60 },
+
     });
 
     if (!posts) {

@@ -274,7 +274,6 @@ function UserTooltip2({ children, username }: UserTooltipProps) {
     queryFn: () =>
       kyInstance.get(`/api/users/username/${username}`).json<UserData>()
   });
-  console.log("userData.followers", userData?.followers);
   const isFollowedByUser = userData?.followers
     ? userData?.followers.some(
         (follower) => follower.followerId === loggedInUser.id
