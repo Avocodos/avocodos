@@ -101,7 +101,7 @@ export function generateViewport(): Viewport {
 export default function Page({ searchParams: { q } }: PageProps) {
   return (
     <main className="flex w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
+      <div className="w-full min-w-0 space-y-8">
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           <h4 className="line-clamp-2 inline-flex items-center gap-3 break-all text-left">
             <Search className="size-6" />

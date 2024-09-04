@@ -7,6 +7,45 @@ import kyInstance from "@/lib/ky";
 import { PostsPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Spinner from "@/components/Spinner";
+import { Metadata, Viewport } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Bookmarks",
+    description:
+      "Get all your bookmarks in one place. All posts you have bookmarked will be displayed here.",
+    openGraph: {
+      images: [
+        {
+          url: "/api/og?page=bookmarks",
+          width: 1200,
+          height: 630
+        }
+      ]
+    },
+    keywords: [
+      "bookmarks",
+      "bookmarked posts",
+      "bookmarks page",
+      "bookmarks on avocados",
+      "web3 bookmarks",
+      "aptos bookmarks"
+    ]
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
+  };
+}
 
 export default function Bookmarks() {
   const {
