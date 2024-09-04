@@ -11,14 +11,7 @@ const nextConfig = {
       static: 180
     }
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = { fs: false, path: false };
-    }
-    return config;
-  },
-  swcMinify: true,
-  // serverExternalPackages: ["@node-rs/argon2"],
+  swcMinify: false,
   images: {
     remotePatterns: [
       {
@@ -42,6 +35,9 @@ const nextConfig = {
     ];
   },
   webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = { fs: false, path: false };
+    }
     if (isServer) {
       config.externals.push("@node-rs/argon2");
     }
