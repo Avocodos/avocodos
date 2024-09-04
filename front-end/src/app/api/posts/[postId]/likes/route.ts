@@ -2,6 +2,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { LikeInfo } from "@/lib/types";
 import { updateRewardProgress } from "@/lib/updateRewardProgress";
+import { handleUserAction } from "@/lib/eventHandler";
 
 export async function GET(
   req: Request,
@@ -110,6 +111,7 @@ export async function POST(
 
     // Update reward progress
     await updateRewardProgress(loggedInUser.id, "LIKES");
+    await handleUserAction(loggedInUser.id, "LIKES");
     if (post.communityName) {
       await updateRewardProgress(loggedInUser.id, "COMMUNITY_LIKES");
     }

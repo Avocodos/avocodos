@@ -44,11 +44,9 @@ export async function GET(req: NextRequest) {
         select: { followingId: true },
       });
       userIds = [...new Set(follows.map(f => f.followingId))];
-      console.log("Fetched userIds from database:", userIds);
       await redis.set(`followed_users:${user.id}`, JSON.stringify(userIds), { ex: 3600 }); // Cache for 1 hour
     } else {
       userIds = followedUserIds;
-      console.log("Retrieved userIds from cache:", userIds);
     }
 
     // Clear the cache if the userIds array contains only duplicate values

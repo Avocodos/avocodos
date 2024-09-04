@@ -18,7 +18,14 @@ export default function Comment({ comment }: CommentProps) {
     <div className="group/comment flex gap-3 py-3">
       <span className="hidden sm:inline">
         <UserTooltip
-          user={{ ...comment.user, isFollowedByUser: false } as UserData}
+          user={
+            {
+              ...comment.user,
+              isFollowedByUser: false,
+              followers: [],
+              following: []
+            } as UserData
+          }
         >
           <Link href={`/users/${comment.user.username}`}>
             <UserAvatar avatarUrl={comment.user.avatarUrl} size={40} />
@@ -32,8 +39,8 @@ export default function Comment({ comment }: CommentProps) {
               {
                 ...comment.user,
                 isFollowedByUser: false,
-                avatarUrl: comment.user.avatarUrl ?? "",
-                bio: comment.user.bio ?? "" // Add this line
+                followers: [],
+                following: []
               } as UserData
             }
           >

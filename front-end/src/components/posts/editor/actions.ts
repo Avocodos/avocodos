@@ -4,6 +4,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { getPostDataInclude } from "@/lib/types";
 import { createPostSchema } from "@/lib/validation";
+import { handleUserAction } from "@/lib/eventHandler";
 
 export async function submitPost(input: {
   content: string;
@@ -43,6 +44,8 @@ export async function submitPost(input: {
     },
     include: getPostDataInclude(user.id),
   });
+
+  await handleUserAction(user.id, "POSTS");
 
   return newPost;
 }

@@ -29,7 +29,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  startCronJobs();
   return (
     <html lang="en">
       <body

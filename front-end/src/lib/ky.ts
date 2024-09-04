@@ -6,6 +6,7 @@ const kyInstance = ky.create({
       if (key.endsWith("At")) return new Date(value);
       return value;
     }),
+  timeout: 30_000,
 });
 
 export default kyInstance;

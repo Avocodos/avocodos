@@ -91,7 +91,12 @@ export default function EditProfileDialog({
             <DialogTitle>Edit profile</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
-            <Label>Avatar</Label>
+            <Label className="inline-flex flex-col items-start justify-start gap-1.5">
+              Avatar
+              <span className="text-xs text-muted-foreground">
+                Max size: 1MB, Recommended resolution: 512x512
+              </span>
+            </Label>
             <AvatarInput
               src={
                 croppedAvatar
@@ -102,7 +107,12 @@ export default function EditProfileDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label>Banner</Label>
+            <Label className="inline-flex flex-col items-start justify-start gap-1.5">
+              Banner
+              <span className="text-xs text-muted-foreground">
+                Max size: 2MB, Recommended resolution: 1500x500
+              </span>
+            </Label>
             <BannerInput
               src={
                 croppedBanner

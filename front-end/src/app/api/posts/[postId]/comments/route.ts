@@ -5,6 +5,8 @@ import { NextRequest } from "next/server";
 import { updateRewardProgress } from "@/lib/updateRewardProgress";
 import { RewardRequirementType } from "@prisma/client";
 import { Comment } from "@prisma/client";
+import { handleUserAction } from "@/lib/eventHandler";
+
 export async function GET(
   req: NextRequest,
   { params: { postId } }: { params: { postId: string } },
@@ -44,6 +46,8 @@ export async function GET(
       comments: comments.length > pageSize ? comments.slice(1) : comments,
       previousCursor,
     };
+
+    await handleUserAction(user.id, "COMMENTS");
 
     return Response.json(data);
   } catch (error) {

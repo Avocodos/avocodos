@@ -6,7 +6,7 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "npm run pages:build && wrangler pages deploy",
-    "prisma:generate": "prisma generate --no-engine --accelerate",
+    "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "prisma:add": "npm run prisma:generate && npm run prisma:push",
