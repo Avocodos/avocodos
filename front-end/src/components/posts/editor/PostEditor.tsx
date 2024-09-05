@@ -73,7 +73,8 @@ export default function PostEditor({
       Placeholder.configure({
         placeholder: placeholderText ?? "What's on your mind?"
       })
-    ]
+    ],
+    immediatelyRender: false
   });
 
   const input =
@@ -92,7 +93,8 @@ export default function PostEditor({
   });
 
   function onSubmit() {
-    if (!input.trim() || isUploading) {
+    // Remove the content check and allow submission if there are attachments
+    if (isUploading || (!input.trim() && attachments.length === 0)) {
       return;
     }
 
@@ -203,7 +205,7 @@ export default function PostEditor({
         <LoadingButton
           onClick={onSubmit}
           loading={mutation.isPending}
-          disabled={!input.trim() || isUploading}
+          disabled={isUploading || (!input.trim() && attachments.length === 0)}
           className="px-4"
           size={"sm"}
         >

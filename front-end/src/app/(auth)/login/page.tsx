@@ -2,12 +2,13 @@ import { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "./LoginForm";
+import { getKeywords } from "@/lib/keywords";
 
 export function generateMetadata(): Metadata {
   return {
     title: "Log In",
     description:
-      "Access your Avocodos account - The Web3 Social Platform for Aptos enthusiasts. Connect, share, and learn in the world of blockchain and cryptocurrency.",
+      "Access your Avocodos account - The Web3 Social Platform For Aspiring Developers. Connect, share, and learn in the world of blockchain and cryptocurrency.",
     authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
@@ -33,28 +34,7 @@ export function generateMetadata(): Metadata {
       images: ["/api/og?page=login"]
     },
     category: "Web3 Social Platform",
-    keywords: [
-      "Avocodos",
-      "Log In",
-      "Sign In",
-      "Web3 Social",
-      "Aptos Blockchain",
-      "Cryptocurrency",
-      "Blockchain Community",
-      "Decentralized Social Network",
-      "Crypto Social Platform",
-      "Web3 Account Access",
-      "Aptos Ecosystem",
-      "Blockchain Social Media",
-      "DeFi Community",
-      "NFT Social Network",
-      "Crypto Enthusiasts",
-      "Web3 Networking",
-      "Blockchain Education",
-      "Aptos Development",
-      "Decentralized Identity",
-      "Crypto Content Creation"
-    ],
+    keywords: getKeywords("login"),
     robots: {
       index: true,
       follow: true,

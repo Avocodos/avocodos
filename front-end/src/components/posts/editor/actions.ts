@@ -23,8 +23,6 @@ export async function submitPost(input: {
   if (communityName) {
     const community = await prisma?.community.findUnique({
       where: { name: communityName },
-
-
     });
     if (!community) {
       throw new Error(`Community "${communityName}" does not exist`);

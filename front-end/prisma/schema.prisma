@@ -97,7 +97,7 @@ model Follow {
 
 model Post {
   id                  String          @id @default(cuid())
-  content             String
+  content             String?
   userId              String
   createdAt           DateTime        @default(now())
   badgeId             String?

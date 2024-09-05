@@ -209,9 +209,9 @@ export default function RewardsModal({
           style={{ zIndex: 2000 }}
         />
       )}
-      <DialogContent className="min-w-[90dvw] p-8 lg:min-w-[60dvw]">
-        <ScrollArea className="h-[400px] lg:h-[600px]">
-          <DialogHeader>
+      <DialogContent className="min-w-[90dvw] bg-background p-8 lg:min-w-[60dvw]">
+        <ScrollArea className="relative h-[400px] lg:h-[600px]">
+          <DialogHeader className="sticky top-0 z-10 bg-background/90 pb-8 backdrop-blur-sm">
             <DialogTitle asChild>
               <div className="flex items-center justify-between">
                 <h3 className="inline-flex items-center gap-3">
@@ -237,7 +237,7 @@ export default function RewardsModal({
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-8 space-y-8">
+          <div className="space-y-8">
             {(isLoading || isUserRewardsLoading) && <RewardsSkeleton />}
             {!isLoading &&
               !isUserRewardsLoading &&

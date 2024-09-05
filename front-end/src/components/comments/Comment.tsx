@@ -6,6 +6,7 @@ import UserAvatar from "../UserAvatar";
 import UserTooltip from "../UserTooltip";
 import CommentMoreButton from "./CommentMoreButton";
 import { UserData } from "@/lib/types";
+import Linkify from "../Linkify";
 
 interface CommentProps {
   comment: CommentData;
@@ -33,7 +34,7 @@ export default function Comment({ comment }: CommentProps) {
         </UserTooltip>
       </span>
       <div>
-        <div className="flex items-center gap-1 text-sm">
+        <div className="mb-0 flex flex-row flex-wrap items-center gap-2 text-sm">
           <UserTooltip
             user={
               {
@@ -46,16 +47,18 @@ export default function Comment({ comment }: CommentProps) {
           >
             <Link
               href={`/users/${comment.user.username}`}
-              className="font-medium"
+              className="text-base font-medium"
             >
               {comment.user.displayName}
             </Link>
           </UserTooltip>
-          <span className="text-foreground/80">
-            {formatRelativeDate(comment.createdAt)}
+          <span className="text-xs text-foreground/80">
+            Commented {formatRelativeDate(comment.createdAt)}
           </span>
         </div>
-        <div>{comment.content}</div>
+        <Linkify>
+          <div className="text-sm">{comment.content}</div>
+        </Linkify>
       </div>
       {comment.user.id === user.id && (
         <CommentMoreButton

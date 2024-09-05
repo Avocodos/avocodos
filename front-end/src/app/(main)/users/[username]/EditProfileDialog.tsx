@@ -26,7 +26,7 @@ import {
   UpdateUserProfileValues
 } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera } from "lucide-react";
+import { Camera, Save } from "lucide-react";
 import Image, { StaticImageData } from "next/image";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -85,11 +85,11 @@ export default function EditProfileDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <ScrollArea className="h-full max-h-[500px]">
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-          </DialogHeader>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="h-full max-h-[400px] overflow-y-auto pl-1 pr-2">
           <div className="space-y-2">
             <Label className="inline-flex flex-col items-start justify-start gap-1.5">
               Avatar
@@ -155,14 +155,19 @@ export default function EditProfileDialog({
                 )}
               />
               <DialogFooter>
-                <LoadingButton type="submit" loading={mutation.isPending}>
-                  Save
+                <LoadingButton
+                  className="inline-flex items-center gap-1.5"
+                  type="submit"
+                  loading={mutation.isPending}
+                >
+                  <Save className="size-4" />
+                  Save Changes
                 </LoadingButton>
               </DialogFooter>
             </form>
           </Form>
-        </DialogContent>
-      </ScrollArea>
+        </ScrollArea>
+      </DialogContent>
     </Dialog>
   );
 }

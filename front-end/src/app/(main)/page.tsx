@@ -14,6 +14,68 @@ import {
   UserCheck2
 } from "lucide-react";
 import Spinner from "@/components/Spinner";
+import { Metadata, Viewport } from "next";
+import { getKeywords } from "@/lib/keywords";
+
+export function generateMetadata(): Metadata {
+  return {
+    title: "Home",
+    description:
+      "Welcome to Avocodos - The Web3 Social Platform For Aspiring Developers.",
+    authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
+    creator: "Harjot Singh Rana",
+    metadataBase: new URL("https://avocodos.com"),
+    alternates: {
+      canonical: "/"
+    },
+    openGraph: {
+      title: "Home - Avocodos",
+      description:
+        "Explore the latest posts and connect with others on Avocodos.",
+      url: "https://avocodos.com",
+      siteName: "Avocodos",
+      images: ["/api/og?page=home"],
+      locale: "en_US",
+      type: "website"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Home - Avocodos",
+      description:
+        "Welcome to Avocodos - The Web3 Social Platform For Aspiring Developers.",
+      creator: "@HarjjotSinghh",
+      images: ["/auth.webp"]
+    },
+    category: "Web3 Social Platform",
+    keywords: getKeywords("home"),
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false
+    },
+    applicationName: "Avocodos",
+    referrer: "origin-when-cross-origin",
+    appLinks: {
+      web: {
+        url: "https://avocodos.com",
+        should_fallback: true
+      }
+    }
+  };
+}
+
+export function generateViewport(): Viewport {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#2fbe13" },
+      { media: "(prefers-color-scheme: dark)", color: "#3bf019" }
+    ]
+  };
+}
 
 export default function Home() {
   return (

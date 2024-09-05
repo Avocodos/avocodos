@@ -28,7 +28,7 @@ export const loginSchema = z.object({
 export type LoginValues = z.infer<typeof loginSchema>;
 
 export const createPostSchema = z.object({
-  content: requiredString,
+  content: z.string().optional(),
   mediaIds: z.array(z.string()).max(5, "Cannot have more than 5 attachments"),
   communityName: z.string().or(z.null()),
   badgeId: z.string().or(z.null()),

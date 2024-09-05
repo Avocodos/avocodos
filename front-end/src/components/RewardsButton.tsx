@@ -22,7 +22,7 @@ export default function RewardsButton({ user }: RewardsButtonProps) {
         onClick={() => setIsOpen(true)}
         variant={"button"}
       >
-        <Stars className="size-3.5" /> NFTs Progress
+        <Stars className="size-3.5 min-h-3.5 min-w-3.5" /> NFTs Progress
       </Badge>
       <RewardsModal
         isOpen={isOpen}
@@ -34,7 +34,7 @@ export default function RewardsButton({ user }: RewardsButtonProps) {
           className="inline-flex w-full items-center gap-2 text-xs"
           variant="button"
         >
-          <Trophy className="size-3.5" /> NFT Rewards
+          <Trophy className="size-3.5 min-h-3.5 min-w-3.5" /> NFT Rewards
         </Badge>
       </Link>
     </>

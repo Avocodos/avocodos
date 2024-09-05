@@ -19,7 +19,7 @@ export default function UserBanner({
         <img
           src={user.bannerUrl}
           alt={`${user.displayName}'s banner`}
-          className="h-52 w-full select-none object-cover"
+          className="aspect-[3/1] w-full select-none rounded-t-2xl object-cover"
           draggable={false}
         />
       ) : (
