@@ -72,8 +72,8 @@
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",
     "input-otp": "^1.2.4",
-    "jiti": "^1.21.6",
     "jimp": "^1.2.0",
+    "jiti": "^1.21.6",
     "json-parse-even-better-errors": "^3.0.2",
     "json-strictify": "^8.0.2",
     "ky": "^1.4.0",
@@ -105,6 +105,7 @@
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.13.2",
+    "versionator-js": "^1.5.11",
     "zeptomail": "^6.0.0",
     "zod": "^3.23.8"
   },
