@@ -43,7 +43,7 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import FollowerCount from "../FollowerCount";
-import PostsCount from "../PostsCount";
+import PostsCount from "./PostsCount";
 import FollowButton from "../FollowButton";
 import UserTooltip from "../UserTooltip";
 

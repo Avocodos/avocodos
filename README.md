@@ -56,7 +56,7 @@ Avocodos is a completely web3-based social media and learning platform. Avocodos
 14. <strong>ESLint</strong>: JavaScript and TypeScript linter for maintaining code quality.
 15. <strong>Prettier</strong>: Code formatter for consistent code style.
 16. <strong>Sharp</strong>: High-performance image processing library for Node.js.
-17. <strong>Tembo</strong>: Postgres database as a service.
+17. <strong>Supabase</strong>: Open source Firebase alternative (used as a postgreSQL database).
 18. <strong>Prisma Accelerate</strong>: Global database connection pool and caching layer.
 19. <strong>Aptos TypeScript SDK</strong>: SDK which allows you to interact on the Aptos blockchain.
 20. <strong>shadcn/ui</strong>: Re-usable components built using Radix UI and Tailwind CSS.

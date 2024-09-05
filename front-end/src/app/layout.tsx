@@ -7,6 +7,7 @@ import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { Archivo } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -35,13 +36,13 @@ export default function RootLayout({
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
+          <Analytics />
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange={false}
           >
-            {/* <StarrySkyBG /> */}
             <main className="relative">
               <div className="absolute left-0 top-0 -z-20 h-full w-full bg-background bg-cross"></div>
               {children}

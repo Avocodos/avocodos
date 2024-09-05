@@ -23,7 +23,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import EditProfileButton from "./EditProfileButton";
 import UserPosts from "./UserPosts";
-import PostsCount from "@/components/PostsCount";
+import PostsCount from "@/components/posts/PostsCount";
 import { User } from "lucia";
 import { Clock } from "lucide-react";
 import RewardsButton from "@/components/RewardsButton";

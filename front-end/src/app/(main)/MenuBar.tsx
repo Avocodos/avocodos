@@ -1,33 +1,28 @@
-import { validateRequest } from "@/auth";
+"use client"; // Client component
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Users } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/UserAvatar";
+import PostEditorDialog from "@/components/posts/PostEditorDialog"; // Import the dialog
+import { BookmarkIcon, HomeIcon, PlusCircleIcon, Users2 } from "lucide-react";
 
 interface MenuBarProps {
+  user: { username: string; avatarUrl: string };
+  unreadNotificationsCount: number;
+  unreadMessagesCount: number;
   className?: string;
 }
 
-export default async function MenuBar({ className }: MenuBarProps) {
-  const { user } = await validateRequest();
-
-  if (!user) return null;
-
-  const [unreadNotificationsCount, unreadMessagesCount] = await Promise.all([
-    prisma?.notification.count({
-      where: {
-        recipientId: user.id,
-        read: false
-      }
-    }),
-    (await streamServerClient.getUnreadCount(user.id)).total_unread_count
-  ]);
-
+export default function MenuBar({
+  user,
+  unreadNotificationsCount,
+  unreadMessagesCount,
+  className
+}: MenuBarProps) {
+  const [isPostEditorOpen, setPostEditorOpen] = useState(false);
   return (
     <div
       className={cn(
@@ -35,15 +30,20 @@ export default async function MenuBar({ className }: MenuBarProps) {
         className
       )}
     >
+      <PostEditorDialog
+        open={isPostEditorOpen}
+        onOpenChange={setPostEditorOpen}
+      />{" "}
+      {/* Dialog component */}
       <Button
         variant="ghost"
         className={cn("flex items-center justify-start gap-3")}
         title="Home"
         asChild
       >
-        <Link href="/">
-          <Home />
-          <span className="hidden lg:inline">Home</span>
+        <Link href="/" className="flex items-center justify-start gap-3">
+          <HomeIcon size={24} />
+          Home
         </Link>
       </Button>
       <Button
@@ -52,13 +52,16 @@ export default async function MenuBar({ className }: MenuBarProps) {
         title="Communities"
         asChild
       >
-        <Link href="/communities">
-          <Users />
-          <span className="hidden lg:inline">Communities</span>
+        <Link
+          href="/communities"
+          className="flex items-center justify-start gap-3"
+        >
+          <Users2 size={24} />
+          <span>Communities</span>
         </Link>
       </Button>
       <NotificationsButton
-        initialState={{ unreadCount: unreadNotificationsCount ?? 0 }}
+        initialState={{ unreadCount: unreadNotificationsCount }}
       />
       <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <Button
@@ -67,10 +70,22 @@ export default async function MenuBar({ className }: MenuBarProps) {
         title="Bookmarks"
         asChild
       >
-        <Link href="/bookmarks">
-          <Bookmark />
-          <span className="hidden lg:inline">Bookmarks</span>
+        <Link
+          href="/bookmarks"
+          className="flex items-center justify-start gap-3"
+        >
+          <BookmarkIcon size={24} />
+          <span>Bookmarks</span>
         </Link>
+      </Button>
+      <Button
+        variant="ghost"
+        className={cn("flex items-center justify-start gap-3")}
+        title="Create Post"
+        onClick={() => setPostEditorOpen(true)}
+      >
+        <PlusCircleIcon size={24} />
+        <span>Create Post</span>
       </Button>
       {/* Profile button */}
       <Button
@@ -81,7 +96,7 @@ export default async function MenuBar({ className }: MenuBarProps) {
       >
         <Link href={`/users/${user.username}`}>
           <UserAvatar size={24} avatarUrl={user.avatarUrl} />
-          <span className="hidden lg:inline">Profile</span>
+          <span>Profile</span>
         </Link>
       </Button>
     </div>

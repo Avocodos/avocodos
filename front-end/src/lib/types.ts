@@ -182,6 +182,14 @@ export const notificationsInclude = {
       content: true,
     },
   },
+  recipient: {
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      avatarUrl: true,
+    },
+  },
 } satisfies Prisma.NotificationInclude;
 
 export type NotificationData = Prisma.NotificationGetPayload<{

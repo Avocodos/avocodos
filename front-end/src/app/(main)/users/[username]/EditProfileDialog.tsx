@@ -1,5 +1,5 @@
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";
-import bannerPlaceholder from "@/../public/auth.webp";
+import bannerPlaceholder from "@/../public/header.png";
 import CropImageDialog from "@/components/CropImageDialog";
 import LoadingButton from "@/components/LoadingButton";
 import {
@@ -87,7 +87,9 @@ export default function EditProfileDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle asChild>
+            <h4 className="text-lg font-medium">Edit profile</h4>
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-full max-h-[400px] overflow-y-auto pl-1 pr-2">
           <div className="space-y-2">

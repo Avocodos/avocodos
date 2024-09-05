@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- add: auto-changelog to generate changelogs automatically [`b1fcb0c`](https://github.com/avocodos/avocodos/commit/b1fcb0cb5b14dc62e156c37cd20c3852940d6f96)
 - fix: build errors [`44b639d`](https://github.com/avocodos/avocodos/commit/44b639d12a76999955fc34f492ec3892168948cf)
 - add: front-end folder [`3ec2e52`](https://github.com/avocodos/avocodos/commit/3ec2e527c7b4e5252ee2fcb07942d4e16aac23df)
 - sync repo with personal repo [`4d798cd`](https://github.com/avocodos/avocodos/commit/4d798cd4cbf1ce603307306f8c9639860d071395)

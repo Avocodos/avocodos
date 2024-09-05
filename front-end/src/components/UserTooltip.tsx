@@ -14,7 +14,7 @@ import {
   TooltipTrigger
 } from "./ui/tooltip";
 import UserAvatar from "./UserAvatar";
-import PostsCount from "./PostsCount";
+import PostsCount from "./posts/PostsCount";
 import { isUserFollowed } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 

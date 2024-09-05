@@ -18,16 +18,11 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
 import { signUp, verifyOTP } from "./actions";
 import OTPDialog from "@/components/OTPDialog";
 import kyInstance from "@/lib/ky";
 import { toast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
 
 export default function SignUpForm() {
   const [error, setError] = useState<string>();
@@ -146,13 +141,20 @@ export default function SignUpForm() {
   return (
     <>
       {showConfetti && (
-        <Confetti
-          width={window.innerWidth - 20}
-          height={window.innerHeight}
-          recycle={true}
-          numberOfPieces={50}
-          style={{ zIndex: 2000 }}
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <Confetti
+            width={window.innerWidth - 20}
+            height={window.innerHeight}
+            recycle={true}
+            numberOfPieces={50}
+            style={{ zIndex: 2000 }}
+          />
+        </motion.div>
       )}
       <Form {...form}>
         <form

@@ -180,6 +180,8 @@ model Notification {
   metadata          Json?
   message           String?
   imageUrl          String?
+  rewardId          String?
+  reward            Reward?          @relation(fields: [rewardId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -338,6 +340,7 @@ model Reward {
   imageUrl        String?
   requirementType RewardRequirementType
   userRewards     UserReward[]
+  Notification    Notification[]
 }
 
 model UserReward {

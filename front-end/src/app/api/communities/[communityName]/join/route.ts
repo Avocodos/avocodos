@@ -3,140 +3,77 @@ import prisma from "@/lib/prisma";
 import { updateRewardProgress } from "@/lib/updateRewardProgress";
 import { NextRequest } from "next/server";
 
-export async function POST(
+async function handleCommunityAction(
     req: NextRequest,
-    { params }: { params: { communityName: string } }
+    { params }: { params: { communityName: string } },
+    action: 'join' | 'leave'
 ) {
-    try {
-        const { user } = await validateRequest();
+    const { user } = await validateRequest();
+    if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (!prisma) return Response.json({ error: "Internal server error" }, { status: 500 });
+    const { communityName } = params;
+    const community = await prisma.community.findUnique({
+        where: { name: communityName },
+        include: { members: true },
+    });
 
-        if (!user) {
-            return Response.json({ error: "Unauthorized" }, { status: 401 });
-        }
+    if (!community) return Response.json({ error: "Community not found" }, { status: 404 });
 
-        const { communityName } = params;
-
-        const community = await prisma?.community.findUnique({
-            where: { name: communityName },
-            include: { members: true },
-            
-
-        });
-
-        if (!community) {
-            return Response.json({ error: "Community not found" }, { status: 404 });
-        }
-
+    if (action === 'join') {
         if (community.isPrivate) {
-            // For private communities, you might want to implement an invitation system
             return Response.json({ error: "This is a private community" }, { status: 403 });
         }
 
-        const updatedCommunity = await prisma?.community.update({
-            where: { name: communityName },
-            data: {
-                members: {
-                    connect: { id: user.id }
-                },
-                CommunityMember: {
-                    create: {
-                        userId: user.id,
-                        communityName: communityName,
-                    }
-                }
-            },
-            include: {
-                members: true
-            }
+        const existingMember = await prisma.communityMember.findUnique({
+            where: { userId_communityName: { userId: user.id, communityName } },
         });
 
-        await prisma?.communityMember.create({
-            data: {
-                userId: user.id,
-                communityName: communityName,
-                communityId: community.id,
-            }
-        });
+        if (existingMember) {
+            return Response.json({ error: "User is already a member" }, { status: 400 });
+        }
+    } else if (action === 'leave') {
+        if (community.creatorId === user.id) {
+            return Response.json({ error: "Creator cannot leave the community" }, { status: 403 });
+        }
+    }
 
-        await updateRewardProgress(user.id, "COMMUNITY_JOINS", 1);
+    const updatedCommunity = await prisma.community.update({
+        where: { name: communityName },
+        data: {
+            members: { [action === 'join' ? 'connect' : 'disconnect']: { id: user.id } },
+            CommunityMember: action === 'join'
+                ? { create: { userId: user.id, communityName } }
+                : { delete: { userId_communityName: { userId: user.id, communityName } } }
+        },
+        include: { members: true }
+    });
 
-        return Response.json({
-            message: "Successfully joined the community",
-            community: updatedCommunity
+    if (action === 'leave') {
+        await prisma.communityModerator.deleteMany({
+            where: { userId: user.id, communityName }
         });
+    }
+
+    await updateRewardProgress(user.id, "COMMUNITY_JOINS", action === 'join' ? 1 : -1);
+
+    return Response.json({
+        message: `Successfully ${action === 'join' ? 'joined' : 'left'} the community`,
+        community: updatedCommunity
+    });
+}
+
+export async function POST(req: NextRequest, context: { params: { communityName: string } }) {
+    try {
+        return await handleCommunityAction(req, context, 'join');
     } catch (error) {
         console.error(error);
         return Response.json({ error: "Internal server error" }, { status: 500 });
     }
 }
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { communityName: string } }
-) {
+
+export async function DELETE(req: NextRequest, context: { params: { communityName: string } }) {
     try {
-        const { user } = await validateRequest();
-
-        if (!user) {
-            return Response.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        const { communityName } = params;
-
-        const community = await prisma?.community.findUnique({
-            where: { name: communityName },
-            include: { members: true },
-            
-
-        });
-
-        if (!community) {
-            return Response.json({ error: "Community not found" }, { status: 404 });
-        }
-
-        if (community.creatorId === user.id) {
-            return Response.json({ error: "Creator cannot leave the community" }, { status: 403 });
-        }
-
-        const updatedCommunity = await prisma?.community.update({
-            where: { name: communityName },
-            data: {
-                members: {
-                    disconnect: { id: user.id }
-                },
-                CommunityMember: {
-                    delete: {
-                        userId_communityName: {
-                            userId: user.id,
-                            communityName: communityName
-                        }
-                    }
-                }
-            },
-            include: {
-                members: true
-            }
-        });
-
-        await prisma?.communityModerator.deleteMany({
-            where: {
-                userId: user.id,
-                communityName: communityName
-            }
-        });
-
-        await prisma?.communityMember.deleteMany({
-            where: {
-                userId: user.id,
-                communityName: communityName
-            }
-        });
-
-        await updateRewardProgress(user.id, "COMMUNITY_JOINS", -1);
-
-        return Response.json({
-            message: "Successfully left the community",
-            community: updatedCommunity
-        });
+        return await handleCommunityAction(req, context, 'leave');
     } catch (error) {
         console.error(error);
         return Response.json({ error: "Internal server error" }, { status: 500 });

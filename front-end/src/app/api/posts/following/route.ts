@@ -9,7 +9,19 @@ const redis = Redis.fromEnv();
 const CACHE_TTL = 60 * 5; // 5 minutes
 const PAGE_SIZE = 10;
 
+async function retryRequest(req: NextRequest, retries: number = 3, interval: number = 1000): Promise<NextResponse> {
+  if (retries <= 0) {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
+  try {
+    return NextResponse.json(await fetch(req));
+  } catch (error) {
+    console.error(`Retry attempt failed: ${error}`);
+    await new Promise(resolve => setTimeout(resolve, interval));
+    return retryRequest(req, retries - 1, interval);
+  }
+}
 
 
 export async function GET(req: NextRequest) {
@@ -44,7 +56,7 @@ export async function GET(req: NextRequest) {
         select: { followingId: true },
       });
       userIds = [...new Set(follows.map(f => f.followingId))];
-      await redis.set(`followed_users:${user.id}`, JSON.stringify(userIds), { ex: 3600 }); // Cache for 1 hour
+      await redis.set(`followed_users:${user.id}`, JSON.stringify(userIds), { ex: 60 }); // Cache for 1 hour
     } else {
       userIds = followedUserIds;
     }

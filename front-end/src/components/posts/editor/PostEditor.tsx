@@ -10,7 +10,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { useDropzone } from "@uploadthing/react";
 import { ImageIcon, Loader2, X } from "lucide-react";
 import Image from "next/image";
-import React, { ClipboardEvent, useRef, useState } from "react";
+import React, { ClipboardEvent, useEffect, useRef, useState } from "react";
 import { useSubmitPostMutation } from "./mutations";
 import "./styles.css";
 import useMediaUpload, { Attachment } from "./useMediaUpload";
@@ -63,6 +63,7 @@ export default function PostEditor({
   });
 
   const { onClick, ...rootProps } = getRootProps();
+  const [input, setInput] = useState<string>("");
 
   const editor = useEditor({
     extensions: [
@@ -74,13 +75,10 @@ export default function PostEditor({
         placeholder: placeholderText ?? "What's on your mind?"
       })
     ],
-    immediatelyRender: false
+    onUpdate: ({ editor }) => {
+      setInput(editor.getText({ blockSeparator: "\n" })); // Update input on editor change
+    }
   });
-
-  const input =
-    editor?.getText({
-      blockSeparator: "\n"
-    }) || "";
 
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
 
@@ -93,8 +91,7 @@ export default function PostEditor({
   });
 
   function onSubmit() {
-    // Remove the content check and allow submission if there are attachments
-    if (isUploading || (!input.trim() && attachments.length === 0)) {
+    if (!input.trim() || isUploading) {
       return;
     }
 
@@ -152,6 +149,27 @@ export default function PostEditor({
     startUpload(files);
   }
 
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (e.ctrlKey && e.key === "Enter") {
+  //       e.preventDefault();
+  //       onSubmit();
+  //     }
+  //   };
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [onSubmit]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      e.preventDefault();
+      setInput(input.slice(0, input.length - 2));
+      onSubmit();
+    }
+  };
+
   return (
     <div className="mb-4 flex flex-col gap-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm md:p-6">
       <div className="flex gap-5">
@@ -163,6 +181,9 @@ export default function PostEditor({
               "max-h-[20rem] max-w-full overflow-y-auto rounded-2xl bg-background px-5 py-3",
               isDragActive && "outline-dashed"
             )}
+            onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
+              handleKeyDown(e)
+            }
             onPaste={onPaste}
           />
           <input {...getInputProps()} />
@@ -205,10 +226,13 @@ export default function PostEditor({
         <LoadingButton
           onClick={onSubmit}
           loading={mutation.isPending}
-          disabled={isUploading || (!input.trim() && attachments.length === 0)}
+          // Ensure the button is enabled when there is content and not uploading
+          disabled={isUploading || input.trim().length === 0}
           className="px-4"
           size={"sm"}
         >
+          {console.log(input.trim().length) as React.ReactNode}
+          {console.log(input) as React.ReactNode}
           Post
         </LoadingButton>
       </div>

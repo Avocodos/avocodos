@@ -31,7 +31,7 @@ import SpinningImageDialog from "./SpinningImageDialog";
 import { UserData } from "@/lib/types";
 import Confetti from "react-confetti";
 import { AVOCODOS_WELCOME_REWARD_ID } from "@/lib/constants";
-
+import { motion } from "framer-motion";
 interface RewardsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -201,13 +201,20 @@ export default function RewardsModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       {showConfetti && (
-        <Confetti
-          width={window.innerWidth - 20}
-          height={window.innerHeight}
-          recycle={true}
-          numberOfPieces={50}
-          style={{ zIndex: 2000 }}
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <Confetti
+            width={window.innerWidth - 20}
+            height={window.innerHeight}
+            recycle={true}
+            numberOfPieces={50}
+            style={{ zIndex: 2000 }}
+          />
+        </motion.div>
       )}
       <DialogContent className="min-w-[90dvw] bg-background p-8 lg:min-w-[60dvw]">
         <ScrollArea className="relative h-[400px] lg:h-[600px]">
