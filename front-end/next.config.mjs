@@ -9,7 +9,9 @@ const nextConfig = {
     staleTimes: {
       dynamic: 30,
       static: 180
-    }
+    },
+    ppr: true,
+    reactCompiler: true
   },
   swcMinify: false,
   images: {

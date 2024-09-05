@@ -7,7 +7,6 @@ import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { Archivo } from "next/font/google";
-import versionator from "versionator-js";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -29,11 +28,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  try {
-    versionator.build();
-  } catch (error) {
-    console.error("Error building versionator:", error);
-  }
   return (
     <html lang="en">
       <body

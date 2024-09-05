@@ -13,17 +13,33 @@ interface PageProps {
   params: { username: string };
 }
 
-export async function generateStaticParams() {
-  const users = await prisma?.user.findMany({
-    select: {
-      username: true
+export async function generateStaticParams(): Promise<{ username: string }[]> {
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
+  const usernames: string[] = []; // Array to hold valid usernames
+
+  try {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const users = await prisma?.user.findMany({
+        select: { username: true }
+      });
+
+      if (users) {
+        usernames.push(...users.map((user) => user.username));
+        break; // Exit loop if users are found
+      }
+
+      // Wait before retrying
+      if (attempt < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
     }
-  });
-  return (
-    users?.map((user) => ({
-      username: user.username
-    })) ?? []
-  );
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
+
+  return usernames.map((username) => ({ username })); // Return usernames for static generation
 }
 
 export async function generateMetadata({
