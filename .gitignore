@@ -3,3 +3,4 @@ aptos-ts-sdk/
 aptos-ts-sdk
 .idea
 db/
+.vercel
