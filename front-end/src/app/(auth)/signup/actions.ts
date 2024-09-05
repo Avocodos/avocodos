@@ -16,7 +16,7 @@ function generateOTP() {
 }
 
 export async function signUp(
-  credentials: SignUpValues,
+  credentials: SignUpValues
 ): Promise<{ error?: string; userId?: string }> {
   try {
     const { username, email, password, wallet, account } = signUpSchema.parse(credentials);
@@ -29,46 +29,27 @@ export async function signUp(
 
     const userId = generateIdFromEntropySize(10);
 
-    const existingUsername = await prisma?.user.findFirst({
+    // Check for existing username or email
+    const existingUser = await prisma?.user.findFirst({
       where: {
-        username: {
-          equals: username,
-          mode: "insensitive",
-        },
+        OR: [
+          { username: { equals: username, mode: "insensitive" } },
+          { email: { equals: email, mode: "insensitive" } },
+          { walletAddress: account?.address },
+        ],
       },
     });
 
-    if (existingUsername) {
-      return {
-        error: "Username already taken. Please choose another.",
-      };
-    }
-
-    const existingEmail = await prisma?.user.findFirst({
-      where: {
-        email: {
-          equals: email,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    const existingWallet = await prisma?.user.findFirst({
-      where: {
-        walletAddress: account?.address,
-      },
-    });
-
-    if (existingWallet) {
-      return {
-        error: "Wallet already linked with another account. Please connect a different wallet.",
-      };
-    }
-
-    if (existingEmail) {
-      return {
-        error: "Email already associated with an account.",
-      };
+    if (existingUser) {
+      if (existingUser.username.toLowerCase() === username.toLowerCase()) {
+        return { error: "Username already taken. Please choose another." };
+      }
+      if (existingUser?.email?.toLowerCase() === email.toLowerCase()) {
+        return { error: "Email already associated with an account." };
+      }
+      if (existingUser.walletAddress === account?.address) {
+        return { error: "Wallet already linked with another account. Please connect a different wallet." };
+      }
     }
 
     const otp = generateOTP();

@@ -7,6 +7,7 @@ import { getUserDataSelect } from "@/lib/types";
 import RewardsGrid from "@/components/RewardsGrid";
 import { Stars } from "lucide-react";
 import Link from "next/link";
+import { RewardRequirementType } from "@prisma/client";
 
 interface PageProps {
   params: { username: string };

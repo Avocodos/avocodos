@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import {
     Aptos,
@@ -8,38 +7,25 @@ import {
     Ed25519PrivateKey,
     AccountAddress
 } from "@aptos-labs/ts-sdk";
-import { formatDatePretty } from "@/lib/utils";
-import { validateRequest } from "@/auth";
 import { AssetType } from "@prisma/client";
 
 const APTOS_NETWORK: Network = Network.TESTNET;
 const config = new AptosConfig({ network: APTOS_NETWORK });
 const aptos = new Aptos(config);
 
-export async function POST(req: NextRequest) {
-    const { user } = await validateRequest();
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { courseId } = await req.json();
-
-    const userData = await prisma?.user.findUnique({
-        where: { id: user.id },
-    });
-
-    if (!userData || !userData.walletAddress) {
-        return NextResponse.json({ error: "User wallet address not found" }, { status: 400 });
-    }
-
-    const course = await prisma?.course.findUnique({
-        where: { id: courseId },
-    });
-
-    if (!course) {
-        return NextResponse.json({ error: "Course not found" }, { status: 404 });
-    }
-
+export async function mintNFT({
+    recipientAddress,
+    courseTitle,
+    displayName,
+    imageUrl,
+    userId,
+}: {
+    recipientAddress: string;
+    courseTitle: string;
+    displayName: string;
+    imageUrl: string;
+    userId: string;
+}) {
     // Avocodos account setup
     const privateKeyBytes = Uint8Array.from(
         Buffer.from(process.env.AVOCODOS_PRIVATE_KEY!.slice(2), "hex")
@@ -47,19 +33,13 @@ export async function POST(req: NextRequest) {
     const privateKey = new Ed25519PrivateKey(privateKeyBytes);
     const avocodosAccount = Account.fromPrivateKey({ privateKey });
 
-    try {
-        const { mintedNFT, createdAsset } = await mintNFT(userData.walletAddress, course.title, user.displayName, avocodosAccount, courseId, user.id);
-        return NextResponse.json({ success: true, nft: mintedNFT, asset: createdAsset });
-    } catch (error) {
-        console.error("Error minting NFT:", error);
-        return NextResponse.json({ error: "Failed to mint NFT" }, { status: 500 });
-    }
-}
-
-async function mintNFT(recipientAddress: string, courseTitle: string, displayName: string, avocodosAccount: Account, courseId: string, userId: string) {
-    const collectionName = "Avocodos Courses";
-    const collectionDescription = "Recieve NFTs for completing Avocodos courses!";
+    const collectionName = "Welcome To Avocodos";
+    const collectionDescription = `Welcome NFT for ${displayName} as a reward for joining Avocodos!`;
     const collectionURI = `https://utfs.io/f/bcd8a212-e94d-44c3-8a43-8d66b492806c-1sfc8.jpg`;
+
+    if (!prisma) {
+        throw new Error("Prisma client not initialized");
+    }
 
     // Function to get the latest account information
     const getLatestAccountInfo = async () => {
@@ -104,13 +84,9 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
     }
 
     // Mint NFT
-    const tokenName = `${courseTitle} Completion`;
-    const tokenDescription = `Completion certificate for ${courseTitle}, issued to ${displayName} on ${formatDatePretty(new Date())}.`;
-    const tokenURI = `https://utfs.io/f/0c857e56-5231-4d44-a4e6-0f0ca95546b4-1e.jpg`;
-
-    // Add this line to specify the image URL
-    // const imageUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/nft-images/2.jpg`;
-    const imageUrl = 'https://utfs.io/f/0c857e56-5231-4d44-a4e6-0f0ca95546b4-1e.jpg'
+    const tokenName = courseTitle;
+    const tokenDescription = `Welcome NFT for ${displayName}. Enjoy your journey on Avocodos!`;
+    const tokenURI = imageUrl;
 
     const mintTokenTransaction = await aptos.mintDigitalAssetTransaction({
         creator: avocodosAccount,
@@ -129,7 +105,6 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
     const avocodoNFTs = await aptos.getOwnedDigitalAssets({
         ownerAddress: avocodosAccount.accountAddress
     });
-    console.log("avocodoNFTs", avocodoNFTs);
     const mintedNFT = avocodoNFTs[avocodoNFTs.length - 1];
 
     // Transfer NFT to recipient
@@ -144,7 +119,7 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
     // Store NFT information in the database
     const assetData = {
         userId: userId,
-        type: AssetType.NFT,
+        type: "NFT" as AssetType,
         url: tokenURI,
         name: tokenName,
         txnHash: transferTxn?.hash ?? "",
@@ -154,11 +129,12 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
         metadata: JSON.stringify(mintedNFT),
         metadataUrl: tokenURI,
         description: tokenDescription,
-        aptosExplorerUrl: `https://explorer.aptoslabs.com/txn/${transferTxn?.hash}?network=testnet`,
-        courseId: courseId
+        aptosExplorerUrl: `https://explorer.aptoslabs.com/txn/${transferTxn?.hash}?network=testnet`
     };
 
-    const createdAsset = await prisma?.asset.create({
+    console.log("Asset data:", assetData);
+
+    const createdAsset = await prisma.asset.create({
         data: assetData
     });
 

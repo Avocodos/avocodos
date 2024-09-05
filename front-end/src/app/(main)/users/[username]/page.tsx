@@ -34,20 +34,35 @@ interface PageProps {
   params: { username: string };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<
+  {
+    username: string;
+  }[]
+> {
   if (process.env.NODE_ENV === "development") {
     return [];
   }
 
-  const users = await prisma?.user.findMany({
-    select: { username: true }
-  });
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
 
-  if (!users) return [];
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const users = await prisma?.user.findMany({
+        select: { username: true }
+      });
 
-  return users.map((user) => ({
-    username: user.username
-  }));
+      if (!users) return [];
+
+      return users.map((user) => ({
+        username: user.username
+      }));
+    } catch (error) {
+      if (attempt === maxRetries - 1) return []; // Rethrow if last attempt
+      await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+    }
+  }
+  return [];
 }
 
 const getUser = cache(async (username: string, loggedInUserId: string) => {

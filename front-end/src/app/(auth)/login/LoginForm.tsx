@@ -41,7 +41,7 @@ export default function LoginForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 px-1"
       >
         {error && <p className="text-center text-destructive">{error}</p>}
         <FormField

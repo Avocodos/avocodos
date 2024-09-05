@@ -7,16 +7,33 @@ interface PageProps {
   params: { communityName: string };
 }
 
-export async function generateStaticParams() {
-  const communities = await prisma?.community.findMany({
-    select: { name: true }
-  });
+export async function generateStaticParams(): Promise<
+  {
+    communityName: string;
+  }[]
+> {
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
+  let attempts = 0;
 
-  if (!communities) return [];
+  while (attempts < maxRetries) {
+    try {
+      const communities = await prisma?.community.findMany({
+        select: { name: true }
+      });
 
-  return communities.map((community) => ({
-    communityName: community.name
-  }));
+      if (!communities) return [];
+
+      return communities.map((community) => ({
+        communityName: community.name
+      }));
+    } catch (error) {
+      attempts++;
+      if (attempts >= maxRetries) return []; // Rethrow after max retries
+      await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+    }
+  }
+  return [];
 }
 
 export async function generateMetadata(

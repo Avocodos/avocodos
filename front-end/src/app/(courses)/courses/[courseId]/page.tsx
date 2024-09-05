@@ -31,7 +31,7 @@ async function getCourse(courseId: string) {
         },
         orderBy: { order: "asc" }
       }
-    },
+    }
   });
 
   if (!course) notFound();
@@ -39,16 +39,32 @@ async function getCourse(courseId: string) {
   return course;
 }
 
-export async function generateStaticParams() {
-  const courses = await prisma?.course.findMany({
-    select: { id: true },
-  });
+export async function generateStaticParams(): Promise<{ courseId: string }[]> {
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
+  let attempts = 0;
 
-  return (
-    courses?.map((course) => ({
-      courseId: course.id
-    })) || []
-  );
+  while (attempts < maxRetries) {
+    try {
+      const courses = await prisma?.course.findMany({
+        select: { id: true }
+      });
+
+      if (!courses) return []; // Ensure it returns an empty array
+
+      return courses.map((course) => ({
+        courseId: course.id
+      }));
+    } catch (error) {
+      attempts++;
+      if (attempts < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      } else {
+        return []; // Ensure it returns an empty array
+      }
+    }
+  }
+  return [];
 }
 
 export async function generateMetadata(

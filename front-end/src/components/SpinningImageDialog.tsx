@@ -60,9 +60,9 @@ export default function SpinningImageDialog({
           <motion.div
             className="relative"
             animate={{ rotateY: 360 }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Image
+            <img
               src={imageUrl}
               alt={rewardName}
               width={500}

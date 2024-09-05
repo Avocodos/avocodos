@@ -1,5 +1,6 @@
 "use client";
 import { useState, useTransition, useEffect } from "react";
+import Confetti from "react-confetti";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpValues } from "@/lib/validation";
@@ -25,6 +26,8 @@ import {
 } from "@/components/ui/dialog";
 import { signUp, verifyOTP } from "./actions";
 import OTPDialog from "@/components/OTPDialog";
+import kyInstance from "@/lib/ky";
+import { toast } from "@/components/ui/use-toast";
 
 export default function SignUpForm() {
   const [error, setError] = useState<string>();
@@ -36,6 +39,7 @@ export default function SignUpForm() {
     "weak" | "medium" | "strong" | null
   >(null);
   const [showPasswordStrength, setShowPasswordStrength] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const { account, wallet, connected, isLoading } = useWallet();
 
@@ -91,6 +95,7 @@ export default function SignUpForm() {
         account: account,
         wallet: wallet
       });
+
       if (error) {
         setError(error);
       } else if (userId) {
@@ -105,8 +110,30 @@ export default function SignUpForm() {
 
     const { success, error } = await verifyOTP(userId, otp);
     if (success) {
-      // Redirect to main page or show success message
-      window.location.href = "/";
+      try {
+        const response = await kyInstance
+          .post("/api/nft/welcome")
+          .json<{ success: boolean } | { error: string }>();
+        if ("success" in response) {
+          toast({
+            title: `Welcome to Avocodos, ${form.getValues("username")}! 🎉`,
+            description:
+              "You have been rewarded with a welcoming gift from our side, an exclusive NFT. You can view it in your wallet or on your NFT Rewards, which is on your profile. 🥳",
+            variant: "default"
+          });
+          setShowConfetti(true);
+          setTimeout(() => setShowConfetti(false), 5000);
+        } else {
+          setError(response.error);
+          toast({
+            title: "Error rewarding Welcome NFT",
+            description: response.error,
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        setError("Failed to mint NFT. Please try again later.");
+      }
     } else {
       setOtpError(error || "Invalid OTP");
       setOtpAttempts((prev) => prev + 1);
@@ -118,6 +145,15 @@ export default function SignUpForm() {
 
   return (
     <>
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth - 20}
+          height={window.innerHeight}
+          recycle={true}
+          numberOfPieces={50}
+          style={{ zIndex: 2000 }}
+        />
+      )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

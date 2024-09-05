@@ -21,7 +21,7 @@ const getPost = cache(async (postId: string, loggedInUserId: string) => {
     where: {
       id: postId
     },
-    include: getPostDataInclude(loggedInUserId),
+    include: getPostDataInclude(loggedInUserId)
   });
 
   if (!post) notFound();
@@ -29,16 +29,32 @@ const getPost = cache(async (postId: string, loggedInUserId: string) => {
   return post;
 });
 
-export async function generateStaticParams() {
-  const posts = await prisma?.post.findMany({
-    select: { id: true }
-  });
+export async function generateStaticParams(): Promise<
+  {
+    postId: string;
+  }[]
+> {
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
 
-  if (!posts) return [];
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const posts = await prisma?.post.findMany({
+      select: { id: true }
+    });
 
-  return posts.map((post) => ({
-    postId: post.id
-  }));
+    if (posts) {
+      return posts.map((post) => ({
+        postId: post.id
+      }));
+    }
+
+    // Wait before retrying
+    if (attempt < maxRetries - 1) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+  }
+
+  return []; // Return empty if all retries fail
 }
 
 export async function generateMetadata(

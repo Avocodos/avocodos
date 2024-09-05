@@ -71,7 +71,7 @@ model Asset {
   aptosExplorerUrl String?
   courseId         String?
   course           Course?   @relation(fields: [courseId], references: [id])
-  user             User      @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("assets")
 }
@@ -80,7 +80,7 @@ model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -111,7 +111,7 @@ model Post {
   badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id])
   CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
   community           Community?      @relation(fields: [communityName], references: [name])
-  user                User            @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
@@ -135,8 +135,8 @@ model Comment {
   createdAt     DateTime   @default(now())
   communityName String?
   community     Community? @relation(fields: [communityName], references: [name])
-  post          Post       @relation(fields: [postId], references: [id], onDelete: NoAction)
-  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction)
+  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("comments")
 }
@@ -146,8 +146,8 @@ model Like {
   postId        String
   communityName String?
   community     Community? @relation(fields: [communityName], references: [name])
-  post          Post       @relation(fields: [postId], references: [id], onDelete: NoAction)
-  user          User       @relation(fields: [userId], references: [id], onDelete: NoAction)
+  post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@map("likes")
@@ -158,8 +158,8 @@ model Bookmark {
   userId    String
   postId    String
   createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
   @@map("bookmarks")
@@ -218,7 +218,7 @@ model Lesson {
   courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: NoAction)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@map("lessons")
 }
@@ -231,8 +231,8 @@ model Enrollment {
   status    EnrollmentStatus @default(ACTIVE)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
-  course    Course           @relation(fields: [courseId], references: [id], onDelete: NoAction)
-  user      User             @relation(fields: [userId], references: [id], onDelete: NoAction)
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@map("enrollments")
@@ -246,8 +246,8 @@ model Review {
   courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: NoAction)
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@map("reviews")
@@ -258,7 +258,7 @@ model CommunityRole {
   name          String
   color         String
   communityName String
-  community     Community @relation(fields: [communityName], references: [name], onDelete: NoAction)
+  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
   assignedTo    User[]    @relation("AssignedRole")
   users         User[]    @relation("UserRoles")
 
@@ -271,7 +271,7 @@ model CommunityBadge {
   name          String
   color         String
   communityName String
-  community     Community @relation(fields: [communityName], references: [name], onDelete: NoAction)
+  community     Community @relation(fields: [communityName], references: [name], onDelete: Cascade)
   badgePosts    Post[]    @relation("PostBadge")
   posts         Post[]    @relation("PostCommunityBadge")
 
@@ -335,6 +335,7 @@ model Reward {
   requirement     Int
   createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
+  imageUrl        String?
   requirementType RewardRequirementType
   userRewards     UserReward[]
 }
@@ -347,8 +348,8 @@ model UserReward {
   claimed   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reward    Reward   @relation(fields: [rewardId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  reward    Reward   @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, rewardId])
   @@index([userId, rewardId])
@@ -392,4 +393,5 @@ enum RewardRequirementType {
   COMMUNITY_POSTS
   COMMUNITY_COMMENTS
   COMMUNITY_LIKES
+  OTHER
 }

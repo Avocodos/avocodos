@@ -21,6 +21,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "utfs.io",
+        pathname: `/f/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`
+      },
+      {
+        protocol: "https",
         hostname: "i.ibb.co",
         pathname: "/*/*"
       }

@@ -10,16 +10,32 @@ interface PageProps {
   params: { courseId: string };
 }
 
-export async function generateStaticParams() {
-  const courses = await prisma?.course.findMany({
-    select: { id: true },
-  });
+export async function generateStaticParams(): Promise<
+  {
+    courseId: string;
+  }[]
+> {
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
+  let attempts = 0;
 
-  if (!courses) return [];
+  while (attempts < maxRetries) {
+    try {
+      const courses = await prisma?.course.findMany({
+        select: { id: true }
+      });
 
-  return courses.map((course) => ({
-    courseId: course.id
-  }));
+      if (!courses) return []; // Ensure it returns an empty array
+      return courses.map((course) => ({
+        courseId: course.id
+      }));
+    } catch (error) {
+      attempts++;
+      if (attempts >= maxRetries) return []; // Rethrow after max retries
+      await new Promise((resolve) => setTimeout(resolve, retryDelay)); // Wait before retrying
+    }
+  }
+  return []; // Ensure it returns an empty array
 }
 
 export async function generateMetadata(
@@ -129,7 +145,7 @@ async function getCourse(courseId: string) {
         },
         orderBy: { order: "asc" }
       }
-    },
+    }
   });
 
   if (!course) notFound();
@@ -140,7 +156,7 @@ async function getCourse(courseId: string) {
 export default async function LMSPage({ params: { courseId } }: PageProps) {
   const { user } = await validateRequest();
   const userData = await prisma?.user.findUnique({
-    where: { id: user?.id },
+    where: { id: user?.id }
   });
   if (!user || !userData) {
     redirect("/login");

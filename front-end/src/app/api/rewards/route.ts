@@ -25,6 +25,11 @@ export async function GET(req: NextRequest) {
         }
 
         const rewards = await prisma?.reward.findMany({
+            where: {
+                NOT: {
+                    description: "Welcome to Avocodos"
+                }
+            }
         });
 
         // Cache the rewards in Redis

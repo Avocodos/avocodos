@@ -6,10 +6,21 @@ import { getUserRewards } from "@/lib/updateRewardProgress";
 
 const redis = Redis.fromEnv();
 const CACHE_TTL = 120; // 120 seconds
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 3000; // 2 seconds
+
+async function retryValidateRequest(retries = 4): Promise<any> {
+    const result = await validateRequest();
+    if (!result.user && retries < MAX_RETRIES) {
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        return retryValidateRequest(retries + 1);
+    }
+    return result;
+}
 
 export async function POST(req: NextRequest) {
     try {
-        const { user } = await validateRequest();
+        const { user } = await retryValidateRequest(MAX_RETRIES);
 
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,8 +28,8 @@ export async function POST(req: NextRequest) {
 
         if (!prisma) {
             return NextResponse.json({ error: "Internal server error. Could not connect to the database." }, { status: 500 });
-
         }
+
         const { rewardId } = await req.json();
 
         if (!rewardId) {
@@ -87,6 +98,7 @@ export async function POST(req: NextRequest) {
         const result = {
             message: "Reward claimed successfully",
             userReward: updatedUserReward,
+            success: true,
         };
 
         // Cache the result

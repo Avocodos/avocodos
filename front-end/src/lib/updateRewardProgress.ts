@@ -100,6 +100,7 @@ export async function initializeUserRewards(userId: string) {
         [RewardRequirementType.COMMUNITY_POSTS]: result[0].communityPostCount,
         [RewardRequirementType.COMMUNITY_COMMENTS]: result[0].communityCommentCount,
         [RewardRequirementType.COMMUNITY_LIKES]: result[0].communityLikeCount,
+        [RewardRequirementType.OTHER]: 0,
     };
 
     // Create new user rewards in a single transaction
@@ -111,7 +112,7 @@ export async function initializeUserRewards(userId: string) {
                     data: {
                         userId,
                         rewardId: reward.id,
-                        progress: rewardCounts[reward.requirementType as RewardRequirementType] || 0,
+                        progress: rewardCounts[reward.requirementType as keyof typeof rewardCounts] || 0,
                     },
                 })
             )
@@ -150,6 +151,7 @@ export async function getUserRewardCounts(userId: string) {
             [RewardRequirementType.COMMUNITY_POSTS]: Number(result[0].communityPostCount),
             [RewardRequirementType.COMMUNITY_COMMENTS]: Number(result[0].communityCommentCount),
             [RewardRequirementType.COMMUNITY_LIKES]: Number(result[0].communityLikeCount),
+            [RewardRequirementType.OTHER]: 0,
         };
 
         return rewardCounts;

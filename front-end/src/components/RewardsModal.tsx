@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,12 @@ import Image from "next/image";
 import kyInstance from "@/lib/ky";
 import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryFunction
+} from "@tanstack/react-query";
 import {
   Reward,
   RewardRequirementType,
@@ -25,6 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import SpinningImageDialog from "./SpinningImageDialog";
 import { UserData } from "@/lib/types";
 import Confetti from "react-confetti";
+import { AVOCODOS_WELCOME_REWARD_ID } from "@/lib/constants";
 
 interface RewardsModalProps {
   isOpen: boolean;
@@ -64,7 +70,10 @@ export default function RewardsModal({
     return res;
   };
 
-  const fetchUserClaimedRewards = async (): Promise<UserReward[]> => {
+  const fetchUserClaimedRewards: QueryFunction<
+    UserReward[],
+    any
+  > = async (): Promise<UserReward[]> => {
     const data = await kyInstance
       .get(`/api/rewards/claimed/${user.id}`)
       .json<UserReward[]>();
@@ -217,8 +226,11 @@ export default function RewardsModal({
                     variant={"light"}
                   >
                     <Percent className="size-3.5" />
-                    {numberOfRewardsOwned} / {numberOfRewards} Rewards Owned (
-                    {Math.round((numberOfRewardsOwned / numberOfRewards) * 100)}
+                    {numberOfRewardsOwned + 1} / {numberOfRewards} Rewards Owned
+                    (
+                    {Math.round(
+                      ((numberOfRewardsOwned + 1) / numberOfRewards) * 100
+                    )}
                     %)
                   </Badge>
                 )}
@@ -243,15 +255,20 @@ export default function RewardsModal({
                     "COMMUNITY_LIKES",
                     "COMMUNITY_COMMENTS",
                     "ENROLLMENTS",
-                    "REVIEWS"
+                    "REVIEWS",
+                    "OTHER"
                   ];
-                  return (
-                    order.indexOf(a.toUpperCase()) -
-                    order.indexOf(b.toUpperCase())
-                  );
+                  return order.indexOf(a) - order.indexOf(b);
                 })
                 .map(([category, rewards]) => (
                   <div key={category}>
+                    {console.log(rewards) as React.ReactNode}
+                    {
+                      console.log(
+                        "userClaimedRewards",
+                        userClaimedRewards
+                      ) as React.ReactNode
+                    }
                     <h4 className="mb-4">{capitalizeWords(category)}</h4>
                     <div className="grid gap-8">
                       {rewards
@@ -261,109 +278,132 @@ export default function RewardsModal({
                             userRewards?.[
                               reward.requirementType as RewardRequirementType
                             ] || 0;
+
                           const percentage = Math.min(
-                            (progress / reward.requirement) * 100,
+                            Math.floor((progress / reward.requirement) * 100),
                             100
                           );
-                          const isClaimed = userClaimedRewards?.some(
-                            (claimedReward) =>
-                              claimedReward.rewardId === reward.id
-                          );
+
+                          // Always show as claimed if the reward ID matches
+                          const isClaimed =
+                            reward.id === AVOCODOS_WELCOME_REWARD_ID ||
+                            userClaimedRewards?.some(
+                              (claimedReward) =>
+                                claimedReward.rewardId === reward.id
+                            );
+
+                          // Update the grayscale condition
+                          const grayscaleClass = isClaimed
+                            ? ""
+                            : reward.id === AVOCODOS_WELCOME_REWARD_ID
+                              ? ""
+                              : "grayscale";
+
+                          console.log("reward", reward);
+                          console.log("isClaimed", isClaimed);
                           return (
                             <div
                               key={reward.id}
                               className="flex cursor-pointer flex-col items-start gap-4 sm:flex-row"
                               onClick={() => setSelectedReward(reward)}
                             >
-                              <div className="relative size-24 cursor-pointer md:size-16">
+                              <div className="relative size-36 cursor-pointer md:size-28">
                                 <div className="relative h-full w-full overflow-hidden rounded-full">
                                   {/* Colored image (bottom layer) */}
-                                  <Image
+                                  <img
                                     draggable={false}
-                                    src="/auth.webp"
-                                    alt={reward.name}
-                                    layout="fill"
-                                    className="select-none object-cover"
+                                    src={reward.imageUrl ?? "/auth.webp"}
+                                    alt={"Avocodos Reward - " + reward.name}
+                                    className={`select-none object-cover ${grayscaleClass}`}
                                   />
                                   {/* Grayscale image with mask (top layer) */}
                                   <div
                                     className="absolute inset-0 overflow-hidden"
                                     style={{
-                                      clipPath: `inset(0 0 ${percentage}% 0)`,
+                                      clipPath: isClaimed
+                                        ? "inset(0 0 0 0)"
+                                        : reward.id ===
+                                            AVOCODOS_WELCOME_REWARD_ID
+                                          ? `inset(0 0 ${percentage}% 0)`
+                                          : `inset(0 0 0 0)`,
                                       transition: "clip-path 0.3s ease-in-out"
                                     }}
                                   >
-                                    <Image
+                                    <img
                                       draggable={false}
-                                      src="/auth.webp"
-                                      alt={reward.name}
-                                      layout="fill"
-                                      className="select-none object-cover grayscale"
+                                      src={reward.imageUrl ?? "/auth.webp"}
+                                      alt={"Avocodos Reward - " + reward.name}
+                                      className={`size-full select-none object-cover ${grayscaleClass}`}
                                     />
                                   </div>
                                 </div>
                               </div>
-                              <div className="w-full flex-1">
-                                <h5 className="font-semibold">
-                                  {reward.name.replace("_", " ")}
-                                </h5>
-                                <p className="text-sm text-foreground/80">
-                                  {reward.description}
-                                </p>
-                                {percentage < 100 ? (
+                              <div
+                                className={`flex w-full flex-1 gap-2 ${isClaimed ? "flex-col md:flex-row" : "flex-col"} justify-between`}
+                              >
+                                <div className="w-fit">
+                                  <h5 className="w-fit font-semibold">
+                                    {reward.name.replace("_", " ")}
+                                  </h5>
+                                  <p className="w-fit text-sm text-foreground/80">
+                                    {reward.description}
+                                  </p>
+                                </div>
+                                {isClaimed ? (
+                                  <Badge
+                                    variant={"light"}
+                                    className="inline-flex h-fit w-fit items-center gap-2 text-sm text-primary/80"
+                                  >
+                                    <CheckCircle className="size-3.5" />
+                                    Reward claimed successfully
+                                  </Badge>
+                                ) : (
                                   <>
-                                    <Progress
-                                      value={percentage}
-                                      className="mt-2"
-                                    />
-                                    <p className="mt-1 text-sm">
-                                      {progress} / {reward.requirement}{" "}
-                                      completed (
-                                      {Math.round(
-                                        (progress / reward.requirement) * 100
-                                      )}
-                                      %){" "}
-                                      {Math.round(
-                                        (progress / reward.requirement) * 100
-                                      ) > 75 &&
-                                        !isClaimed && (
-                                          <span className="text-primary/80">
-                                            - You&apos;re almost there!
-                                          </span>
-                                        )}
-                                    </p>
+                                    {percentage < 100 ? (
+                                      <div>
+                                        <Progress
+                                          value={percentage}
+                                          className="mt-2 flex-1"
+                                        />
+                                        <p className="mt-1 text-sm">
+                                          {progress} / {reward.requirement}{" "}
+                                          completed (
+                                          {Math.round(
+                                            (progress / reward.requirement) *
+                                              100
+                                          )}
+                                          %){" "}
+                                          {Math.round(
+                                            (progress / reward.requirement) *
+                                              100
+                                          ) > 75 && (
+                                            <span className="text-primary/80">
+                                              - You&apos;re almost there!
+                                            </span>
+                                          )}
+                                        </p>
+                                      </div>
+                                    ) : null}
                                   </>
-                                ) : null}
+                                )}
                               </div>
-                              {percentage === 100 && (
-                                <>
-                                  {!isClaimed ? (
-                                    <Button
-                                      onClick={() =>
-                                        claimRewardMutation.mutate(reward.id)
-                                      }
-                                      className="inline-flex w-full max-w-[180px] items-center gap-2 rounded-full"
-                                      disabled={claimRewardMutation.isPending}
-                                    >
-                                      {claimRewardMutation.isPending ? (
-                                        <Loader2 className="size-4 animate-spin" />
-                                      ) : (
-                                        <Stars className="size-4" />
-                                      )}
-                                      {claimRewardMutation.isPending
-                                        ? "Claiming..."
-                                        : "Claim Reward"}
-                                    </Button>
+                              {percentage === 100 && !isClaimed && (
+                                <Button
+                                  onClick={() =>
+                                    claimRewardMutation.mutate(reward.id)
+                                  }
+                                  className="inline-flex w-full max-w-[180px] items-center gap-2 rounded-full"
+                                  disabled={claimRewardMutation.isPending}
+                                >
+                                  {claimRewardMutation.isPending ? (
+                                    <Loader2 className="size-4 animate-spin" />
                                   ) : (
-                                    <Badge
-                                      variant={"light"}
-                                      className="inline-flex items-center gap-2 text-sm text-primary/80"
-                                    >
-                                      <CheckCircle className="size-3.5" />
-                                      Reward claimed successfully
-                                    </Badge>
+                                    <Stars className="size-4" />
                                   )}
-                                </>
+                                  {claimRewardMutation.isPending
+                                    ? "Claiming..."
+                                    : "Claim Reward"}
+                                </Button>
                               )}
                             </div>
                           );
@@ -378,7 +418,7 @@ export default function RewardsModal({
         <SpinningImageDialog
           isOpen={!!selectedReward === true}
           onClose={() => setSelectedReward(null)}
-          imageUrl="/auth.webp"
+          imageUrl={selectedReward.imageUrl ?? "/auth.webp"}
           rewardName={selectedReward.name}
           username={userData?.username ?? ""}
           reward={selectedReward}

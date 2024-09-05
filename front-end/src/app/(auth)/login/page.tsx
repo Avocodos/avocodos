@@ -105,8 +105,11 @@ export default function Page() {
           </div>
           <div className="h-full space-y-2 overflow-y-scroll md:h-[460px]">
             <LoginForm />
-            <Link href="/signup" className="block text-center">
-              Don&apos;t have an account? Sign up
+            <Link
+              href="/signup"
+              className="!mt-4 block text-center hover:underline"
+            >
+              Don&apos;t have an account? Sign up here
             </Link>
           </div>
         </div>
