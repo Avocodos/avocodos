@@ -107,12 +107,12 @@ export default function PostMoreButton({
             </DialogTitle>
           </DialogHeader>
           <Textarea
-            value={editedContent}
+            value={editedContent ?? ""}
             onChange={(e) => setEditedContent(e.target.value)}
             rows={6}
           />
           <Button
-            onClick={() => editMutation.mutate(editedContent)}
+            onClick={() => editMutation.mutate(editedContent ?? "")}
             className="w-full"
             disabled={isLoading || isContentUnchanged}
           >

@@ -84,10 +84,10 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
-  const description = `${post.content.slice(0, 150)}... | ${post._count.likes} likes, ${post._count.comments} comments.`;
+  const description = `${post.content?.slice(0, 150)}... | ${post._count.likes} likes, ${post._count.comments} comments.`;
 
   return {
-    title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+    title: `${post.user.displayName}: ${post.content?.slice(0, 50)}...`,
     description,
     authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
     creator: "Harjot Singh Rana",
@@ -96,7 +96,7 @@ export async function generateMetadata(
       canonical: `/posts/${post.id}`
     },
     openGraph: {
-      title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+      title: `${post.user.displayName}: ${post.content?.slice(0, 50)}...`,
       description,
       url: `https://avocodos.com/posts/${post.id}`,
       siteName: "Avocodos",
@@ -109,7 +109,7 @@ export async function generateMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: `${post.user.displayName}: ${post.content.slice(0, 50)}...`,
+      title: `${post.user.displayName}: ${post.content?.slice(0, 50)}...`,
       description,
       creator: "@HarjjotSinghh",
       images: [post.user.avatarUrl || `/api/og?postId=${post.id}`]

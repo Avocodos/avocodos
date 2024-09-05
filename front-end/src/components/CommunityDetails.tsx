@@ -74,7 +74,7 @@ export default function CommunityDetails({
         {community.posts.map((post) => (
           <li key={post.id}>
             <Link href={`/posts/${post.id}`}>
-              <h3>{post.content.substring(0, 50)}...</h3>
+              <h3>{post.content?.substring(0, 50)}...</h3>
             </Link>
             <p>Posted by: {post.user.username}</p>
             <p>Created at: {new Date(post.createdAt).toLocaleString()}</p>
