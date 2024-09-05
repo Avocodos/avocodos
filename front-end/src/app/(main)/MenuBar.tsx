@@ -26,7 +26,7 @@ export default function MenuBar({
   return (
     <div
       className={cn(
-        "border-2 border-muted [&>*]:!px-2 lg:[&>*]:!px-4",
+        "border-2 border-muted [&>*]:!px-0.5 lg:[&>*]:!px-4",
         className
       )}
     >
@@ -43,7 +43,7 @@ export default function MenuBar({
       >
         <Link href="/" className="flex items-center justify-start gap-3">
           <HomeIcon size={24} />
-          Home
+          <span className="hidden lg:block">Home</span>
         </Link>
       </Button>
       <Button
@@ -57,7 +57,7 @@ export default function MenuBar({
           className="flex items-center justify-start gap-3"
         >
           <Users2 size={24} />
-          <span>Communities</span>
+          <span className="hidden lg:block">Communities</span>
         </Link>
       </Button>
       <NotificationsButton
@@ -75,7 +75,7 @@ export default function MenuBar({
           className="flex items-center justify-start gap-3"
         >
           <BookmarkIcon size={24} />
-          <span>Bookmarks</span>
+          <span className="hidden lg:block">Bookmarks</span>
         </Link>
       </Button>
       <Button
@@ -85,7 +85,7 @@ export default function MenuBar({
         onClick={() => setPostEditorOpen(true)}
       >
         <PlusCircleIcon size={24} />
-        <span>Create Post</span>
+        <span className="hidden lg:block">Create Post</span>
       </Button>
       {/* Profile button */}
       <Button
@@ -96,7 +96,7 @@ export default function MenuBar({
       >
         <Link href={`/users/${user.username}`}>
           <UserAvatar size={24} avatarUrl={user.avatarUrl} />
-          <span>Profile</span>
+          <span className="hidden lg:block">Profile</span>
         </Link>
       </Button>
     </div>
