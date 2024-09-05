@@ -54,7 +54,6 @@ export async function generateMetadata(
 
   return {
     title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
-
     description,
     authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
     creator: "Harjot Singh Rana",
@@ -64,7 +63,6 @@ export async function generateMetadata(
     },
     openGraph: {
       title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
-
       description,
       url: `https://avocodos.com/users/${username}/rewards/${rewardId}`,
       siteName: "Avocodos",
