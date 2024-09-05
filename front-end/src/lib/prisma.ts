@@ -1,7 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    log: ["query", "info", "warn", "error"],
+    errorFormat: "pretty",
+    transactionOptions: {
+      maxWait: 30000,
+      timeout: 30000,
+    },
+  });
 };
 
 declare global {
