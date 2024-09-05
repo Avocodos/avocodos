@@ -36,22 +36,26 @@ export async function generateStaticParams(): Promise<
 > {
   const maxRetries = 3;
   const retryDelay = 5000; // 5 seconds
+  try {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const posts = await prisma?.post.findMany({
+        select: { id: true }
+      });
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const posts = await prisma?.post.findMany({
-      select: { id: true }
-    });
+      if (posts) {
+        return posts.map((post) => ({
+          postId: post.id
+        }));
+      }
 
-    if (posts) {
-      return posts.map((post) => ({
-        postId: post.id
-      }));
+      // Wait before retrying
+      if (attempt < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
     }
-
-    // Wait before retrying
-    if (attempt < maxRetries - 1) {
-      await new Promise((resolve) => setTimeout(resolve, retryDelay));
-    }
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
   }
 
   return []; // Return empty if all retries fail
