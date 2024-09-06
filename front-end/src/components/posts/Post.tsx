@@ -2,7 +2,7 @@
 
 import { useSession } from "@/app/(main)/SessionProvider";
 import { FollowerInfo, PostData, UserData } from "@/lib/types";
-import { cn, formatRelativeDate } from "@/lib/utils";
+import { cn, formatRelativeDate, getKandMString } from "@/lib/utils";
 import { CommunityRole, Media, User } from "@prisma/client";
 import { Crown, Edit, ExternalLink, MessageSquare, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -46,6 +46,8 @@ import FollowerCount from "../FollowerCount";
 import PostsCount from "./PostsCount";
 import FollowButton from "../FollowButton";
 import UserTooltip from "../UserTooltip";
+import LinkEmbed from "../LinkEmbed";
+import { BASE_URL } from "@/lib/constants";
 
 interface PostProps {
   post: PostData;
@@ -74,6 +76,48 @@ export default function Post({
     staleTime: Infinity
   });
   const [showComments, setShowComments] = useState(false);
+  const [linkEmbed, setLinkEmbed] = useState<{
+    url: string;
+    title: string;
+    description: string;
+    image: string;
+    themeColor: string;
+    favicon: string;
+  } | null>(null);
+
+  // Function to extract the first link from the post content
+  const extractLink = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const match = content.match(urlRegex);
+    return match ? match[0] : null;
+  };
+
+  const link = extractLink(post.content ?? "");
+
+  // Fetch link preview data (you can use a service like LinkPreview API)
+  if (link && !linkEmbed) {
+    kyInstance
+      .get(`${BASE_URL}/api/link-preview?url=${link}`)
+      .then((response) =>
+        response.json<{
+          title: string;
+          description: string;
+          image: string;
+          themeColor: string;
+          favicon: string;
+        }>()
+      )
+      .then((data) => {
+        setLinkEmbed({
+          url: link,
+          title: data.title,
+          description: data.description,
+          image: data.image,
+          themeColor: data.themeColor,
+          favicon: data.favicon
+        });
+      });
+  }
 
   return (
     <>
@@ -162,6 +206,16 @@ export default function Post({
         {!!post.attachments.length && (
           <MediaPreviews attachments={post.attachments} />
         )}
+        {linkEmbed && (
+          <LinkEmbed
+            url={linkEmbed.url}
+            title={linkEmbed.title}
+            description={linkEmbed.description}
+            image={linkEmbed.image}
+            themeColor={linkEmbed.themeColor}
+            favicon={linkEmbed.favicon}
+          />
+        )}
         <hr className="text-foreground/80" />
         <div className="flex justify-between gap-5">
           <div className="flex items-center gap-5">
@@ -225,7 +279,8 @@ function MediaPreview({ media }: MediaPreviewProps) {
         alt="Attachment"
         width={500}
         height={500}
-        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        className="mx-auto size-fit max-h-[30rem] select-none rounded-2xl"
+        draggable={false}
       />
     );
   }
@@ -236,7 +291,8 @@ function MediaPreview({ media }: MediaPreviewProps) {
         <video
           src={media.url}
           controls
-          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+          draggable={false}
+          className="mx-auto size-fit max-h-[30rem] select-none rounded-2xl"
         />
       </div>
     );
@@ -305,7 +361,7 @@ function UserTooltip2({ children, username }: UserTooltipProps) {
                   <FollowButton
                     userId={userData.id}
                     initialState={{
-                      followers: userData._count.followers,
+                      followers: getKandMString(userData._count.followers),
                       isFollowedByUser: userData.following.some(
                         ({ followingId }) => followingId === userData.id
                       )
@@ -324,7 +380,7 @@ function UserTooltip2({ children, username }: UserTooltipProps) {
                 <FollowerCount
                   userId={userData.id}
                   initialState={{
-                    followers: userData._count.followers,
+                    followers: getKandMString(userData._count.followers),
                     isFollowedByUser: isFollowedByUser!
                   }}
                 />

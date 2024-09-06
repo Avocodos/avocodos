@@ -1,7 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { getUserDataSelect, UserData } from "@/lib/types";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, getKandMString } from "@/lib/utils";
 import { ChartNoAxesCombined, Loader2, Rss } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import Link from "next/link";
@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 
 export default function TrendsSidebar() {
   return (
-    <div className="sticky top-[6.5em] ml-3 hidden h-fit w-72 flex-none space-y-8 md:block lg:w-80">
+    <div className="ml-3 hidden h-full w-72 flex-none space-y-8 pr-1 md:block lg:w-80">
       <Suspense fallback={<Spinner />}>
         <WhoToFollow />
         <TrendingTopics />
@@ -71,7 +71,7 @@ async function WhoToFollow() {
           <FollowButton
             userId={user.id}
             initialState={{
-              followers: user._count.followers,
+              followers: getKandMString(user._count.followers),
               isFollowedByUser: user.followers.some(
                 ({ followerId }) => followerId === user.id
               )

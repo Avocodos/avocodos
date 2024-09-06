@@ -48,13 +48,6 @@ export default function RewardsModal({
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const fetchUser = async (): Promise<User> => {
-    const data = await kyInstance
-      .get(`/api/users/username/${user.username}`)
-      .json<User>();
-    return data;
-  };
-
   const fetchRewards = async (): Promise<Record<string, Reward[]>> => {
     const data = await kyInstance.get("/api/rewards").json<Reward[]>();
     const res = data.reduce(
@@ -359,9 +352,9 @@ export default function RewardsModal({
                                 {isClaimed ? (
                                   <Badge
                                     variant={"light"}
-                                    className="inline-flex h-fit w-fit items-center gap-2 text-sm text-primary/80"
+                                    className="inline-flex h-fit w-fit items-center gap-2 text-xs text-primary/80"
                                   >
-                                    <CheckCircle className="size-3.5" />
+                                    <CheckCircle className="size-3" />
                                     Reward claimed successfully
                                   </Badge>
                                 ) : (
@@ -394,24 +387,44 @@ export default function RewardsModal({
                                   </>
                                 )}
                               </div>
-                              {percentage === 100 && !isClaimed && (
-                                <Button
-                                  onClick={() =>
-                                    claimRewardMutation.mutate(reward.id)
-                                  }
-                                  className="inline-flex w-full max-w-[180px] items-center gap-2 rounded-full"
-                                  disabled={claimRewardMutation.isPending}
-                                >
-                                  {claimRewardMutation.isPending ? (
-                                    <Loader2 className="size-4 animate-spin" />
-                                  ) : (
-                                    <Stars className="size-4" />
-                                  )}
-                                  {claimRewardMutation.isPending
-                                    ? "Claiming..."
-                                    : "Claim Reward"}
-                                </Button>
-                              )}
+                              {percentage >= 100 &&
+                                !isClaimed &&
+                                user.id !== reward.userID && (
+                                  <Badge variant={"light"}>
+                                    Owned but not claimed yet.
+                                  </Badge>
+                                )}
+                              {percentage >= 100 &&
+                                isClaimed &&
+                                user.id !== reward.userID && (
+                                  <Badge
+                                    variant={"light"}
+                                    className="inline-flex h-fit w-fit items-center gap-2 text-xs text-primary/80"
+                                  >
+                                    <CheckCircle className="size-3" />
+                                    Reward claimed successfully
+                                  </Badge>
+                                )}
+                              {percentage === 100 &&
+                                !isClaimed &&
+                                user.id === reward.userId && (
+                                  <Button
+                                    onClick={() =>
+                                      claimRewardMutation.mutate(reward.id)
+                                    }
+                                    className="inline-flex w-full max-w-[180px] items-center gap-2 rounded-full"
+                                    disabled={claimRewardMutation.isPending}
+                                  >
+                                    {claimRewardMutation.isPending ? (
+                                      <Loader2 className="size-4 animate-spin" />
+                                    ) : (
+                                      <Stars className="size-4" />
+                                    )}
+                                    {claimRewardMutation.isPending
+                                      ? "Claiming Reward..."
+                                      : "Claim Reward"}
+                                  </Button>
+                                )}
                             </div>
                           );
                         })}

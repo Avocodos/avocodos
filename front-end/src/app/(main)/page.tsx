@@ -29,18 +29,18 @@ export function generateMetadata(): Metadata {
       canonical: "/"
     },
     openGraph: {
-      title: "Home - Avocodos",
+      title: "Home ",
       description:
         "Explore the latest posts and connect with others on Avocodos.",
       url: "https://avocodos.com",
       siteName: "Avocodos",
-      images: ["/api/og?page=home"],
+      images: ["/auth.webp"],
       locale: "en_US",
       type: "website"
     },
     twitter: {
       card: "summary_large_image",
-      title: "Home - Avocodos",
+      title: "Home",
       description:
         "Welcome to Avocodos - The Web3 Social Platform For Aspiring Developers.",
       creator: "@HarjjotSinghh",

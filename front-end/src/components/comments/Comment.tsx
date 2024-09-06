@@ -53,7 +53,7 @@ export default function Comment({ comment }: CommentProps) {
             </Link>
           </UserTooltip>
           <span className="text-xs text-foreground/80">
-            Commented {formatRelativeDate(comment.createdAt)}
+            {formatRelativeDate(comment.createdAt)}
           </span>
         </div>
         <Linkify>

@@ -163,3 +163,16 @@ export const getUserData = async ({ userId, username }: { userId?: string, usern
   }
   return null;
 };
+
+export type CountType = `${number}B` | `${number}M` | `${number}K` | `${number}`;
+
+export const getKandMString = (count: number): CountType => {
+  if (count >= 1000000000) {
+    return `${(Math.floor(count / 100000000) / 10).toFixed((count % 1000000000 === 0) ? 0 : 1)}B` as CountType;
+  } else if (count >= 1000000) {
+    return `${(Math.floor(count / 100000) / 10).toFixed((count % 1000000 === 0) ? 0 : 1)}M` as CountType;
+  } else if (count >= 1000) {
+    return `${(Math.floor(count / 100) / 10).toFixed((count % 1000 === 0) ? 0 : 1)}K` as CountType;
+  }
+  return count.toString() as CountType;
+};

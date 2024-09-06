@@ -162,7 +162,9 @@ export default function EditProfileDialog({
                   type="submit"
                   loading={mutation.isPending}
                 >
-                  <Save className="size-4" />
+                  <Save
+                    className={`size-4 ${mutation.isPending ? "hidden" : "block"}`}
+                  />
                   Save Changes
                 </LoadingButton>
               </DialogFooter>

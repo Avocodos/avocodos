@@ -14,6 +14,7 @@ import {
 import {
   formatDatePretty,
   formatNumber,
+  getKandMString,
   getMostProminentColorFromImage,
   rgbToHex
 } from "@/lib/utils";
@@ -286,7 +287,7 @@ interface UserProfileProps {
 
 async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
   const followerInfo: FollowerInfo = {
-    followers: user._count.followers,
+    followers: getKandMString(user._count.followers),
     isFollowedByUser: user.followers.some(
       ({ followerId }) => followerId === loggedInUserId
     )
@@ -309,17 +310,30 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
           <div className="me-auto w-full space-y-3">
             <div className="w-full">
               <h5 className="inline-flex w-full items-start justify-between text-primary-1000 dark:text-primary-0">
-                <div className="flex flex-col gap-2">
-                  {user.displayName}
-                  <p className="-mt-1.5 text-sm font-normal opacity-80">
-                    @{user.username}
-                  </p>
-                  <p className="-mt-1.5 mb-2 flex items-center gap-0.5 text-xs font-normal opacity-80">
-                    <Clock className="size-3" /> Member since{" "}
-                    {formatDatePretty(user.createdAt)}
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col">
+                    <h5>{user.displayName}</h5>
+                    <p className="text-sm font-normal opacity-80">
+                      @{user.username}
+                    </p>
+                  </div>
+                  {user.bio && (
+                    <>
+                      <Linkify>
+                        <p className="overflow-hidden whitespace-pre-line break-words text-sm font-normal">
+                          {user.bio}
+                        </p>
+                      </Linkify>
+                    </>
+                  )}
+                  <p className="mb-2 flex items-center gap-0.5 text-sm font-normal">
+                    <Clock className="size-4" />
+                    <span className="text-foreground/80">
+                      Member since {formatDatePretty(user.createdAt)}
+                    </span>
                   </p>
                   {user.id === loggedInUserId && (
-                    <EditProfileButton user={user} />
+                    <EditProfileButton user={user} className="mb-4" />
                   )}
                 </div>
                 <div className="grid grid-cols-1 gap-2">
@@ -332,23 +346,14 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
                   <RewardsButton user={user} />
                 </div>
               </h5>
-              {user.bio && (
-                <>
-                  <Linkify>
-                    <div className="mt-4 overflow-hidden whitespace-pre-line break-words text-sm">
-                      {user.bio}
-                    </div>
-                  </Linkify>
-                </>
-              )}
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <PostsCount count={user._count.posts} />
               <FollowerCount userId={user.id} initialState={followerInfo} />
               <FollowingCount
                 userId={user.id}
                 initialState={{
-                  followingCount: user.following.length
+                  followingCount: getKandMString(user.following.length)
                 }}
               />
             </div>

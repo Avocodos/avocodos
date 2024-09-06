@@ -1,4 +1,5 @@
 import { Asset, Community, CommunityRole, Course, Notification, Prisma } from "@prisma/client";
+import { CountType } from "./utils";
 
 export function getUserDataSelect(loggedInUserId: string) {
   return {
@@ -204,12 +205,12 @@ export interface NotificationsPage {
 export type NotificationType = Notification["type"];
 
 export interface FollowerInfo {
-  followers: number;
+  followers: CountType;
   isFollowedByUser: boolean;
 }
 
 export interface FollowingInfo {
-  followingCount: number;
+  followingCount: CountType;
 }
 
 export interface LikeInfo {

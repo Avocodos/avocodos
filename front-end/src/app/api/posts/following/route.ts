@@ -9,17 +9,16 @@ const redis = Redis.fromEnv();
 const CACHE_TTL = 60 * 5; // 5 minutes
 const PAGE_SIZE = 10;
 
-async function retryRequest(req: NextRequest, retries: number = 3, interval: number = 1000): Promise<NextResponse> {
-  if (retries <= 0) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-
+async function retryFunction(fun: () => Promise<any>, retries: number = 3, delay: number = 1000) {
   try {
-    return NextResponse.json(await fetch(req));
+    return await fun();
   } catch (error) {
-    console.error(`Retry attempt failed: ${error}`);
-    await new Promise(resolve => setTimeout(resolve, interval));
-    return retryRequest(req, retries - 1, interval);
+    if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return retryFunction(fun, retries - 1, delay * 2);
+    } else {
+      throw error;
+    }
   }
 }
 
@@ -27,7 +26,7 @@ async function retryRequest(req: NextRequest, retries: number = 3, interval: num
 export async function GET(req: NextRequest) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-    const { user } = await validateRequest();
+    const { user } = await retryFunction(validateRequest);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
