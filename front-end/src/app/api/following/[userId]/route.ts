@@ -1,6 +1,7 @@
 import { FollowingInfo } from "@/lib/types";
 import { getKandMString } from "@/lib/utils";
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 async function retryFunction(fun: () => Promise<any>, retries: number = 3, delay: number = 1000) {
     try {
