@@ -110,6 +110,7 @@ export default function PostEditor({
           resetMediaUploads();
           // Reset selected badge
           setSelectedBadge(null);
+          setInput("");
           // Invalidate the community posts query
           queryClient.invalidateQueries({
             queryKey: ["community-posts", communityName]
