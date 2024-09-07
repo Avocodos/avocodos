@@ -93,14 +93,20 @@ export default function Post({
   };
 
   const link = extractLink(post.content ?? "");
-
+  console.log("link: ", link);
   useEffect(() => {
     const fetchLinkEmbed = async () => {
       if (link && !linkEmbed) {
         try {
+          console.log("Fetching link embed for:", link);
           const response = await kyInstance.get(
             `${BASE_URL}/api/link-preview?url=${link}`
           );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
           const data = await response.json<{
             title: string;
             description: string;
@@ -108,6 +114,8 @@ export default function Post({
             themeColor: string;
             favicon: string;
           }>();
+
+          console.log("Link embed data:", data);
           setLinkEmbed({
             url: link,
             title: data.title,
