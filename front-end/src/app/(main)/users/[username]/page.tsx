@@ -309,7 +309,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
         <div className="flex w-full flex-wrap gap-3 sm:flex-nowrap">
           <div className="me-auto w-full space-y-3">
             <div className="w-full">
-              <h5 className="inline-flex w-full items-start justify-between text-primary-1000 dark:text-primary-0">
+              <div className="inline-flex w-full flex-col items-start justify-between text-primary-1000 dark:text-primary-0 md:flex-row">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col">
                     <h5>{user.displayName}</h5>
@@ -345,7 +345,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
                   )}
                   <RewardsButton user={user} />
                 </div>
-              </h5>
+              </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <PostsCount count={user._count.posts} />
