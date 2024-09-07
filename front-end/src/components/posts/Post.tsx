@@ -7,7 +7,7 @@ import { CommunityRole, Media, User } from "@prisma/client";
 import { Crown, Edit, ExternalLink, MessageSquare, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import Comments from "../comments/Comments";
 import Linkify from "../Linkify";
 import UserAvatar from "../UserAvatar";
@@ -94,30 +94,36 @@ export default function Post({
 
   const link = extractLink(post.content ?? "");
 
-  // Fetch link preview data (you can use a service like LinkPreview API)
-  if (link && !linkEmbed) {
-    kyInstance
-      .get(`${BASE_URL}/api/link-preview?url=${link}`)
-      .then((response) =>
-        response.json<{
-          title: string;
-          description: string;
-          image: string;
-          themeColor: string;
-          favicon: string;
-        }>()
-      )
-      .then((data) => {
-        setLinkEmbed({
-          url: link,
-          title: data.title,
-          description: data.description,
-          image: data.image,
-          themeColor: data.themeColor,
-          favicon: data.favicon
-        });
-      });
-  }
+  useEffect(() => {
+    const fetchLinkEmbed = async () => {
+      if (link && !linkEmbed) {
+        try {
+          const response = await kyInstance.get(
+            `${BASE_URL}/api/link-preview?url=${link}`
+          );
+          const data = await response.json<{
+            title: string;
+            description: string;
+            image: string;
+            themeColor: string;
+            favicon: string;
+          }>();
+          setLinkEmbed({
+            url: link,
+            title: data.title,
+            description: data.description,
+            image: data.image,
+            themeColor: data.themeColor,
+            favicon: data.favicon
+          });
+        } catch (error) {
+          console.error("Error fetching link embed:", error);
+        }
+      }
+    };
+
+    fetchLinkEmbed();
+  }, [link, linkEmbed]);
 
   return (
     <>
@@ -321,77 +327,4 @@ function CommentButton({ post, onClick }: CommentButtonProps) {
 interface UserTooltipProps {
   children: React.ReactNode;
   username: string;
-}
-
-function UserTooltip2({ children, username }: UserTooltipProps) {
-  const { user: loggedInUser } = useSession();
-  const queryClient = useQueryClient();
-
-  const { data: userData, isLoading } = useQuery({
-    queryKey: ["user-data", username],
-    queryFn: () =>
-      kyInstance.get(`/api/users/username/${username}`).json<UserData>()
-  });
-  const isFollowedByUser = userData?.followers
-    ? userData?.followers.some(
-        (follower) => follower.followerId === loggedInUser.id
-      )
-    : false;
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="w-80 p-4">
-          {isLoading ? (
-            <p>Loading user data...</p>
-          ) : userData ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <UserAvatar avatarUrl={userData.avatarUrl} size={48} />
-                  <div>
-                    <h5>{userData.displayName}</h5>
-                    <p className="text-sm text-muted-foreground">
-                      @{userData.username}
-                    </p>
-                  </div>
-                </div>
-                {userData.id !== loggedInUser.id && (
-                  <FollowButton
-                    userId={userData.id}
-                    initialState={{
-                      followers: getKandMString(userData._count.followers),
-                      isFollowedByUser: userData.following.some(
-                        ({ followingId }) => followingId === userData.id
-                      )
-                    }}
-                  />
-                )}
-              </div>
-              {userData.bio && (
-                <Linkify>
-                  <div className="line-clamp-6 whitespace-pre-line text-pretty break-words text-base text-foreground/80">
-                    {userData.bio}
-                  </div>
-                </Linkify>
-              )}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <FollowerCount
-                  userId={userData.id}
-                  initialState={{
-                    followers: getKandMString(userData._count.followers),
-                    isFollowedByUser: isFollowedByUser!
-                  }}
-                />
-                <PostsCount count={userData._count.posts} />
-              </div>
-            </div>
-          ) : (
-            <p>User not found</p>
-          )}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
 }
