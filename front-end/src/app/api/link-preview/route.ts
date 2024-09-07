@@ -4,8 +4,19 @@ import { webscrap } from 'node-webscrap';
 
 const redis = Redis.fromEnv();
 
+export async function OPTIONS(req: NextRequest) {
+    return NextResponse.json(null, {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': '*',
+        },
+    });
+}
+
 export async function GET(req: NextRequest) {
     const url = req.nextUrl.searchParams.get('url');
+    console.log('Received request for URL:', url); // Debugging log
     const cacheKey = `link-preview:${url}`;
 
     const cachedData = await redis.get<string>(cacheKey);
