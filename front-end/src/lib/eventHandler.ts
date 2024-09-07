@@ -27,7 +27,7 @@ export async function handleUserAction(userId: string, actionType: RewardRequire
         if (!userReward || !userReward.claimed) {
             if (percentage >= 100) {
                 await createNotification(userId, reward.id, reward.name, 100);
-            } else if (percentage >= 75) {
+            } else if (percentage >= 90) {
                 await createNotification(userId, reward.id, reward.name, percentage);
             }
         }

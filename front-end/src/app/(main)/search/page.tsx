@@ -109,10 +109,6 @@ export default function Page({ searchParams: { q } }: PageProps) {
             Search results for{" "}
             <span className="-ml-1.5 text-primary underline">{q}</span>
           </h4>
-          <span className="text-sm text-foreground/80">
-            {getKandMString(q.length)} results found for{" "}
-            <span className="font-bold">&quot;{q}&quot;</span>
-          </span>
         </div>
         <SearchResults query={q} />
       </div>

@@ -306,8 +306,8 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
         />
       </div>
       <div className="p-6 pt-0">
-        <div className="flex w-full flex-wrap gap-3 sm:flex-nowrap">
-          <div className="me-auto w-full space-y-3">
+        <div className="flex w-full flex-wrap gap-4 sm:flex-nowrap">
+          <div className="me-auto w-full space-y-4">
             <div className="w-full">
               <div className="inline-flex w-full flex-col items-start justify-between text-primary-1000 dark:text-primary-0 md:flex-row">
                 <div className="flex flex-col gap-4">
@@ -333,7 +333,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
                     </span>
                   </p>
                   {user.id === loggedInUserId && (
-                    <EditProfileButton user={user} className="mb-4" />
+                    <EditProfileButton user={user} className="mb-2" />
                   )}
                 </div>
                 <div className="grid grid-cols-1 gap-2">
@@ -347,7 +347,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="xs:grid-cols-3 grid grid-cols-2 gap-4">
               <PostsCount count={user._count.posts} />
               <FollowerCount userId={user.id} initialState={followerInfo} />
               <FollowingCount

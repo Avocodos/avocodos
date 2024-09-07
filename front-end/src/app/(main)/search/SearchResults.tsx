@@ -7,6 +7,7 @@ import kyInstance from "@/lib/ky";
 import { PostsPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Spinner from "@/components/Spinner";
+import { HTTPError } from "ky";
 
 interface SearchResultsProps {
   query: string;
@@ -19,7 +20,8 @@ export default function SearchResults({ query }: SearchResultsProps) {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status
+    status,
+    error
   } = useInfiniteQuery({
     queryKey: ["post-feed", "search", query],
     queryFn: ({ pageParam }) =>
@@ -30,7 +32,13 @@ export default function SearchResults({ query }: SearchResultsProps) {
             ...(pageParam ? { cursor: pageParam } : {})
           }
         })
-        .json<PostsPage>(),
+        .json<PostsPage>()
+        .catch((err: HTTPError) => {
+          if (err.response.status === 404) {
+            return { posts: [], nextCursor: null };
+          }
+          throw err;
+        }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     gcTime: 0
@@ -51,6 +59,13 @@ export default function SearchResults({ query }: SearchResultsProps) {
   }
 
   if (status === "error") {
+    if (error instanceof HTTPError && error.response.status === 404) {
+      return (
+        <p className="text-center text-foreground/80">
+          No results found for this query.
+        </p>
+      );
+    }
     return (
       <p className="text-center text-destructive">
         An error occurred while loading posts.

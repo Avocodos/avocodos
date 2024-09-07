@@ -391,7 +391,7 @@ export default function RewardsModal({
                                             (progress /
                                               userReward.reward.requirement) *
                                               100
-                                          ) > 75 && (
+                                          ) > 85 && (
                                             <span className="text-primary/80">
                                               - You&apos;re almost there!
                                             </span>
