@@ -75,9 +75,11 @@ export default function PostEditor({
         placeholder: placeholderText ?? "What's on your mind?"
       })
     ],
+    autofocus: true,
     onUpdate: ({ editor }) => {
       setInput(editor.getText({ blockSeparator: "\n" })); // Update input on editor change
-    }
+    },
+    immediatelyRender: false
   });
 
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
@@ -144,10 +146,16 @@ export default function PostEditor({
   }
 
   function onPaste(e: ClipboardEvent<HTMLInputElement>) {
-    const files = Array.from(e.clipboardData.items)
-      .filter((item) => item.kind === "file")
-      .map((item) => item.getAsFile()) as File[];
-    startUpload(files);
+    // check if the clipboard data contains media (image or video)
+    if (
+      e.clipboardData.types.includes("image") ||
+      e.clipboardData.types.includes("video")
+    ) {
+      const files = Array.from(e.clipboardData.items)
+        .filter((item) => item.kind === "file")
+        .map((item) => item.getAsFile()) as File[];
+      startUpload(files);
+    }
   }
 
   // useEffect(() => {
@@ -232,8 +240,6 @@ export default function PostEditor({
           className="px-4"
           size={"sm"}
         >
-          {console.log(input.trim().length) as React.ReactNode}
-          {console.log(input) as React.ReactNode}
           Post
         </LoadingButton>
       </div>

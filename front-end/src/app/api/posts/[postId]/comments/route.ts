@@ -27,12 +27,6 @@ export async function GET(
 ) {
   try {
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
-    const cacheKey = `comments:${postId}:${cursor}`;
-
-    const cachedComments = await redis.get<string>(cacheKey);
-    if (cachedComments) {
-      return Response.json(JSON.parse(JSON.stringify(cachedComments)));
-    }
 
     const pageSize = 5;
 
@@ -64,9 +58,8 @@ export async function GET(
     const data: CommentsPage = {
       comments: comments.length > pageSize ? comments.slice(1) : comments,
       previousCursor,
+      commentCount: comments.length,
     };
-
-    await redis.set(cacheKey, JSON.stringify(data), { ex: 60 * 60 * 24 });
 
     await retryFetch(async () => await handleUserAction(user.id, "COMMENTS"), 3, 5000);
 

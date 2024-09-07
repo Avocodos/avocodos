@@ -22,11 +22,11 @@ export default function CommentInput({ post }: CommentInputProps) {
     mutation.mutate(
       {
         post,
-        content: input,
+        content: input
       },
       {
-        onSuccess: () => setInput(""),
-      },
+        onSuccess: () => setInput("")
+      }
     );
   }
 

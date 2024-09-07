@@ -22,9 +22,40 @@ export async function GET(
         }
 
         // Fetch all counts in a single query
-        const userCounts = await getUserRewardCounts(userId);
-
-        return NextResponse.json(userCounts);
+        const userRewards = await prisma.userReward.findMany({
+            where: {
+                userId: userId,
+                NOT: {
+                    reward: {
+                        description: "Welcome to Avocodos"
+                    }
+                }
+            },
+            select: {
+                id: true,
+                claimed: true,
+                reward: {
+                    select: {
+                        id: true,
+                        name: true,
+                        description: true,
+                        requirementType: true,
+                        imageUrl: true,
+                        requirement: true,
+                        _count: {
+                            select: {
+                                userRewards: true
+                            }
+                        }
+                    }
+                },
+                progress: true,
+                rewardId: true,
+                userId: true,
+            }
+        });
+        console.log("userRewards: ", userRewards);
+        return NextResponse.json(userRewards);
     } catch (error) {
         console.error('Error fetching user reward counts:', error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

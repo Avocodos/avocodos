@@ -167,6 +167,7 @@ export type CommentData = Prisma.CommentGetPayload<{
 
 export interface CommentsPage {
   comments: CommentData[];
+  commentCount: number;
   previousCursor: string | null;
 }
 

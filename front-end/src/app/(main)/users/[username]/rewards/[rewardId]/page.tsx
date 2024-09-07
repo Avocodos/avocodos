@@ -27,13 +27,8 @@ async function getReward(username: string, rewardId: string) {
     }
   });
 
-  console.log("reward", reward);
-  console.log("username", username);
-  console.log("reward.user.username", reward?.user.username);
-  console.log("reward.user", reward?.user);
 
   if (!reward || reward.user.username !== username) {
-    console.log("here");
     notFound();
   }
 

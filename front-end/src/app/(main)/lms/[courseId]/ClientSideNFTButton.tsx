@@ -32,7 +32,6 @@ export default function ClientSideNFTButton({
       }
 
       const data = await response.json();
-      console.log("NFT minted and transferred:", data.nft);
       toast({
         title: "NFT minted successfully!",
         description: `You can now view your NFT in your wallet (${userData.walletAddress}).`

@@ -38,6 +38,10 @@ interface RewardsModalProps {
   user: UserData;
 }
 
+interface ExtendedUserReward extends UserReward {
+  reward: Reward;
+}
+
 export default function RewardsModal({
   isOpen,
   onClose,
@@ -48,17 +52,21 @@ export default function RewardsModal({
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const fetchRewards = async (): Promise<Record<string, Reward[]>> => {
-    const data = await kyInstance.get("/api/rewards").json<Reward[]>();
+  const fetchRewards = async (): Promise<
+    Record<string, ExtendedUserReward[]>
+  > => {
+    const data = await kyInstance
+      .get(`/api/rewards/user/${user.id}`)
+      .json<ExtendedUserReward[]>();
     const res = data.reduce(
       (acc, reward) => {
-        if (!acc[reward.requirementType]) {
-          acc[reward.requirementType] = [];
+        if (!acc[reward.reward.requirementType]) {
+          acc[reward.reward.requirementType] = [];
         }
-        acc[reward.requirementType].push(reward);
+        acc[reward.reward.requirementType].push(reward);
         return acc;
       },
-      {} as Record<string, Reward[]>
+      {} as Record<string, ExtendedUserReward[]>
     );
     return res;
   };
@@ -73,11 +81,11 @@ export default function RewardsModal({
     return data;
   };
 
-  const fetchUserRewards = async (): Promise<
+  const fetchUserRewardsCount = async (): Promise<
     Record<RewardRequirementType, number>
   > => {
     const data = await kyInstance
-      .get(`/api/rewards/user/${user.id}`)
+      .get(`/api/rewards/user/${user.id}/count`)
       .json<Record<RewardRequirementType, number>>();
     return data;
   };
@@ -94,12 +102,12 @@ export default function RewardsModal({
   });
 
   const {
-    data: userRewards,
+    data: userRewardsCount,
     isLoading: isUserRewardsLoading,
     error: userRewardsError
   } = useQuery({
-    queryKey: ["userRewards", user.id],
-    queryFn: fetchUserRewards,
+    queryKey: ["userRewardsCount", user.id],
+    queryFn: fetchUserRewardsCount,
     enabled: isOpen
   });
 
@@ -170,9 +178,10 @@ export default function RewardsModal({
     (total, rewards) => {
       return (
         total +
-        rewards.filter((reward: Reward) => {
-          const progress = userRewards?.[reward.requirementType] || 0;
-          return progress >= reward.requirement;
+        rewards.filter((reward: ExtendedUserReward) => {
+          const progress =
+            userRewardsCount?.[reward.reward.requirementType] || 0;
+          return progress >= reward.reward.requirement;
         }).length
       );
     },
@@ -242,7 +251,7 @@ export default function RewardsModal({
             {!isLoading &&
               !isUserRewardsLoading &&
               rewardsByCategory &&
-              userRewards &&
+              userRewardsCount &&
               Object.entries(rewardsByCategory || {})
                 .sort(([a], [b]) => {
                   const order = [
@@ -262,58 +271,63 @@ export default function RewardsModal({
                 })
                 .map(([category, rewards]) => (
                   <div key={category}>
-                    {console.log(rewards) as React.ReactNode}
-                    {
-                      console.log(
-                        "userClaimedRewards",
-                        userClaimedRewards
-                      ) as React.ReactNode
-                    }
                     <h4 className="mb-4">{capitalizeWords(category)}</h4>
                     <div className="grid gap-8">
                       {rewards
-                        .sort((a, b) => a.requirement - b.requirement)
-                        .map((reward: any) => {
+                        .sort(
+                          (a, b) => a.reward.requirement - b.reward.requirement
+                        )
+                        .map((userReward: ExtendedUserReward) => {
                           const progress =
-                            userRewards?.[
-                              reward.requirementType as RewardRequirementType
+                            userRewardsCount?.[
+                              userReward.reward
+                                .requirementType as RewardRequirementType
                             ] || 0;
 
                           const percentage = Math.min(
-                            Math.floor((progress / reward.requirement) * 100),
+                            Math.floor(
+                              (progress / userReward.reward.requirement) * 100
+                            ),
                             100
                           );
 
                           // Always show as claimed if the reward ID matches
                           const isClaimed =
-                            reward.id === AVOCODOS_WELCOME_REWARD_ID ||
+                            userReward.reward.id ===
+                              AVOCODOS_WELCOME_REWARD_ID ||
                             userClaimedRewards?.some(
                               (claimedReward) =>
-                                claimedReward.rewardId === reward.id
+                                claimedReward.rewardId === userReward.reward.id
                             );
 
                           // Update the grayscale condition
                           const grayscaleClass = isClaimed
                             ? ""
-                            : reward.id === AVOCODOS_WELCOME_REWARD_ID
+                            : userReward.reward.id ===
+                                AVOCODOS_WELCOME_REWARD_ID
                               ? ""
                               : "grayscale";
 
-                          console.log("reward", reward);
-                          console.log("isClaimed", isClaimed);
                           return (
                             <div
-                              key={reward.id}
+                              key={userReward.reward.id}
                               className="flex cursor-pointer flex-col items-start gap-4 sm:flex-row"
-                              onClick={() => setSelectedReward(reward)}
+                              onClick={() =>
+                                setSelectedReward(userReward.reward)
+                              }
                             >
                               <div className="relative size-36 cursor-pointer md:size-28">
                                 <div className="relative h-full w-full overflow-hidden rounded-full">
                                   {/* Colored image (bottom layer) */}
                                   <img
                                     draggable={false}
-                                    src={reward.imageUrl ?? "/auth.webp"}
-                                    alt={"Avocodos Reward - " + reward.name}
+                                    src={
+                                      userReward.reward.imageUrl ?? "/auth.webp"
+                                    }
+                                    alt={
+                                      "Avocodos Reward - " +
+                                      userReward.reward.name
+                                    }
                                     className={`select-none object-cover ${grayscaleClass}`}
                                   />
                                   {/* Grayscale image with mask (top layer) */}
@@ -322,7 +336,7 @@ export default function RewardsModal({
                                     style={{
                                       clipPath: isClaimed
                                         ? "inset(0 0 0 0)"
-                                        : reward.id ===
+                                        : userReward.reward.id ===
                                             AVOCODOS_WELCOME_REWARD_ID
                                           ? `inset(0 0 ${percentage}% 0)`
                                           : `inset(0 0 0 0)`,
@@ -331,8 +345,14 @@ export default function RewardsModal({
                                   >
                                     <img
                                       draggable={false}
-                                      src={reward.imageUrl ?? "/auth.webp"}
-                                      alt={"Avocodos Reward - " + reward.name}
+                                      src={
+                                        userReward.reward.imageUrl ??
+                                        "/auth.webp"
+                                      }
+                                      alt={
+                                        "Avocodos Reward - " +
+                                        userReward.reward.name
+                                      }
                                       className={`size-full select-none object-cover ${grayscaleClass}`}
                                     />
                                   </div>
@@ -343,21 +363,13 @@ export default function RewardsModal({
                               >
                                 <div className="w-fit">
                                   <h5 className="w-fit font-semibold">
-                                    {reward.name.replace("_", " ")}
+                                    {userReward.reward.name.replace("_", " ")}
                                   </h5>
                                   <p className="w-fit text-sm text-foreground/80">
-                                    {reward.description}
+                                    {userReward.reward.description}
                                   </p>
                                 </div>
-                                {isClaimed ? (
-                                  <Badge
-                                    variant={"light"}
-                                    className="inline-flex h-fit w-fit items-center gap-2 text-xs text-primary/80"
-                                  >
-                                    <CheckCircle className="size-3" />
-                                    Reward claimed successfully
-                                  </Badge>
-                                ) : (
+                                {isClaimed ? null : (
                                   <>
                                     {percentage < 100 ? (
                                       <div>
@@ -366,15 +378,18 @@ export default function RewardsModal({
                                           className="mt-2 flex-1"
                                         />
                                         <p className="mt-1 text-sm">
-                                          {progress} / {reward.requirement}{" "}
+                                          {progress} /{" "}
+                                          {userReward.reward.requirement}{" "}
                                           completed (
                                           {Math.round(
-                                            (progress / reward.requirement) *
+                                            (progress /
+                                              userReward.reward.requirement) *
                                               100
                                           )}
                                           %){" "}
                                           {Math.round(
-                                            (progress / reward.requirement) *
+                                            (progress /
+                                              userReward.reward.requirement) *
                                               100
                                           ) > 75 && (
                                             <span className="text-primary/80">
@@ -389,14 +404,15 @@ export default function RewardsModal({
                               </div>
                               {percentage >= 100 &&
                                 !isClaimed &&
-                                user.id !== reward.userID && (
+                                user.id !== userReward.userId && (
                                   <Badge variant={"light"}>
                                     Owned but not claimed yet.
                                   </Badge>
                                 )}
                               {percentage >= 100 &&
                                 isClaimed &&
-                                user.id !== reward.userID && (
+                                userReward.reward.id !==
+                                  AVOCODOS_WELCOME_REWARD_ID && (
                                   <Badge
                                     variant={"light"}
                                     className="inline-flex h-fit w-fit items-center gap-2 text-xs text-primary/80"
@@ -405,12 +421,24 @@ export default function RewardsModal({
                                     Reward claimed successfully
                                   </Badge>
                                 )}
-                              {percentage === 100 &&
+                              {userReward.reward.id ===
+                                AVOCODOS_WELCOME_REWARD_ID && (
+                                <Badge
+                                  variant={"light"}
+                                  className="inline-flex h-fit w-fit items-center gap-2 text-xs text-primary/80"
+                                >
+                                  <CheckCircle className="size-3" />
+                                  Reward claimed successfully
+                                </Badge>
+                              )}
+                              {percentage >= 100 &&
                                 !isClaimed &&
-                                user.id === reward.userId && (
+                                user.id === userReward.userId && (
                                   <Button
                                     onClick={() =>
-                                      claimRewardMutation.mutate(reward.id)
+                                      claimRewardMutation.mutate(
+                                        userReward.reward.id
+                                      )
                                     }
                                     className="inline-flex w-full max-w-[180px] items-center gap-2 rounded-full"
                                     disabled={claimRewardMutation.isPending}
@@ -443,7 +471,7 @@ export default function RewardsModal({
           username={userData?.username ?? ""}
           reward={selectedReward}
           progress={
-            userRewards?.[
+            userRewardsCount?.[
               selectedReward.requirementType as RewardRequirementType
             ] || 0
           }

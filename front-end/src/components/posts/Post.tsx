@@ -1,50 +1,25 @@
 "use client";
 
 import { useSession } from "@/app/(main)/SessionProvider";
-import { FollowerInfo, PostData, UserData } from "@/lib/types";
+import { CommentsPage, FollowerInfo, PostData, UserData } from "@/lib/types";
 import { cn, formatRelativeDate, getKandMString } from "@/lib/utils";
 import { CommunityRole, Media, User } from "@prisma/client";
 import { Crown, Edit, ExternalLink, MessageSquare, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, useRef } from "react";
 import Comments from "../comments/Comments";
 import Linkify from "../Linkify";
 import UserAvatar from "../UserAvatar";
 import BookmarkButton from "./BookmarkButton";
 import LikeButton from "./LikeButton";
 import PostMoreButton from "./PostMoreButton";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "../ui/use-toast";
+
 import { Badge } from "../ui/badge";
-import prisma from "@/lib/prisma";
 import { HTTPError } from "ky";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import FollowerCount from "../FollowerCount";
-import PostsCount from "./PostsCount";
-import FollowButton from "../FollowButton";
 import UserTooltip from "../UserTooltip";
 import LinkEmbed from "../LinkEmbed";
 import { BASE_URL } from "@/lib/constants";
@@ -84,7 +59,7 @@ export default function Post({
     themeColor: string;
     favicon: string;
   } | null>(null);
-
+  const contentRef = useRef<HTMLDivElement>(null);
   // Move extractLink function inside useEffect
   useEffect(() => {
     const extractLink = async (content: string) => {
@@ -122,20 +97,13 @@ export default function Post({
     }
   }, [post.content]);
 
-  // Remove this line
-  // const link = extractLink(post.content ?? "");
-  // console.log("link: ", link);
-
   return (
     <>
       <article className="group/post space-y-3 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
         <div className="flex justify-between gap-3">
           <div className="flex flex-wrap gap-3">
             <UserTooltip user={post.user as unknown as UserData}>
-              <Link
-                className="flex items-center gap-2"
-                href={`/users/${post.user.username}`}
-              >
+              <div className="flex items-center gap-2">
                 <UserAvatar avatarUrl={post.user.avatarUrl} />
                 <div className="flex flex-col gap-0">
                   <Link
@@ -152,7 +120,7 @@ export default function Post({
                     {formatRelativeDate(post.createdAt)}
                   </Link>
                 </div>
-              </Link>
+              </div>
             </UserTooltip>
             <div>
               <div className="flex flex-row flex-wrap items-center gap-2">
@@ -207,7 +175,7 @@ export default function Post({
         )}
 
         <Linkify>
-          <div className="whitespace-pre-line break-words">
+          <div ref={contentRef} className="whitespace-pre-line break-words">
             {post.content ?? ""}
           </div>
         </Linkify>
@@ -315,12 +283,19 @@ interface CommentButtonProps {
 }
 
 function CommentButton({ post, onClick }: CommentButtonProps) {
+  const queryClient = useQueryClient();
+  const commentsData = queryClient.getQueryData<CommentsPage>([
+    "comments",
+    post.id
+  ]);
+
+  const commentCount = commentsData?.commentCount ?? post._count.comments;
+
   return (
     <button onClick={onClick} className="flex items-center gap-2">
       <MessageSquare className="size-5" />
       <span className="text-sm font-medium tabular-nums">
-        {post._count.comments}{" "}
-        <span className="hidden sm:inline">comments</span>
+        {commentCount} <span className="hidden sm:inline">comments</span>
       </span>
     </button>
   );

@@ -35,7 +35,6 @@ const LinkEmbed: React.FC<LinkEmbedProps> = ({
         <p className="text-base font-bold md:text-lg">{title}</p>
       </a>
       <p className="text-xs text-foreground/80 md:text-sm">{description}</p>
-      {console.log("image: ", image) as ReactNode}
       <img
         src={image}
         alt={`Link Preview Image for ${title}`}
