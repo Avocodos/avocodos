@@ -69,7 +69,10 @@ export default function Post({
       if (link) {
         try {
           const response = await kyInstance.get(
-            `${BASE_URL}/api/link-preview?url=${link}`
+            `${BASE_URL}/api/link-preview?url=${link}`,
+            {
+              mode: "no-cors"
+            }
           );
           const data = await response.json<{
             title: string;

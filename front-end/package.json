@@ -19,7 +19,7 @@
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "changelog:generate": "auto-changelog --release-summary --hide-credit --commit-limit false --config .auto-changelog --output ../CHANGELOG.md",
     "changelog:commit": "bun run changelog:generate && cd .. && git add CHANGELOG.md && git commit -m \"chore(release): update changelog\" && git push",
-    "vercel:deploy": "bun run changelog:commit && cd .. && vercel --regions bom1 --prod --logs"
+    "vercel": "bun run changelog:commit && cd .. && vercel --regions bom1 --prod --logs"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.27.1",
