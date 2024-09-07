@@ -77,7 +77,7 @@ export default function PostEditor({
     ],
     autofocus: true,
     onUpdate: ({ editor }) => {
-      setInput(editor.getText({ blockSeparator: "\n" })); // Update input on editor change
+      setInput(editor.getText({ blockSeparator: "\n" }));
     },
     immediatelyRender: false
   });
