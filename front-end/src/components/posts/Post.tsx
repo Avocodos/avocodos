@@ -23,10 +23,7 @@ import { HTTPError } from "ky";
 import UserTooltip from "../UserTooltip";
 import LinkEmbed from "../LinkEmbed";
 import { BASE_URL } from "@/lib/constants";
-import { Redis } from "@upstash/redis";
 import { webscrap } from "node-webscrap";
-
-const redis = Redis.fromEnv();
 
 interface PostProps {
   post: PostData;
@@ -71,47 +68,29 @@ export default function Post({
       const match = content.match(urlRegex);
       const link = match ? match[0] : null;
       if (link) {
-        const cacheKey = `link-preview:${link}`;
-        const cachedData = await redis.get<string>(cacheKey);
+        try {
+          const data = await webscrap(link);
+          const response = {
+            title: data.metadata.title || "",
+            description: data.metadata.description || "",
+            image: data.openGraph.image || "",
+            themeColor: data.metadata.themeColor || "",
+            favicon:
+              data.metadata.favicons && data.metadata.favicons.length > 0
+                ? data.metadata.favicons[0]
+                : ""
+          };
 
-        if (cachedData) {
-          const data = JSON.parse(cachedData);
           setLinkEmbed({
             url: link,
-            title: data.title,
-            description: data.description,
-            image: data.image,
-            themeColor: data.themeColor,
-            favicon: data.favicon
+            title: response.title,
+            description: response.description,
+            image: response.image,
+            themeColor: response.themeColor,
+            favicon: response.favicon
           });
-        } else {
-          try {
-            const data = await webscrap(link);
-            const response = {
-              title: data.metadata.title || "",
-              description: data.metadata.description || "",
-              image: data.openGraph.image || "",
-              themeColor: data.metadata.themeColor || "",
-              favicon:
-                data.metadata.favicons && data.metadata.favicons.length > 0
-                  ? data.metadata.favicons[0]
-                  : ""
-            };
-
-            await redis.set(cacheKey, JSON.stringify(response), {
-              ex: 60 * 60 * 24 * 1
-            });
-            setLinkEmbed({
-              url: link,
-              title: response.title,
-              description: response.description,
-              image: response.image,
-              themeColor: response.themeColor,
-              favicon: response.favicon
-            });
-          } catch (error) {
-            console.error("Error fetching link preview:", error);
-          }
+        } catch (error) {
+          console.error("Error fetching link preview:", error);
         }
       }
     };
