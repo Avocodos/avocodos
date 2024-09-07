@@ -11,6 +11,7 @@ import { Metadata, ResolvingMetadata, Viewport } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache, ReactNode, Suspense } from "react";
+import { getKandMString } from "@/lib/utils";
 
 interface PageProps {
   params: { postId: string };
@@ -330,7 +331,7 @@ async function UserInfoSidebar({ user }: UserInfoSidebarProps) {
         <FollowButton
           userId={user.id}
           initialState={{
-            followers: user._count.followers,
+            followers: getKandMString(user._count.followers),
             isFollowedByUser: user.followers.some(
               ({ followerId }) => followerId === loggedInUser.id
             )

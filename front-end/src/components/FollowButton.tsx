@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 import { Badge } from "./ui/badge";
 import { UserCheck, UserMinus, UserPlus } from "lucide-react";
+import { getKandMString } from "@/lib/utils";
 
 interface FollowButtonProps {
   userId: string;
@@ -37,9 +38,17 @@ export default function FollowButton({
       const previousState = queryClient.getQueryData<FollowerInfo>(queryKey);
 
       queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
-        followers:
-          (previousState?.followers || 0) +
-          (previousState?.isFollowedByUser ? -1 : 1),
+        followers: getKandMString(
+          (Number(previousState?.followers) > 1000
+            ? Number(
+                previousState?.followers.slice(
+                  0,
+                  previousState.followers.length - 1
+                )
+              )
+            : Number(previousState?.followers)) +
+            (previousState?.isFollowedByUser ? -1 : 1)
+        ),
         isFollowedByUser: !previousState?.isFollowedByUser
       }));
 

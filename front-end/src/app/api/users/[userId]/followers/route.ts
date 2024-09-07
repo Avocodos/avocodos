@@ -1,6 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { FollowerInfo } from "@/lib/types";
+import { getKandMString } from "@/lib/utils";
 
 export async function GET(
   req: Request,
@@ -39,7 +40,7 @@ export async function GET(
     }
 
     const data: FollowerInfo = {
-      followers: user._count.followers,
+      followers: getKandMString(user._count.followers),
       isFollowedByUser: !!user.followers.length,
     };
 

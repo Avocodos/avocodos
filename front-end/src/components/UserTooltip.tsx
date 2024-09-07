@@ -15,7 +15,7 @@ import {
 } from "./ui/tooltip";
 import UserAvatar from "./UserAvatar";
 import PostsCount from "./posts/PostsCount";
-import { isUserFollowed } from "@/lib/utils";
+import { getKandMString, isUserFollowed } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
 interface UserTooltipProps extends PropsWithChildren {
@@ -26,7 +26,7 @@ export default function UserTooltip({ children, user }: UserTooltipProps) {
   const { user: loggedInUser } = useSession();
 
   const followerState: FollowerInfo = {
-    followers: user._count.followers,
+    followers: getKandMString(user._count.followers),
     isFollowedByUser: user?.followers
       ? user?.followers.some(
           (follower) => follower.followerId === loggedInUser?.id
