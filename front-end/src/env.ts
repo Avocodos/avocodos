@@ -8,11 +8,17 @@ export const env = createEnv({
     STREAM_SECRET: z.string(),
     UPLOADTHING_SECRET: z.string(),
     UPLOADTHING_APP_ID: z.string(),
-    NODE_ENV: z.enum(["development", "production", "test"])
+    NODE_ENV: z.enum(["development", "production", "test"]),
+    ALLOWED_METHODS: z.string(),
+    ALLOWED_ORIGIN: z.string(),
+    ALLOWED_HEADERS: z.string(),
+    EXPOSED_HEADERS: z.string(),
+    MAX_AGE: z.string(),
+    CREDENTIALS: z.string()
   },
   client: {
     NEXT_PUBLIC_STREAM_KEY: z.string(),
-    NEXT_PUBLIC_UPLOADTHING_APP_ID: z.string()
+    NEXT_PUBLIC_UPLOADTHING_APP_ID: z.string(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -21,7 +27,13 @@ export const env = createEnv({
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
     NODE_ENV: process.env.NODE_ENV,
+    ALLOWED_METHODS: process.env.ALLOWED_METHODS,
+    ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
+    ALLOWED_HEADERS: process.env.ALLOWED_HEADERS,
+    EXPOSED_HEADERS: process.env.EXPOSED_HEADERS,
+    MAX_AGE: process.env.MAX_AGE,
+    CREDENTIALS: process.env.CREDENTIALS,
     NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
-    NEXT_PUBLIC_UPLOADTHING_APP_ID: process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID
+    NEXT_PUBLIC_UPLOADTHING_APP_ID: process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID,
   }
 });

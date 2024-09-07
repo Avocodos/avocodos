@@ -1,32 +1,46 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import { env } from '@/env';
+
+const corsOptions: {
+    allowedMethods: string[];
+    allowedOrigins: string[];
+    allowedHeaders: string[];
+    exposedHeaders: string[];
+    maxAge?: number;
+    credentials: boolean;
+} = {
+    allowedMethods: (env.ALLOWED_METHODS).split(","),
+    allowedOrigins: (env.ALLOWED_ORIGIN).split(","),
+    allowedHeaders: (env.ALLOWED_HEADERS).split(","),
+    exposedHeaders: (env.EXPOSED_HEADERS).split(","),
+    maxAge: env.MAX_AGE ? parseInt(env.MAX_AGE) : undefined,
+    credentials: env.CREDENTIALS === "true",
+};
 
 export function middleware(request: NextRequest) {
-    const pathname = request.nextUrl.pathname;
+    const response = NextResponse.next();
+    const origin = request.headers.get('origin') ?? '';
+    if (corsOptions.allowedOrigins.includes('*') || corsOptions.allowedOrigins.includes(origin)) {
+        response.headers.set('Access-Control-Allow-Origin', origin);
+    }
 
-    // Clone the request headers
+    response.headers.set("Access-Control-Allow-Credentials", corsOptions.credentials.toString());
+    response.headers.set("Access-Control-Allow-Methods", corsOptions.allowedMethods.join(","));
+    response.headers.set("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    response.headers.set("Access-Control-Expose-Headers", corsOptions.exposedHeaders.join(","));
+    response.headers.set("Access-Control-Max-Age", corsOptions.maxAge?.toString() ?? "");
+
     const requestHeaders = new Headers(request.headers);
 
-    // Set the x-invoke-path header
-    requestHeaders.set('x-invoke-path', pathname);
+    requestHeaders.set('x-invoke-path', request.nextUrl.pathname);
 
-    // Return the response with the modified headers
-    return NextResponse.next({
-        request: {
-            headers: requestHeaders,
-        },
-    });
+    return response;
 }
 
+// Config for path matching
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
         '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/api/:path*',
     ],
 };
