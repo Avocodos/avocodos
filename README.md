@@ -3,7 +3,7 @@
 [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 ---
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/green?icon=github)](https://github.com/Naereen/badges/)
-[![GitHub stars](https://badgen.net/github/stars/HarjjotSinghh/avocodos-web?color=green)](https://GitHub.com/HarjjotSinghh/avocodos-web/stargazers/)
+[![GitHub stars](https://badgen.net/github/stars/Avocodos/avocodos?color=green)](https://GitHub.com/HarjjotSinghh/avocodos-web/stargazers/)
 [![Maintainer](https://badgen.net/badge/maintainer/Harjot%20Singh%20Rana/green)](https://harjot.pro)
 [![GitHub branches](https://badgen.net/github/branches/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web)
 [![GitHub commits](https://badgen.net/github/commits/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web/commits/main)
@@ -99,20 +99,8 @@ If you encounter any bugs or have suggestions for improvements, please feel free
 5. Submit the issue.
 
 ## Contribute to this Repository
-We welcome contributions from the community! Here's how you can contribute:
 
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix:
-   ```bash
-   $ git checkout -b feature/your-feature-name
-   ```
-3. Make your changes and commit them with a clear commit message.
-4. Push your changes to your fork:
-   ```bash
-   $ git push origin feature/your-feature-name
-   ```
-5. Create a pull request from your fork to the [main repository](https://github.com/HarjjotSinghh/avocodos/pulls).
-6. Wait for review and address any feedback if necessary.
+Please read our [contribution guide](https://github.com/avocodos/avocodos/blob/master/CONTRIBUTING.md) to learn more about contributing to this project.
 
 Please ensure that your code adheres to the project's coding standards and includes appropriate tests if applicable.
 
