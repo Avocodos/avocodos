@@ -18,7 +18,7 @@
     "postinstall": "npm run prisma:generate",
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "changelog": "auto-changelog --release-summary --hide-credit --commit-limit false --config .auto-changelog --output ../CHANGELOG.md",
-    "vercel:deploy": "cd .. && vercel --regions bom1 --prod --logs"
+    "vercel:deploy": "cd .. && npm run changelog && vercel --regions bom1 --prod --logs"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.27.1",
