@@ -13,7 +13,6 @@ const nextConfig = {
     ppr: true,
     reactCompiler: true
   },
-  swcMinify: false,
   images: {
     remotePatterns: [
       {

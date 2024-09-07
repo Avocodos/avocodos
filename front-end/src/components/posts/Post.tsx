@@ -85,28 +85,17 @@ export default function Post({
     favicon: string;
   } | null>(null);
 
-  // Function to extract the first link from the post content
-  const extractLink = (content: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const match = content.match(urlRegex);
-    return match ? match[0] : null;
-  };
-
-  const link = extractLink(post.content ?? "");
-  console.log("link: ", link);
+  // Move extractLink function inside useEffect
   useEffect(() => {
-    const fetchLinkEmbed = async () => {
-      if (link && !linkEmbed) {
+    const extractLink = async (content: string) => {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const match = content.match(urlRegex);
+      const link = match ? match[0] : null;
+      if (link) {
         try {
-          console.log("Fetching link embed for:", link);
           const response = await kyInstance.get(
             `${BASE_URL}/api/link-preview?url=${link}`
           );
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
           const data = await response.json<{
             title: string;
             description: string;
@@ -114,8 +103,6 @@ export default function Post({
             themeColor: string;
             favicon: string;
           }>();
-
-          console.log("Link embed data:", data);
           setLinkEmbed({
             url: link,
             title: data.title,
@@ -125,13 +112,19 @@ export default function Post({
             favicon: data.favicon
           });
         } catch (error) {
-          console.error("Error fetching link embed:", error);
+          console.error("Error fetching link preview:", error);
         }
       }
     };
 
-    fetchLinkEmbed();
-  }, [link, linkEmbed]);
+    if (post.content && post.content !== "") {
+      extractLink(post.content);
+    }
+  }, [post.content]);
+
+  // Remove this line
+  // const link = extractLink(post.content ?? "");
+  // console.log("link: ", link);
 
   return (
     <>
@@ -212,6 +205,7 @@ export default function Post({
             <hr className="text-foreground/80" />
           </React.Fragment>
         )}
+
         <Linkify>
           <div className="whitespace-pre-line break-words">
             {post.content ?? ""}
