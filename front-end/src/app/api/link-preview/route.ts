@@ -10,7 +10,11 @@ export async function GET(req: NextRequest) {
 
     const cachedData = await redis.get<string>(cacheKey);
     if (cachedData) {
-        return NextResponse.json(JSON.parse(JSON.stringify(cachedData)));
+        return NextResponse.json(JSON.parse(JSON.stringify(cachedData)), {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+        });
     }
 
     if (!url) {
@@ -29,7 +33,11 @@ export async function GET(req: NextRequest) {
 
         await redis.set(cacheKey, JSON.stringify(response), { ex: 60 * 60 * 24 * 1 });
 
-        return NextResponse.json(response);
+        return NextResponse.json(response, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+        });
     } catch (error) {
         console.error('Error fetching link preview:', error);
         return NextResponse.json({ error: 'Failed to fetch link preview' }, { status: 500 });
