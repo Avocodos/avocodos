@@ -14,7 +14,10 @@ export const env = createEnv({
     ALLOWED_HEADERS: z.string(),
     EXPOSED_HEADERS: z.string(),
     MAX_AGE: z.string(),
-    CREDENTIALS: z.string()
+    CREDENTIALS: z.string(),
+    ABLY_API_KEY: z.string(),
+    WEAVY_API_KEY: z.string(),
+    WEAVY_API_URL: z.string(),
   },
   client: {
     NEXT_PUBLIC_STREAM_KEY: z.string(),
@@ -35,5 +38,8 @@ export const env = createEnv({
     CREDENTIALS: process.env.CREDENTIALS,
     NEXT_PUBLIC_STREAM_KEY: process.env.NEXT_PUBLIC_STREAM_KEY,
     NEXT_PUBLIC_UPLOADTHING_APP_ID: process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID,
+    ABLY_API_KEY: process.env.ABLY_API_KEY,
+    WEAVY_API_KEY: process.env.WEAVY_API_KEY,
+    WEAVY_API_URL: process.env.WEAVY_API_URL,
   }
 });

@@ -1,6 +1,5 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
 import MenuBar from "./MenuBar"; // Import the client component
 
 export default async function MenuBarServer({
@@ -18,7 +17,7 @@ export default async function MenuBarServer({
         read: false
       }
     }),
-    (await streamServerClient.getUnreadCount(user.id)).total_unread_count
+    0
   ]);
 
   return (

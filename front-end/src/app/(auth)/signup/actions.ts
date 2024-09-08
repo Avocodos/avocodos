@@ -2,7 +2,6 @@
 
 import { lucia } from "@/auth";
 import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
 import { signUpSchema, SignUpValues } from "@/lib/validation";
 import { hash } from "@node-rs/argon2";
 import { generateIdFromEntropySize } from "lucia";
@@ -73,11 +72,6 @@ export async function signUp(
           emailVerifyToken: otp,
           emailVerifyExpires: otpExpires,
         },
-      });
-      await streamServerClient.upsertUser({
-        id: userId,
-        username,
-        name: username,
       });
     });
 

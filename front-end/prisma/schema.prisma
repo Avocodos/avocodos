@@ -50,6 +50,7 @@ model User {
   joinedCommunities     Community[]          @relation("CommunityMembers")
   moderatedCommunities  Community[]          @relation("CommunityModerators")
   communityRoles        CommunityRole[]      @relation("UserRoles")
+  MessageReaction       MessageReaction[]
 
   @@map("users")
 }
@@ -356,6 +357,37 @@ model UserReward {
 
   @@unique([userId, rewardId])
   @@index([userId, rewardId])
+}
+
+model Group {
+  id         String    @id @default(cuid())
+  name       String
+  membersIds String[]
+  messages   Message[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Message {
+  id        String            @id @default(cuid())
+  content   String            @default("")
+  senderId  String            @default("")
+  groupId   String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now()) @updatedAt
+  reactions MessageReaction[]
+  group     Group?            @relation(fields: [groupId], references: [id])
+}
+
+model MessageReaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  reaction  String // e.g., "👍", "❤️", etc.
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum AssetType {

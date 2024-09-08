@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import Chat from "./Chat";
+import { validateRequest } from "@/auth";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Messages",
@@ -8,6 +10,10 @@ export const metadata: Metadata = {
   keywords: "messages, chat, friends, avocodos"
 };
 
-export default function Page() {
+export default async function Page() {
+  const { user } = await validateRequest();
+  if (!user) {
+    return notFound();
+  }
   return <Chat />;
 }

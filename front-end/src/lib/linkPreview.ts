@@ -25,8 +25,8 @@ const translations: Record<string, (o: any, v: any) => void> = {
 };
 
 const request = async (url: string): Promise<{ statusCode: number, statusMessage: string, data: string }> => {
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // CORS proxy
-    const response = await fetch(proxyUrl + url, { // Use the proxy
+    const proxyUrl = 'https://cloudflare-cors-anywhere.harjjotsinghh.workers.dev/'; // CORS proxy
+    const response = await fetch(proxyUrl + "?" + url, {
         headers: {
             "Content-Type": "application/json",
         },
