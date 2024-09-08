@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { updateRewardProgress, getUserRewards } from "@/lib/updateRewardProgress";
+import { updateRewardProgress, getUserRewards } from "@/lib/rewards";
 
 const redis = Redis.fromEnv();
 

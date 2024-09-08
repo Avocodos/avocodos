@@ -2,12 +2,12 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { getUserRewards } from "@/lib/updateRewardProgress";
+import { getUserRewards } from "@/lib/rewards";
 
 const redis = Redis.fromEnv();
-const CACHE_TTL = 120; // 120 seconds
+const CACHE_TTL = 120;
 const MAX_RETRIES = 5;
-const RETRY_DELAY = 3000; // 2 seconds
+const RETRY_DELAY = 5000;
 
 async function retryValidateRequest(retries = 4): Promise<any> {
     const result = await validateRequest();

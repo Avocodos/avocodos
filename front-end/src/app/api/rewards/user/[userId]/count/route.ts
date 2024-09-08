@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { RewardRequirementType } from "@prisma/client";
-import { getUserRewardCounts } from "@/lib/updateRewardProgress";
+import { getUserRewardCounts } from "@/lib/rewards";
 
 export async function GET(
     req: NextRequest,

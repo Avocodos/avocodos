@@ -18,7 +18,7 @@ const LinkEmbed: React.FC<LinkEmbedProps> = ({
   favicon
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-xl border-2 border-muted bg-card p-4 lg:p-6">
+    <div className="relative overflow-hidden rounded-xl border-2 border-muted bg-card p-4 pl-5 lg:p-6 lg:pl-7">
       <div
         className={`absolute left-0 top-0 h-full w-1`}
         style={{ backgroundColor: `${themeColor}` }}

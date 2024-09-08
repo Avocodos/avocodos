@@ -218,8 +218,8 @@ export default function RewardsModal({
           />
         </motion.div>
       )}
-      <DialogContent className="min-w-[90dvw] bg-background p-8 lg:min-w-[60dvw]">
-        <ScrollArea className="relative h-[400px] lg:h-[600px]">
+      <DialogContent className="h-[80dvh] min-w-[90dvw] bg-background p-8 lg:min-w-[60dvw]">
+        <ScrollArea className="relative h-full">
           <DialogHeader className="sticky top-0 z-10 bg-background/90 pb-8 backdrop-blur-sm">
             <DialogTitle asChild>
               <div className="flex items-center justify-between">

@@ -26,6 +26,8 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { RewardRequirementType } from "@prisma/client";
+import { Metadata } from "next";
+import { AUTHORIZED_INSTRUCTORS } from "@/lib/constants";
 
 // Define the schema for reward creation
 const rewardSchema = z.object({
@@ -34,18 +36,28 @@ const rewardSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters long"),
   requirement: z.number().min(1, "Requirement must be at least 1"),
-  requirementType: z.enum(
-    Object.values(RewardRequirementType) as [string, ...string[]]
-  )
+  requirementType: z.enum([
+    ...Object.values(RewardRequirementType)
+  ] as unknown as [string, ...string[]]),
+  imageUrl: z.string().optional()
 });
 
-type RewardFormValues = z.infer<typeof rewardSchema>;
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Add New Reward",
+    description: "Add a new reward to the platform",
+    keywords: "reward, add, new, platform",
+    robots: "index, follow",
+    openGraph: {
+      title: "Add New Reward",
+      description: "Add a new reward to the platform",
+      url: "https://www.avocodos.com/rewards/add",
+      images: ["/auth.webp"]
+    }
+  };
+}
 
-const authorizedInstructors = [
-  "hr4b7qe2umifrlec",
-  "sorhu7vjt7mwxlgy",
-  "m6klf54owcy6kf2u"
-];
+type RewardFormValues = z.infer<typeof rewardSchema>;
 
 export default function AddRewardForm() {
   const { user } = useSession();
@@ -58,11 +70,12 @@ export default function AddRewardForm() {
       name: "",
       description: "",
       requirement: 1,
-      requirementType: "POSTS"
+      requirementType: "OTHER",
+      imageUrl: "https://avocodos.com/auth.webp"
     }
   });
 
-  if (!user || !authorizedInstructors.includes(user.id)) {
+  if (!user || !AUTHORIZED_INSTRUCTORS.includes(user.id)) {
     return (
       <p className="text-base text-destructive">
         You are not authorized to add rewards :p
@@ -107,7 +120,10 @@ export default function AddRewardForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mr-auto max-w-full space-y-8 md:w-screen md:max-w-xl"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -164,26 +180,27 @@ export default function AddRewardForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="POSTS">Posts</SelectItem>
-                  <SelectItem value="COMMENTS">Comments</SelectItem>
-                  <SelectItem value="LIKES">Likes</SelectItem>
-                  <SelectItem value="FOLLOWS">Follows</SelectItem>
-                  <SelectItem value="ENROLLMENTS">Enrollments</SelectItem>
-                  <SelectItem value="REVIEWS">Reviews</SelectItem>
-                  <SelectItem value="COMMUNITY_JOINS">
-                    Community Joins
-                  </SelectItem>
-                  <SelectItem value="COMMUNITY_POSTS">
-                    Community Posts
-                  </SelectItem>
-                  <SelectItem value="COMMUNITY_COMMENTS">
-                    Community Comments
-                  </SelectItem>
-                  <SelectItem value="COMMUNITY_LIKES">
-                    Community Likes
-                  </SelectItem>
+                  {[...Object.values(RewardRequirementType)].map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type.replace(/_/g, " ").charAt(0).toUpperCase() +
+                        type.replace(/_/g, " ").slice(1).toLowerCase()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image URL</FormLabel>
+              <FormControl>
+                <Input placeholder="Reward image URL" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

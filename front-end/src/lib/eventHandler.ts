@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 import { RewardRequirementType } from "@prisma/client";
-import { getUserRewardCounts } from "./updateRewardProgress";
+import { getUserRewardCounts } from "./rewards";
 import { createNotification } from "./notifications"; // Assuming you have a notification function
 
 export async function handleUserAction(userId: string, actionType: RewardRequirementType) {

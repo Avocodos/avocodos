@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { CommentsPage, getCommentDataInclude } from "@/lib/types";
 import { NextRequest } from "next/server";
-import { updateRewardProgress } from "@/lib/updateRewardProgress";
+import { updateRewardProgress } from "@/lib/rewards";
 import { RewardRequirementType } from "@prisma/client";
 import { Comment } from "@prisma/client";
 import { handleUserAction } from "@/lib/eventHandler";

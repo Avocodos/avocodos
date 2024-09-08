@@ -1,6 +1,6 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import { updateRewardProgress } from "@/lib/updateRewardProgress";
+import { updateRewardProgress } from "@/lib/rewards";
 import { NextRequest } from "next/server";
 
 async function handleCommunityAction(

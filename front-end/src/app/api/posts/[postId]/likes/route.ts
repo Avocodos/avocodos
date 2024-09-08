@@ -1,7 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { LikeInfo } from "@/lib/types";
-import { updateRewardProgress } from "@/lib/updateRewardProgress";
+import { updateRewardProgress } from "@/lib/rewards";
 import { handleUserAction } from "@/lib/eventHandler";
 
 async function retryOperation(operation: () => Promise<any>, retries: number, interval: number) {

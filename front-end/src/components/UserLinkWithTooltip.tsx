@@ -18,7 +18,7 @@ export default function UserLinkWithTooltip({
   username
 }: UserLinkWithTooltipProps) {
   const { user: loggedInUser } = useSession();
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, status } = useQuery({
     queryKey: ["user-data", username],
     queryFn: async () => {
       try {
@@ -60,7 +60,9 @@ export default function UserLinkWithTooltip({
     return <span>{children}</span>;
   }
 
-  return (
+  return status !== "success" ? (
+    <span>{children}</span>
+  ) : (
     <UserTooltip user={data}>
       <Link
         href={`/users/${username}`}
