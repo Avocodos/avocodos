@@ -1,13 +1,13 @@
 "use client";
 
 import { useSession } from "@/app/(main)/SessionProvider";
-import { CommentsPage, FollowerInfo, PostData, UserData } from "@/lib/types";
-import { cn, formatRelativeDate, getKandMString } from "@/lib/utils";
-import { CommunityRole, Media, User } from "@prisma/client";
-import { Crown, Edit, ExternalLink, MessageSquare, Trash2 } from "lucide-react";
+import { CommentsPage, PostData, UserData } from "@/lib/types";
+import { cn, formatRelativeDate } from "@/lib/utils";
+import { Media } from "@prisma/client";
+import { Crown, ExternalLink, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Comments from "../comments/Comments";
 import Linkify from "../Linkify";
 import UserAvatar from "../UserAvatar";
@@ -17,13 +17,11 @@ import PostMoreButton from "./PostMoreButton";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
-
 import { Badge } from "../ui/badge";
 import { HTTPError } from "ky";
 import UserTooltip from "../UserTooltip";
 import LinkEmbed from "../LinkEmbed";
-import { BASE_URL } from "@/lib/constants";
-import { webscrap } from "node-webscrap";
+import { webscrap } from "@/lib/linkPreview";
 
 interface PostProps {
   post: PostData;
