@@ -15,5 +15,9 @@ export default async function Page() {
   if (!user) {
     return notFound();
   }
-  return <Chat />;
+  return (
+    <div className="flex items-start justify-start pt-4">
+      Messages feature is disabled temporarily. Please stay tuned for updates.
+    </div>
+  );
 }
