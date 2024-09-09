@@ -2,7 +2,6 @@
 
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
 import { getUserDataSelect } from "@/lib/types";
 import {
   updateUserProfileSchema,
@@ -24,12 +23,6 @@ export async function updateUserProfile(values: UpdateUserProfileValues) {
         bannerUrl: validatedValues.banner,
       },
       select: getUserDataSelect(user.id),
-    });
-    await streamServerClient.partialUpdateUser({
-      id: user.id,
-      set: {
-        name: validatedValues.displayName,
-      },
     });
     return updatedUser;
   });

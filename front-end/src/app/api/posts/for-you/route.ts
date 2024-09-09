@@ -5,8 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 
 
-
-
 // Initialize Redis client
 const redis = Redis.fromEnv();
 

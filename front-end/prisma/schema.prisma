@@ -46,11 +46,15 @@ model User {
   posts                 Post[]
   Review                Review[]
   sessions              Session[]
+  messages              Message[]            @relation("UserMessages")
+  channels              Channel[]            @relation("ChannelMembers")
+  reactions             Reaction[]
+  notifications         Notification[]
   assignedRoles         CommunityRole[]      @relation("AssignedRole")
   joinedCommunities     Community[]          @relation("CommunityMembers")
   moderatedCommunities  Community[]          @relation("CommunityModerators")
   communityRoles        CommunityRole[]      @relation("UserRoles")
-  MessageReaction       MessageReaction[]
+  Message               Message[]
 
   @@map("users")
 }
@@ -118,12 +122,17 @@ model Post {
 }
 
 model Media {
-  id        String    @id @default(cuid())
-  postId    String?
-  type      MediaType
-  url       String
-  createdAt DateTime  @default(now())
-  post      Post?     @relation(fields: [postId], references: [id])
+  id           String         @id @default(cuid())
+  postId       String?
+  type         MediaType
+  url          String
+  createdAt    DateTime       @default(now())
+  post         Post?          @relation(fields: [postId], references: [id])
+  messageId    String?
+  channelId    String?
+  Channel      Channel?       @relation(fields: [channelId], references: [id])
+  MessageMedia MessageMedia[]
+  Message      Message?       @relation(fields: [messageId], references: [id])
 
   @@map("post_media")
 }
@@ -172,6 +181,11 @@ model Notification {
   recipientUsername String?
   issuerId          String
   postId            String?
+  userId            String?
+  message           String?
+  messageId         String?
+  user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userMessage       Message?         @relation(fields: [messageId], references: [id])
   type              NotificationType
   read              Boolean          @default(false)
   createdAt         DateTime         @default(now())
@@ -179,7 +193,6 @@ model Notification {
   post              Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
   recipient         User             @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
   metadata          Json?
-  message           String?
   imageUrl          String?
   rewardId          String?
   reward            Reward?          @relation(fields: [rewardId], references: [id], onDelete: Cascade)
@@ -359,35 +372,80 @@ model UserReward {
   @@index([userId, rewardId])
 }
 
-model Group {
-  id         String    @id @default(cuid())
-  name       String
-  membersIds String[]
-  messages   Message[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+// Channel model for both direct and group chats
+model Channel {
+  id       String      @id @default(cuid())
+  type     ChannelType
+  name     String?
+  members  User[]      @relation("ChannelMembers")
+  messages Message[]
+  Media    Media[]
+
+  @@index([name, id])
+  @@map("channels")
 }
 
+// Enum for channel types
+enum ChannelType {
+  DIRECT
+  GROUP
+}
+
+// Message model for storing messages
 model Message {
-  id        String            @id @default(cuid())
-  content   String            @default("")
-  senderId  String            @default("")
-  groupId   String?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @default(now()) @updatedAt
-  reactions MessageReaction[]
-  group     Group?            @relation(fields: [groupId], references: [id])
+  id           String         @id @default(cuid())
+  content      String
+  userId       String
+  channelId    String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  type         MessageType
+  attachments  MessageMedia[]
+  channel      Channel        @relation(fields: [channelId], references: [id])
+  reactions    Reaction[]
+  Notification Notification[]
+  user         User           @relation(fields: [userId], references: [id])
+  userMessages User[]         @relation("UserMessages")
+  Media        Media[]
+
+  @@index([channelId])
+  @@map("messages")
 }
 
-model MessageReaction {
+// Reaction model for message reactions
+model Reaction {
   id        String   @id @default(cuid())
   messageId String
   userId    String
-  reaction  String // e.g., "👍", "❤️", etc.
+  reaction  String // e.g., emoji or text representation of the reaction
   createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([messageId, userId])
+  @@map("reactions")
+}
+
+// Join table for Message and Media
+model MessageMedia {
+  id        String    @id @default(cuid())
+  url       String
+  type      MediaType
+  messageId String?
+  mediaId   String?
+  channelId String?
+  message   Message?  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  media     Media?    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, messageId])
+  @@map("attachments_messages")
+}
+
+enum MessageType {
+  TEXT
+  ATTACHMENT
+  REACTION
+  OTHER
 }
 
 enum AssetType {
@@ -415,6 +473,7 @@ enum NotificationType {
   FOLLOW
   COMMENT
   REWARD_PROGRESS
+  MENTION
 }
 
 enum RewardRequirementType {

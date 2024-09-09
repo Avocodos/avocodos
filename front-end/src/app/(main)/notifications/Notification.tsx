@@ -33,6 +33,11 @@ export default function Notification({ notification }: NotificationProps) {
       message: notification.message ?? "",
       icon: <Gift className="size-7 text-primary" />,
       href: `/users/${notification.recipient.username}`
+    },
+    MENTION: {
+      message: notification.message ?? "",
+      icon: <MessageCircle className="size-7 fill-primary text-primary" />,
+      href: `/messages`
     }
   };
 

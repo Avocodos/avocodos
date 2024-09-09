@@ -8,6 +8,8 @@ import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { Archivo } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { listenForMessages } from "@/lib/messages";
+import { NextUIProvider } from "@nextui-org/react";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -29,27 +31,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  listenForMessages();
   return (
     <html lang="en">
       <body
         className={`${instrumentSans.className} ${instrumentSans.variable}`}
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
+
         <ReactQueryProvider>
-          <Analytics />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange={false}
-          >
-            <main className="relative">
-              <div className="absolute left-0 top-0 -z-20 h-full w-full bg-background mix-blend-lighten bg-cross"></div>
-              <div className="fixed left-0 top-0 -z-30 h-full w-full bg-background bg-gradient-to-b from-background from-50% to-primary/[0.03]"></div>
-              {children}
-            </main>
-            <Toaster />
-          </ThemeProvider>
+          <NextUIProvider>
+            <Analytics />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange={false}
+            >
+              <main className="relative">
+                <div className="absolute left-0 top-0 -z-20 h-full w-full bg-background bg-cross"></div>
+                <div className="fixed left-0 top-0 -z-30 h-full w-full bg-background bg-gradient-to-b from-background from-50% to-primary/[0.03]"></div>
+                {children}
+              </main>
+              <Toaster />
+            </ThemeProvider>
+          </NextUIProvider>
         </ReactQueryProvider>
       </body>
     </html>

@@ -1,4 +1,4 @@
-import { Asset, Community, CommunityRole, Course, Notification, Prisma } from "@prisma/client";
+import { Asset, Community, CommunityRole, Course, Media, Message, MessageType, Notification, Prisma, Reaction, User } from "@prisma/client";
 import { CountType } from "./utils";
 
 export function getUserDataSelect(loggedInUserId: string) {
@@ -234,4 +234,16 @@ export interface MessageCountInfo {
 export interface CoursesPage {
   courses: Course[];
   nextCursor: string | null;
+}
+
+export interface ExtendedMessage extends Message {
+  user: User;
+  reactions: Reaction[];
+  attachments: Media[];
+}
+
+export interface MessagesPage {
+  messages: ExtendedMessage[];
+  nextCursor: string | null;
+  prevCursor: string | null;
 }

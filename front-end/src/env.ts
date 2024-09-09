@@ -18,6 +18,8 @@ export const env = createEnv({
     ABLY_API_KEY: z.string(),
     WEAVY_API_KEY: z.string(),
     WEAVY_API_URL: z.string(),
+    SUPABASE_URL: z.string(),
+    SUPABASE_ANON_KEY: z.string(),
   },
   client: {
     NEXT_PUBLIC_STREAM_KEY: z.string(),
@@ -41,5 +43,7 @@ export const env = createEnv({
     ABLY_API_KEY: process.env.ABLY_API_KEY,
     WEAVY_API_KEY: process.env.WEAVY_API_KEY,
     WEAVY_API_URL: process.env.WEAVY_API_URL,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
   }
 });

@@ -1,6 +1,5 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
 import { getUserData } from "@/lib/utils";
 import { createUploadthing, FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
@@ -69,7 +68,35 @@ export const fileRouter = {
 
       return { mediaId: media?.id };
     }),
-  // New banner upload type
+  message_attachments: f({
+    image: { maxFileSize: "4MB", maxFileCount: 5 },
+    video: { maxFileSize: "64MB", maxFileCount: 5 },
+  })
+    .middleware(async () => {
+      const { user } = await validateRequest();
+
+      if (!user) throw new UploadThingError("Unauthorized");
+
+      return {};
+    })
+    .onUploadComplete(async ({ file }) => {
+      const media = await prisma?.media.create({
+        data: {
+          url: file.url.replace(
+            "/f/",
+            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+          ),
+          type: file.type.startsWith("image") ? "IMAGE" : "VIDEO",
+        },
+      });
+
+      const newMessageAttachmentUrl = file.url.replace(
+        "/f/",
+        `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+      );
+
+      return { mediaId: media?.id, messageAttachmentUrl: newMessageAttachmentUrl };
+    }),
   banner: f({
     image: { maxFileSize: "2MB" }, // Set your desired limits
   })

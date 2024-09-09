@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import { withUt } from "uploadthing/tw";
 import plugin from 'tailwindcss/plugin'
 import { default as flattenColorPalette } from 'tailwindcss/lib/util/flattenColorPalette';
+import { nextui } from "@nextui-org/theme";
 
 const config = {
   darkMode: ["class"],
@@ -10,6 +11,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   prefix: "",
   theme: {
@@ -53,7 +55,8 @@ const config = {
           '800': '#16670d',
           '900': '#155710',
           '950': '#043102',
-          '1000': '#011200'
+          '1000': '#011200',
+          'dark-popover': '#181b18'
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -150,7 +153,48 @@ const config = {
         'background-position': '0 0, 27.5px 27.5px, 0 0, 27.5px 27.5px',
       }
     })
-  }), addVariablesForColors],
+  }), addVariablesForColors, nextui({
+    themes: {
+      light: {
+        colors: {
+          primary: {
+            DEFAULT: "#A8D8A0", // hsl(var(--primary))
+            foreground: "#0D0D0D", // hsl(var(--primary-foreground))
+          },
+          secondary: {
+            DEFAULT: "#E7E7E7", // hsl(var(--secondary))
+            foreground: "#0D0D0D", // hsl(var(--secondary-foreground))
+          },
+          background: "#E3E3E3", // hsl(var(--background))
+          foreground: "#0D0D0D", // hsl(var(--foreground))
+          danger: {
+            DEFAULT: "#FF4D3D", // hsl(var(--destructive))
+            foreground: "#FCFCFC", // hsl(var(--destructive-foreground))
+          },
+        },
+        extend: "light"
+      },
+      dark: {
+        colors: {
+          primary: {
+            DEFAULT: "#A8D8A0", // hsl(var(--primary))
+            foreground: "#0D0D0D", // hsl(var(--primary-foreground))
+          },
+          secondary: {
+            DEFAULT: "#2D2D2D", // hsl(var(--secondary))
+            foreground: "#FCFCFC", // hsl(var(--secondary-foreground))
+          },
+          background: "#0D0D0D", // hsl(var(--background))
+          foreground: "#FCFCFC", // hsl(var(--foreground))
+          danger: {
+            DEFAULT: "#FF4D3D", // hsl(var(--destructive))
+            foreground: "#FCFCFC", // hsl(var(--destructive-foreground))
+          },
+        },
+        extend: "dark"
+      },
+    },
+  })],
 } satisfies Config;
 
 export default withUt(config);

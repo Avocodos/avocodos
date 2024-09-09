@@ -5,28 +5,28 @@ const url = process.env.ZEPTOMAIL_URL || "api.zeptomail.in/";
 const token = process.env.ZEPTOMAIL_TOKEN || "";
 
 export const getZeptoMailClient = () => {
-    return new SendMailClient({ url, token });
+  return new SendMailClient({ url, token });
 };
 
 export const sendOTPEmail = async (to: string, otp: string) => {
-    const client = getZeptoMailClient();
+  const client = getZeptoMailClient();
 
-    try {
-        await client.sendMail({
-            from: {
-                address: "noreply@avocodos.com",
-                name: "Avocodos"
-            },
-            to: [
-                {
-                    email_address: {
-                        address: to,
-                        name: to.split("@")[0]
-                    }
-                }
-            ],
-            subject: "Verify Your Email - Avocodos",
-            htmlbody: `
+  try {
+    await client.sendMail({
+      from: {
+        address: "noreply@avocodos.com",
+        name: "Avocodos"
+      },
+      to: [
+        {
+          email_address: {
+            address: to,
+            name: to.split("@")[0]
+          }
+        }
+      ],
+      subject: "Verify Your Email - Avocodos",
+      htmlbody: `
         <html>
           <head>
             <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -55,39 +55,39 @@ export const sendOTPEmail = async (to: string, otp: string) => {
               }
               .otp-container {
               	width: 100%;
-              margin: auto;
+                margin: auto;
               }
               * {
               	color: #1a1a1a;
               }
-
               .otp {
                 font-size: 24px;
                 font-weight: 800;
                 color: #1a1a1a;
                 background-color: #fafafa;
                 padding: 5px 20px;
-              border-style: solid;
-              border-color: #1a1a1a;
+                border-style: solid;
+                border-color: #1a1a1a;
                 border-radius: 10px;
                 display: inline-block;
-              display: flex;
-              justify-content: center;
-
+                display: flex;
+                justify-content: center;
+                margin-left: auto;
+                margin-right: auto;
               }
               .footer {
                 font-size: 14px;
                 color: #7f8c8d;
                 margin-top: 30px;
               	text-balance: balance;
-              text-align: center;
-              max-width: 300px;
-              margin-left: auto;
-              margin-right: auto;
+                text-align: center;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
               }
               h1 {
-              	font-weight: 800;
-              letter-spacing: -1px;
+                font-weight: 800;
+                letter-spacing: -1px;
               }
             </style>
           </head>
@@ -118,10 +118,10 @@ export const sendOTPEmail = async (to: string, otp: string) => {
           </body>
         </html>
       `,
-        });
-        return true;
-    } catch (error) {
-        console.error("Failed to send OTP email:", error);
-        return false;
-    }
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send OTP email:", error);
+    return false;
+  }
 };

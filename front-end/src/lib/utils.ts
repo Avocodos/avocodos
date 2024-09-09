@@ -176,3 +176,22 @@ export const getKandMString = (count: number): CountType => {
   }
   return count.toString() as CountType;
 };
+
+export function formatSentAtTime(date: Date): string {
+  const now = new Date();
+  const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+  const sentTime = new Intl.DateTimeFormat('en-US', options).format(date);
+
+  const isToday = now.toDateString() === date.toDateString();
+  const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === date.toDateString();
+
+  if (isToday) {
+    return `Today at ${sentTime}`;
+  } else if (isYesterday) {
+    return `Yesterday at ${sentTime}`;
+  } else {
+    const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formattedDate = new Intl.DateTimeFormat('en-US', dateOptions).format(date);
+    return `${formattedDate} ${sentTime}`;
+  }
+}
