@@ -5,6 +5,7 @@ import { toast } from "@/components/ui/use-toast";
 import Spinner from "@/components/Spinner";
 import { User } from "@prisma/client";
 import { Loader2 } from "lucide-react";
+import kyInstance from "@/lib/ky";
 
 // New client-side component for NFT minting
 export default function ClientSideNFTButton({
@@ -19,19 +20,13 @@ export default function ClientSideNFTButton({
   const handleGetNFT = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/nft/mint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ courseId })
+      const response = await kyInstance.post("/api/nft/mint", {
+        json: JSON.stringify({ courseId })
       });
 
       if (!response.ok) {
         throw new Error("Failed to mint NFT: " + response.statusText);
       }
-
-      const data = await response.json();
       toast({
         title: "NFT minted successfully!",
         description: `You can now view your NFT in your wallet (${userData.walletAddress}).`

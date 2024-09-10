@@ -82,7 +82,7 @@ export default function Home() {
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0">
         <Tabs defaultValue="socialize">
-          <TabsList className="mb-4 rounded-2xl border-2 border-muted">
+          <TabsList className="mb-5 rounded-2xl border-2 border-muted">
             <TabsTrigger
               value="socialize"
               className="inline-flex flex-row items-center gap-2 rounded-xl"
@@ -97,9 +97,9 @@ export default function Home() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="socialize" className="rounded-2xl">
-            <Tabs defaultValue="for-you">
+            <Tabs defaultValue="for-you" className="">
               <PostEditor />
-              <TabsList className="mb-4 mt-2 rounded-2xl border-2 border-muted">
+              <TabsList className="mb-5 mt-3 rounded-2xl border-2 border-muted">
                 <TabsTrigger
                   value="for-you"
                   className="inline-flex flex-row items-center gap-2 rounded-xl"

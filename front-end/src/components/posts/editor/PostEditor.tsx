@@ -232,11 +232,16 @@ export default function PostEditor({
           onFilesSelected={startUpload}
           disabled={isUploading || attachments.length >= 5}
         />
+        {input.length > 512 && (
+          <span className="text-destructive">Post exceeds 512 characters.</span>
+        )}
         <LoadingButton
           onClick={onSubmit}
           loading={mutation.isPending}
           // Ensure the button is enabled when there is content and not uploading
-          disabled={isUploading || input.trim().length === 0}
+          disabled={
+            isUploading || input.trim().length === 0 || input.length > 512
+          }
           className="px-4"
           size={"sm"}
         >
