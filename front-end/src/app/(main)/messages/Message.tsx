@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useState } from "react";
 import { Media, Message as MessageType, Reaction, User } from "@prisma/client";
 import ReactionTooltip from "./ReactionTooltip";
@@ -90,6 +90,16 @@ export default function Message({ message, reversed }: MessageProps) {
     addReaction(emoji);
   };
 
+  // useEffect(() => {
+  //   const markAsRead = async () => {
+  //     await kyInstance.get("/api/messages/read-receipts", {
+  //       searchParams: { messageIds: message.id }
+  //     });
+  //   };
+
+  //   markAsRead();
+  // }, [message.id]);
+
   return !reversed ? (
     <div className="message-container flex flex-col items-start justify-start gap-2">
       <div className="flex flex-row items-center gap-2">
@@ -118,6 +128,12 @@ export default function Message({ message, reversed }: MessageProps) {
           </div>
         </Linkify>
         <div className="relative mt-2 flex flex-row flex-wrap items-center justify-start gap-2">
+          <ReactionPicker
+            reactions={reactions}
+            className=""
+            onSelect={handleEmojiSelect}
+            reversed={reversed}
+          />
           {message.reactions && message.reactions.length >= 1 && (
             <ReactionTooltip
               reactions={message.reactions.map((reaction) => ({
@@ -129,14 +145,9 @@ export default function Message({ message, reversed }: MessageProps) {
               messageId={message.id}
             />
           )}
-          <ReactionPicker
-            reactions={reactions}
-            className=""
-            onSelect={handleEmojiSelect}
-            reversed={reversed}
-          />
         </div>
       </div>
+      {/* {message.read && <span className="text-xs text-foreground/80">Read</span>} */}
     </div>
   ) : (
     <div className="message-container flex w-full items-start justify-end gap-2">

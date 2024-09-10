@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-
+        console.log("here")
         const communityName = req.nextUrl.searchParams.get('communityName');
         const cacheKey = communityName
             ? `community:${communityName}:${user.id}`
@@ -32,11 +32,11 @@ export async function GET(req: NextRequest) {
         }
 
         let data;
-
+        console.log(communityName);
         if (communityName) {
             // Fetch a specific community by name
             const community = await prisma?.community.findUnique({
-                where: { name: communityName },
+                where: { name: decodeURI(communityName) },
                 include: {
                     members: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
                     posts: {
@@ -98,7 +98,6 @@ export async function POST(req: NextRequest) {
                 name,
                 description,
                 isPrivate,
-                communityName: name,
                 creatorId: user.id,
                 members: {
                     connect: {

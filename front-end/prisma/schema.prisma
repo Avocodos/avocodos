@@ -55,6 +55,7 @@ model User {
   moderatedCommunities  Community[]          @relation("CommunityModerators")
   communityRoles        CommunityRole[]      @relation("UserRoles")
   Message               Message[]
+  MessageReadReceipt    MessageReadReceipt[]
 
   @@map("users")
 }
@@ -393,20 +394,22 @@ enum ChannelType {
 
 // Message model for storing messages
 model Message {
-  id           String         @id @default(cuid())
+  id           String               @id @default(cuid())
   content      String
   userId       String
   channelId    String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
   type         MessageType
+  read         Boolean              @default(false)
   attachments  MessageMedia[]
-  channel      Channel        @relation(fields: [channelId], references: [id])
+  channel      Channel              @relation(fields: [channelId], references: [id])
   reactions    Reaction[]
   Notification Notification[]
-  user         User           @relation(fields: [userId], references: [id])
-  userMessages User[]         @relation("UserMessages")
+  user         User                 @relation(fields: [userId], references: [id])
+  userMessages User[]               @relation("UserMessages")
   Media        Media[]
+  readReceipts MessageReadReceipt[]
 
   @@index([channelId])
   @@map("messages")
@@ -439,6 +442,19 @@ model MessageMedia {
 
   @@unique([mediaId, messageId])
   @@map("attachments_messages")
+}
+
+model MessageReadReceipt {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  readAt    DateTime @default(now()) // Timestamp when the message was read
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([messageId, userId])
+  @@map("message_read_receipts")
 }
 
 enum MessageType {

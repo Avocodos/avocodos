@@ -2,6 +2,8 @@ import { Metadata, ResolvingMetadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import CommunityPage from "./CommunityPage";
+import { useQuery } from "@tanstack/react-query";
+import kyInstance from "@/lib/ky";
 
 interface PageProps {
   params: { communityName: string };
@@ -153,30 +155,6 @@ export function generateViewport(): Viewport {
   };
 }
 
-export default async function Page({ params: { communityName } }: PageProps) {
-  const community = await prisma?.community.findUnique({
-    where: { name: communityName },
-    include: {
-      members: true,
-      posts: {
-        include: {
-          user: true,
-          _count: {
-            select: { comments: true, likes: true }
-          }
-        }
-      },
-      _count: {
-        select: { members: true, posts: true }
-      },
-      badges: true,
-      moderators: true,
-      roles: true,
-      creator: true
-    }
-  });
-
-  if (!community) notFound();
-
+export default function Page({ params: { communityName } }: PageProps) {
   return <CommunityPage communityName={communityName} />;
 }

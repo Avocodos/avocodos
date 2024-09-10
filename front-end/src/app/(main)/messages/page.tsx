@@ -18,13 +18,14 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-2 pt-4">
-      <p className="text-destructive">
-        This feature is still in development.{" "}
+    <div className="flex w-full flex-col items-start justify-start gap-2">
+      <p className="text-left text-xs text-destructive">
+        This feature is still in development. <br />
         <span className="text-foreground">
           If you find any bugs, please report them{" "}
           <Link
             target="_blank"
+            className="underline"
             href="https://github.com/Avocodos/avocodos/issues/new"
           >
             here

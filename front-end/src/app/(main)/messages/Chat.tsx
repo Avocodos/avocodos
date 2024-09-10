@@ -5,6 +5,7 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import kyInstance from "@/lib/ky";
 import {
   Channel,
+  MessageReadReceipt,
   Message as MessageType,
   Reaction,
   User
@@ -101,7 +102,7 @@ export default function Chat({ user }: ChatProps) {
     }
   });
 
-  const messages = data?.pages.flatMap((page) => page) || [];
+  const messages: any[] = data?.pages.flatMap((page) => page) || [];
 
   const { data: channels, isLoading: channelsLoading } = useQuery<{
     channels: ExtendedChannel[];
@@ -259,12 +260,34 @@ export default function Chat({ user }: ChatProps) {
     };
   }, [hasPreviousPage, isFetching, fetchPreviousPage]);
 
+  // useEffect(() => {
+  //   const fetchReadReceipts = async () => {
+  //     const messageIds = messages.map((msg: any) => msg.id);
+  //     const response = await kyInstance.get<MessageReadReceipt[]>(
+  //       `/api/messages/read-receipts?messageIds=${messageIds.join(",")}`
+  //     );
+  //     const readReceipts = await response.json();
+
+  //     // Update the messages state with read receipts
+  //     messages.push(
+  //       messages.map((msg: any) => ({
+  //         ...msg,
+  //         read: readReceipts.some(
+  //           (receipt: any) => receipt.messageId === msg.id
+  //         )
+  //       }))
+  //     );
+  //   };
+
+  //   fetchReadReceipts();
+  // }, [messages]);
+
   return (
-    <div className="chat-container flex w-full flex-row gap-0 overflow-y-auto rounded-2xl border-2 border-muted bg-card">
+    <div className="chat-container flex w-full flex-row gap-0 rounded-2xl border-2 border-muted bg-card">
       <React.Fragment>
-        <div className="chat-sidebar hidden h-full max-h-[350px] min-h-full w-full max-w-[280px] flex-col overflow-y-auto rounded-lg border-r-2 border-muted md:flex lg:max-w-[300px] xl:max-w-[320px]">
-          <div className="flex w-full flex-row justify-between border-b-2 border-muted px-6 py-4 md:px-8 md:py-6">
-            <h5 className="mt-1.5">Messages</h5>
+        <div className="chat-sidebar hidden h-full min-h-full w-full max-w-[280px] flex-col overflow-y-auto rounded-lg border-r-2 border-muted md:flex lg:max-w-[300px] xl:max-w-[320px]">
+          <div className="flex w-full flex-row justify-between border-b-2 border-muted p-6 lg:p-8">
+            <h4 className="mt-1.5">Messages</h4>
             <div className="flex flex-row gap-2">
               <NewChatDialog channels={channels!} />
               <NewGroupDialog />
@@ -277,7 +300,7 @@ export default function Chat({ user }: ChatProps) {
               {channels?.channels.map((channel) => (
                 <div
                   key={channel.id}
-                  className="flex cursor-pointer items-center gap-4 px-6 py-2 avocodos-transition hover:bg-muted md:px-8"
+                  className="flex cursor-pointer items-center gap-4 px-6 py-3 avocodos-transition hover:bg-muted lg:px-8"
                   onClick={() => setSelectedChannel(channel)}
                 >
                   {channel.members.length === 2 ? (
@@ -298,7 +321,7 @@ export default function Chat({ user }: ChatProps) {
                       className="rounded-full"
                     />
                   )}
-                  <span>
+                  <span className="line-clamp-2">
                     {channel.members.length === 2
                       ? channel.members
                           .filter((member) => member.id !== user.id)
@@ -323,7 +346,7 @@ export default function Chat({ user }: ChatProps) {
                 <Menu className="size-3" />
               </Badge>
             </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent className="mb-8">
               <DrawerHeader>
                 <DrawerTitle asChild>
                   <h3>Messages</h3>
@@ -336,25 +359,39 @@ export default function Chat({ user }: ChatProps) {
                   channels?.channels.map((channel) => (
                     <div
                       key={channel.id}
-                      className="flex cursor-pointer items-center gap-4 rounded-xl p-2 py-2 avocodos-transition hover:bg-muted"
+                      className="flex cursor-pointer items-center gap-4 rounded-xl p-2 py-3 avocodos-transition hover:bg-muted"
                       onClick={() => {
                         setSelectedChannel(channel);
                         setSidebarOpen(false);
                       }}
                     >
-                      <UserAvatar
-                        avatarUrl={
-                          channel.members.filter(
-                            (member) => member.id !== user.id
-                          )[0]?.avatarUrl ?? "/avatar-placeholder.png"
-                        }
-                        size={44}
-                      />
-                      <span>
-                        {channel.members
-                          .filter((member) => member.id !== user.id)
-                          .map((member) => member.displayName)
-                          .join(", ")}
+                      {channel.members.length === 2 ? (
+                        <UserAvatar
+                          avatarUrl={
+                            channel.members.filter(
+                              (member) => member.id !== user.id
+                            )[0]?.avatarUrl ?? "/avatar-placeholder.png"
+                          }
+                          size={39.2}
+                        />
+                      ) : (
+                        <Image
+                          src="/group-placeholder.png"
+                          alt="Group Avatar"
+                          width={39.2}
+                          height={39.2}
+                          className="rounded-full"
+                        />
+                      )}
+                      <span className="line-clamp-2">
+                        {channel.members.length === 2
+                          ? channel.members
+                              .filter((member) => member.id !== user.id)
+                              .map((member) => member.displayName)
+                              .join(", ")
+                          : channel.members
+                              .map((member) => member.displayName)
+                              .join(", ")}
                       </span>
                     </div>
                   ))
@@ -367,7 +404,7 @@ export default function Chat({ user }: ChatProps) {
         </div>
       </React.Fragment>
       {selectedChannel && (
-        <div className="chat-messages relative flex min-h-full w-full flex-col">
+        <div className="chat-messages relative flex min-h-full w-full flex-col justify-start">
           <Link
             href={`/users/${
               selectedChannel.members.filter(
@@ -376,7 +413,7 @@ export default function Chat({ user }: ChatProps) {
             }`}
             className="w-full avocodos-transition hover:underline"
           >
-            <div className="inline-flex w-full items-center gap-4 border-b-2 border-muted p-4 lg:p-6">
+            <div className="inline-flex w-full items-center gap-4 border-b-2 border-muted p-6 lg:p-8">
               {selectedChannel.members.length === 2 ? (
                 <UserAvatar
                   avatarUrl={
@@ -426,14 +463,14 @@ export default function Chat({ user }: ChatProps) {
             </div>
           </Link>
           <InfiniteScrollContainer
-            className="h-full max-h-[350px]"
+            className="h-full max-h-[450px] flex-1 lg:max-h-[380px] xl:max-h-[400px]"
             onBottomReached={() =>
               hasPreviousPage && !isFetching && fetchPreviousPage()
             }
           >
             <div
               ref={topScrollRef}
-              className="chat-messages-body flex h-full max-h-[350px] flex-1 flex-col gap-4 overflow-y-auto p-4 lg:p-8"
+              className="chat-messages-body flex h-full flex-1 flex-col gap-4 overflow-y-auto p-6 lg:p-8"
             >
               {messages
                 .filter(Boolean)
@@ -506,7 +543,7 @@ export default function Chat({ user }: ChatProps) {
           )}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="my-4 flex items-center gap-2 px-4"
+            className="my-4 flex items-center gap-2 bg-background/80 px-4 backdrop-blur-sm"
           >
             <FormField
               name="message"
@@ -552,7 +589,7 @@ export default function Chat({ user }: ChatProps) {
         </div>
       )}
       {!selectedChannel && (
-        <div className="flex min-h-full w-full flex-col items-center justify-center gap-4 p-8">
+        <div className="flex min-h-[450px] w-full flex-col items-center justify-center gap-4 p-8 md:min-h-[350px] lg:min-h-[400px]">
           <Image
             src="/icon.svg"
             alt="Empty Chat"
