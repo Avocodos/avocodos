@@ -135,4 +135,10 @@ html {
   h6 {
     @apply !text-base !font-extrabold tracking-tight sm:!text-lg lg:!text-lg xl:!text-xl;
   }
+  makeStyles-title-2 {
+    display: none !important;
+  }
+  [data-testid="title"] {
+    display: none !important;
+  }
 }

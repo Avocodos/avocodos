@@ -30,7 +30,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
       } catch (e) {
         console.error("Failed to parse cachedResults:", e);
-        console.log("Fetching fresh data due to cache parsing error");
       }
     }
 

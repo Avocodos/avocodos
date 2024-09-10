@@ -7,7 +7,6 @@ export function startCronJobs() {
     cron.schedule("*/60 * * * * *", async () => {
         try {
             await kyInstance.get(url);
-            console.log("Rewards progress check completed");
         } catch (error) {
             console.error("Error running rewards progress check:", error);
             console.error("Failed URL:", url);

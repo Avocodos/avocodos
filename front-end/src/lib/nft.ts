@@ -27,7 +27,6 @@ export async function mintNFT({
     imageUrl: string;
     userId: string;
 }) {
-    console.log(process.env.AVOCODOS_PRIVATE_KEY)
     // Avocodos account setup
     const privateKeyBytes = Uint8Array.from(
         Buffer.from(process.env.AVOCODOS_PRIVATE_KEY!.slice(2), "hex")
@@ -136,8 +135,6 @@ export async function mintNFT({
         aptosExplorerUrl: `https://explorer.aptoslabs.com/txn/${transferTxn?.hash}?network=testnet`
     };
 
-    console.log("Asset data:", assetData);
-    console.log("Minted NFT: ", mintedNFT);
     const createdAsset = await prisma.asset.create({
         data: assetData
     });

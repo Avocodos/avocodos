@@ -25,6 +25,5 @@ export async function GET(request: Request, { params }: { params: { userId: stri
             }
         });
     });
-    console.log(followingInfo);
     return NextResponse.json({ followingCount: getKandMString(followingInfo ?? 0) } as FollowingInfo);
 }

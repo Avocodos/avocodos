@@ -129,7 +129,6 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
     const avocodoNFTs = await aptos.getOwnedDigitalAssets({
         ownerAddress: avocodosAccount.accountAddress
     });
-    console.log("avocodoNFTs", avocodoNFTs);
     const mintedNFT = avocodoNFTs.filter((nft) => {
         return nft.current_token_data?.description === tokenDescription
     })[0]

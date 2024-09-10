@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        console.log("here")
         const communityName = req.nextUrl.searchParams.get('communityName');
         const cacheKey = communityName
             ? `community:${communityName}:${user.id}`
@@ -26,13 +25,10 @@ export async function GET(req: NextRequest) {
                 return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
             } catch (e) {
                 console.error("Failed to parse cachedResults:", e);
-                // Instead of returning an error, we'll proceed to fetch fresh data
-                console.log("Fetching fresh data due to cache parsing error");
             }
         }
 
         let data;
-        console.log(communityName);
         if (communityName) {
             // Fetch a specific community by name
             const community = await prisma?.community.findUnique({

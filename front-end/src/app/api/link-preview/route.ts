@@ -16,7 +16,6 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     const url = req.nextUrl.searchParams.get('url');
-    console.log('Received request for URL:', url); // Debugging log
     const cacheKey = `link-preview:${url}`;
 
     const cachedData = await redis.get<string>(cacheKey);

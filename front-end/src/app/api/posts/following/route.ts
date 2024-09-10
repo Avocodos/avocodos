@@ -40,7 +40,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
       } catch (e) {
         console.error("Failed to parse cachedResults:", e);
-        console.log("Fetching fresh data due to cache parsing error");
       }
     }
 
@@ -62,7 +61,6 @@ export async function GET(req: NextRequest) {
 
     // Clear the cache if the userIds array contains only duplicate values
     if (userIds.every(id => id === userIds[0])) {
-      console.log("Detected duplicate userIds, clearing cache");
       await redis.del(`followed_users:${user.id}`);
       const follows = await prisma.follow.findMany({
         where: { followerId: user.id },

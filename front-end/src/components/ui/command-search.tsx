@@ -28,7 +28,6 @@ export default function CommandSearch({
         command.label.toLowerCase().includes(inputValue.toLowerCase())
       )
     : [];
-  console.log("filteredCommands", filteredCommands);
   return (
     <Command className="relative rounded-lg border shadow-md">
       <CommandInput

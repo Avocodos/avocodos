@@ -26,7 +26,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { cn, formatDatePretty } from "@/lib/utils";
 import { ShareSocial } from "react-share-social";
 import Link from "next/link";
-import { BASE_URL } from "@/lib/constants";
+import { AVOCODOS_WELCOME_REWARD_ID, BASE_URL } from "@/lib/constants";
 
 interface SpinningImageDialogProps {
   isOpen: boolean;
@@ -52,6 +52,7 @@ export default function SpinningImageDialog({
   type = "dialog"
 }: SpinningImageDialogProps) {
   const percentage = (progress / reward.requirement) * 100;
+  if (reward.id === AVOCODOS_WELCOME_REWARD_ID) owned = true;
 
   return type === "dialog" ? (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
     if (!content || !channelId) {
         return NextResponse.json({ error: "Content and channelId are required" }, { status: 400 });
     }
-    console.log("attachments", attachments)
     try {
         const message = await prisma.message.create({
             data: {

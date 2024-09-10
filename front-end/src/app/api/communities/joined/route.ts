@@ -25,8 +25,6 @@ export async function GET(req: NextRequest) {
                 return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
             } catch (e) {
                 console.error("Failed to parse cachedResults in /api/communities/joined:", e);
-                // Instead of returning an error, we'll proceed to fetch fresh data
-                console.log("Fetching fresh data due to cache parsing error");
             }
         }
 

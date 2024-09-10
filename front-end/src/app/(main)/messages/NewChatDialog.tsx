@@ -86,7 +86,6 @@ export default function NewChatDialog({
             <>
               <ModalHeader>Create New Chat</ModalHeader>
               <ModalBody>
-                  {console.log("channels", channels) as ReactNode}
                 <Autocomplete
                   label="User"
                   placeholder="Search for a user"

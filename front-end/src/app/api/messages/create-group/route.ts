@@ -5,7 +5,6 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
     const { user } = await validateRequest();
     const { memberIds }: { memberIds: Option[] } = await req.json();
-    console.log("memeberIds", memberIds)
 
     if (!prisma) return Response.json({ error: "Prisma client not initialized" }, { status: 500 });
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });

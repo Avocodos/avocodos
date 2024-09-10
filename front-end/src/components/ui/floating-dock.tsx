@@ -111,7 +111,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto flex h-12 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 dark:bg-neutral-900 z-[199]",
+        "mx-auto flex h-12 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 dark:bg-neutral-900",
         className
       )}
     >
@@ -177,13 +177,13 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div onClick={() => onSelect(icon)} className="cursor-pointer z-[198]">
+    <div onClick={() => onSelect(icon)} className="cursor-pointer">
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800 z-[197]"
+        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
       >
         <AnimatePresence>
           {hovered && (
@@ -191,7 +191,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit -translate-x-1/2 whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-0.5 py-0 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white z-[196]"
+              className="absolute -top-8 left-1/2 w-fit -translate-x-1/2 whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-0.5 py-0 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
             >
               {title}
             </motion.div>
@@ -199,7 +199,7 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center z-[195]"
+          className="flex items-center justify-center"
         >
           {icon}
         </motion.div>

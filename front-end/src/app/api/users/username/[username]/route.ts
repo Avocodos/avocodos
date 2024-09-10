@@ -35,7 +35,6 @@ export async function GET(
         return NextResponse.json(userData);
       } catch (e) {
         console.error("Failed to parse cachedUser:", e);
-        console.log("Fetching fresh data due to cache parsing error");
       }
     }
 
