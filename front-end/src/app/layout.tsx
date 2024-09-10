@@ -48,9 +48,9 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange={false}
             >
-              <main className="relative">
-                <div className="absolute left-0 top-0 -z-20 h-full w-full bg-background bg-cross"></div>
-                {/* <div className="fixed left-0 top-0 -z-30 h-full w-full bg-background bg-gradient-to-b from-background from-50% to-primary/[0.03]"></div> */}
+              <main className="relative bg-cross">
+                {/* <div className="absolute left-0 top-0 -z-[0] h-full w-full bg-background bg-cross"></div> */}
+                <div className="fixed left-0 top-0 -z-[1] h-full w-full bg-background bg-gradient-to-b from-background from-50% to-primary/[0.03]"></div>
                 {children}
               </main>
               <Toaster />

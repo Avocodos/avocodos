@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    console.log("user: ", user)
 
     try {
         const userData = await getUserData(user.id);

@@ -21,7 +21,9 @@ export default function ClientSideNFTButton({
     setIsLoading(true);
     try {
       const response = await kyInstance.post("/api/nft/mint", {
-        json: JSON.stringify({ courseId })
+        json: {
+          courseId: courseId
+        }
       });
 
       if (!response.ok) {

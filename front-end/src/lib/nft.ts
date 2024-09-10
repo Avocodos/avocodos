@@ -8,6 +8,7 @@ import {
     AccountAddress
 } from "@aptos-labs/ts-sdk";
 import { AssetType } from "@prisma/client";
+import { AVOCODOS_WELCOME_REWARD_ID } from "./constants";
 
 const APTOS_NETWORK: Network = Network.TESTNET;
 const config = new AptosConfig({ network: APTOS_NETWORK });
@@ -26,6 +27,7 @@ export async function mintNFT({
     imageUrl: string;
     userId: string;
 }) {
+    console.log(process.env.AVOCODOS_PRIVATE_KEY)
     // Avocodos account setup
     const privateKeyBytes = Uint8Array.from(
         Buffer.from(process.env.AVOCODOS_PRIVATE_KEY!.slice(2), "hex")
@@ -105,7 +107,9 @@ export async function mintNFT({
     const avocodoNFTs = await aptos.getOwnedDigitalAssets({
         ownerAddress: avocodosAccount.accountAddress
     });
-    const mintedNFT = avocodoNFTs[avocodoNFTs.length - 1];
+    const mintedNFT = avocodoNFTs.filter((nft) => {
+        return nft.current_token_data?.description === tokenDescription
+    })[0]
 
     // Transfer NFT to recipient
     const transferTransaction = await aptos.transferDigitalAssetTransaction({
@@ -133,7 +137,7 @@ export async function mintNFT({
     };
 
     console.log("Asset data:", assetData);
-
+    console.log("Minted NFT: ", mintedNFT);
     const createdAsset = await prisma.asset.create({
         data: assetData
     });

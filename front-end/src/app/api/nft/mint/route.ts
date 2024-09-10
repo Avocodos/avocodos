@@ -130,7 +130,9 @@ async function mintNFT(recipientAddress: string, courseTitle: string, displayNam
         ownerAddress: avocodosAccount.accountAddress
     });
     console.log("avocodoNFTs", avocodoNFTs);
-    const mintedNFT = avocodoNFTs[avocodoNFTs.length - 1];
+    const mintedNFT = avocodoNFTs.filter((nft) => {
+        return nft.current_token_data?.description === tokenDescription
+    })[0]
 
     // Transfer NFT to recipient
     const transferTransaction = await aptos.transferDigitalAssetTransaction({
