@@ -15,10 +15,6 @@ export async function GET(
 
         const { userId } = params;
 
-        if (user.id !== userId) {
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-        }
-
         const claimedRewards = await prisma?.userReward.findMany({
             where: {
                 userId,
