@@ -177,7 +177,6 @@ export default async function LMSPage({ params: { courseId } }: PageProps) {
   const assets = await getAssets(user.id, courseId);
 
   const hasAsset = assets?.filter((asset) => asset.courseId === courseId);
-  console.log(hasAsset);
 
   return (
     <main className="max-w-3xl pt-4">

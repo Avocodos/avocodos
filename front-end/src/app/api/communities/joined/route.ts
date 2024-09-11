@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateRequest } from '@/auth';
-import { Redis } from '@upstash/redis';
 
-
-const redis = Redis.fromEnv();
-const CACHE_TTL = 60 * 5; // 5 minutes
 
 export async function GET(req: NextRequest) {
     try {
@@ -13,19 +9,6 @@ export async function GET(req: NextRequest) {
 
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const cacheKey = `user:${user.username}:joined_communities`;
-
-        // Try to get results from Redis cache
-        const cachedResults = await redis.get<string>(cacheKey) as string;
-
-        if (cachedResults) {
-            try {
-                return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
-            } catch (e) {
-                console.error("Failed to parse cachedResults in /api/communities/joined:", e);
-            }
         }
 
         // Fetch data from the database
@@ -48,8 +31,6 @@ export async function GET(req: NextRequest) {
                 },
             },
         });
-        // Cache the results in Redis
-        await redis.set(cacheKey, JSON.stringify(joinedCommunities), { ex: CACHE_TTL });
 
         return NextResponse.json(joinedCommunities);
     } catch (error) {

@@ -9,7 +9,7 @@ import CommunityBadges from "@/components/CommunityBadges";
 import { Community, Post as PrismaPost, User } from "@prisma/client";
 import Post from "@/components/posts/Post";
 import { CommunityBadge, CommunityRole } from "@prisma/client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -78,9 +78,13 @@ export default function CommunityPage({ communityName }: CommunityPageProps) {
           .json<ExtendedCommunity>()
     });
 
-  const [isMember, setIsMember] = useState(
-    communityData?.members?.some((member) => member.id === user.id) ?? false
-  );
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    setIsMember(
+      communityData?.members?.some((member) => member.id === user.id) ?? false
+    );
+  }, [communityData, communityLoading, user.id]);
 
   const { data: posts, isLoading: postsLoading } = useQuery({
     queryKey: ["community-posts", communityName],

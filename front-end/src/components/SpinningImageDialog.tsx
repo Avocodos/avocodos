@@ -121,7 +121,7 @@ export default function SpinningImageDialog({
           animate={{ rotateY: 360 }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Image
+          <img
             src={imageUrl}
             alt={rewardName}
             width={500}
@@ -139,7 +139,7 @@ export default function SpinningImageDialog({
             <div className="flex w-full flex-col items-center justify-center gap-2">
               <Badge
                 variant={"light"}
-                className="mx-auto mt-2 inline-flex w-fit items-center gap-2 break-words text-center text-sm text-primary"
+                className="mx-auto mt-2 inline-flex w-fit items-center gap-1 break-words text-center text-sm text-primary"
               >
                 <CheckCircle className="size-4 min-h-4 min-w-4" />
                 Reward claimed by{" "}

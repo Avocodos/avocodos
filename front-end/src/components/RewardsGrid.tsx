@@ -31,12 +31,12 @@ export default function RewardsGrid({
             onClick={() => setSelectedReward(userReward)}
           >
             <CardHeader className="overflow-hidden rounded-t-lg p-0">
-              <Image
-                src={"/auth.webp"}
+              <img
+                src={userReward.reward.imageUrl ?? "/auth.webp"}
                 alt={userReward.reward.name}
                 width={500}
                 height={500}
-                className="rounded-t-lg object-cover avocodos-transition group-hover:scale-105"
+                className="aspect-square rounded-t-lg object-cover avocodos-transition group-hover:scale-105"
               />
             </CardHeader>
             <CardContent className="flex w-full flex-row items-start justify-between gap-4 pt-6">

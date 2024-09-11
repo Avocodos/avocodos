@@ -1,9 +1,7 @@
 import { validateRequest } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
 
-const redis = Redis.fromEnv();
 
 // Handle GET requests
 export async function GET(req: NextRequest) {
@@ -17,16 +15,6 @@ export async function GET(req: NextRequest) {
         const cacheKey = communityName
             ? `community:${communityName}:${user.id}`
             : `communities:all:${user.id}`;
-
-        // Try to get results from Redis cache
-        const cachedResults = await redis.get<string>(cacheKey);
-        if (cachedResults) {
-            try {
-                return NextResponse.json(JSON.parse(JSON.stringify(cachedResults)));
-            } catch (e) {
-                console.error("Failed to parse cachedResults:", e);
-            }
-        }
 
         let data;
         if (communityName) {
@@ -67,9 +55,6 @@ export async function GET(req: NextRequest) {
 
             data = communities;
         }
-
-        // Cache the results in Redis
-        await redis.set(cacheKey, JSON.stringify(data), { ex: 300 }); // Cache for 5 minutes
 
         return NextResponse.json(data);
     } catch (error) {

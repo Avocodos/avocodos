@@ -3,12 +3,6 @@ import { Metadata, ResolvingMetadata, Viewport } from "next";
 import prisma from "@/lib/prisma";
 import SpinningImageDialog from "@/components/SpinningImageDialog";
 import { notFound } from "next/navigation";
-import kyInstance from "@/lib/ky";
-import { User } from "@prisma/client";
-import { headers } from "next/headers";
-import { validateRequest } from "@/auth";
-import { UserData } from "@/lib/types";
-import { SearchParamsOption } from "ky";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -18,15 +12,22 @@ interface PageProps {
 }
 
 async function getReward(username: string, rewardId: string) {
-  const reward = await prisma?.userReward.findFirst({
+  const rewards = await prisma?.userReward.findMany({
     where: {
-      id: rewardId
+      rewardId: rewardId
     },
     include: {
       user: true
     }
   });
 
+  if (!rewards) {
+    notFound();
+  }
+
+  const reward = rewards?.find((reward) => reward.user.username === username);
+
+  console.log("reward: ", reward);
 
   if (!reward || reward.user.username !== username) {
     notFound();
@@ -147,6 +148,7 @@ const getUserIdFromUsername = async (username: string) => {
 
 export default async function RewardPage({ params }: PageProps) {
   const userId = await getUserIdFromUsername(params.username);
+
   const userReward = await prisma?.userReward.findFirst({
     where: {
       rewardId: params.rewardId,
@@ -156,6 +158,7 @@ export default async function RewardPage({ params }: PageProps) {
       reward: true
     }
   });
+
   if (!userReward) {
     return <p>Reward not found</p>;
   }
@@ -175,7 +178,7 @@ export default async function RewardPage({ params }: PageProps) {
       <SpinningImageDialog
         isOpen={true}
         // onClose={() => {}}
-        imageUrl={"/auth.webp"}
+        imageUrl={userReward.reward.imageUrl ?? "/auth.webp"}
         rewardName={userReward.reward.name}
         owned={userReward.progress >= userReward.reward.requirement}
         reward={userReward.reward}

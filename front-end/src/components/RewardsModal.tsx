@@ -69,8 +69,6 @@ export default function RewardsModal({
       {} as Record<string, ExtendedUserReward[]>
     );
 
-    console.log("res: ", res);
-
     return res;
   };
 
