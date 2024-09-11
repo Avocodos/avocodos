@@ -78,6 +78,10 @@ export default function CommunityPage({ communityName }: CommunityPageProps) {
           .json<ExtendedCommunity>()
     });
 
+  const [isMember, setIsMember] = useState(
+    communityData?.members?.some((member) => member.id === user.id) ?? false
+  );
+
   const { data: posts, isLoading: postsLoading } = useQuery({
     queryKey: ["community-posts", communityName],
     queryFn: () =>
@@ -90,6 +94,7 @@ export default function CommunityPage({ communityName }: CommunityPageProps) {
     mutationFn: () => kyInstance.post(`/api/communities/${communityName}/join`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["community", communityName] });
+      setIsMember(true);
     }
   });
 
@@ -102,6 +107,7 @@ export default function CommunityPage({ communityName }: CommunityPageProps) {
         title: "Success",
         description: "You have left the community."
       });
+      setIsMember(false);
     },
     onError: (error: any) => {
       if (error.response) {
@@ -155,11 +161,11 @@ export default function CommunityPage({ communityName }: CommunityPageProps) {
       </p>
     );
 
-  const isMember =
-    communityData.members?.some((member) => member.id === user.id) ?? false;
   const isModerator =
     communityData.moderators?.some((mod) => mod.id === user.id) ?? false;
+
   const isCreator = communityData.creatorId === user.id;
+
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
       <div className="mb-4 flex flex-col items-start justify-between gap-4 md:flex-row">
