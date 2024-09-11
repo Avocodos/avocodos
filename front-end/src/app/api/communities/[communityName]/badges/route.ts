@@ -13,6 +13,10 @@ export async function POST(
         const { name, color } = await req.json();
         const { communityName } = params;
 
+        if (typeof communityName !== "string") return Response.json({ error: "Invalid community name" }, { status: 400 });
+
+        if (!communityName || !name || !color) return Response.json({ error: "Missing required fields" }, { status: 400 });
+
         const community = await prisma?.community.findUnique({
             where: { name: communityName },
             include: { moderators: true },

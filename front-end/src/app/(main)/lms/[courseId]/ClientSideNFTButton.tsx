@@ -4,18 +4,21 @@ import React, { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import Spinner from "@/components/Spinner";
 import { User } from "@prisma/client";
-import { Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import kyInstance from "@/lib/ky";
 
 // New client-side component for NFT minting
 export default function ClientSideNFTButton({
+  disabled,
   courseId,
   userData
 }: {
   courseId: string;
   userData: User;
+  disabled: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [disabled_, setDisabled] = useState(disabled);
 
   const handleGetNFT = async () => {
     setIsLoading(true);
@@ -40,6 +43,7 @@ export default function ClientSideNFTButton({
       });
     } finally {
       setIsLoading(false);
+      setDisabled(true);
     }
   };
 
@@ -48,10 +52,16 @@ export default function ClientSideNFTButton({
       <Button
         className="inline-flex w-full items-center justify-center gap-2"
         onClick={handleGetNFT}
-        disabled={isLoading || !!!userData.walletAddress}
+        variant={disabled_ ? "secondary" : "default"}
+        disabled={isLoading || !!!userData.walletAddress || disabled_}
       >
         {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {isLoading ? "Minting..." : "Get Your NFT Now"}
+        {isLoading ? "Minting..." : disabled_ ? "" : "Get Your NFT Now"}
+        {disabled_ && (
+          <span className="inline-flex items-center gap-2">
+            <CheckCircle className="size-4 text-primary" /> NFT Claimed
+          </span>
+        )}
       </Button>
       {!userData.walletAddress && (
         <p className="mx-auto mt-4 max-w-sm text-center text-xs text-destructive">

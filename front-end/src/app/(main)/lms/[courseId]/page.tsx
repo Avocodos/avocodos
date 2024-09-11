@@ -153,16 +153,31 @@ async function getCourse(courseId: string) {
   return course;
 }
 
+async function getAssets(userId: string, courseId: string) {
+  const assets = await prisma?.asset.findMany({
+    where: {
+      userId,
+      courseId
+    }
+  });
+  return assets;
+}
+
 export default async function LMSPage({ params: { courseId } }: PageProps) {
   const { user } = await validateRequest();
   const userData = await prisma?.user.findUnique({
     where: { id: user?.id }
   });
+
   if (!user || !userData) {
     redirect("/login");
   }
 
   const course = await getCourse(courseId);
+  const assets = await getAssets(user.id, courseId);
+
+  const hasAsset = assets?.filter((asset) => asset.courseId === courseId);
+  console.log(hasAsset);
 
   return (
     <main className="max-w-3xl pt-4">
@@ -195,7 +210,11 @@ export default async function LMSPage({ params: { courseId } }: PageProps) {
           Thank you for completing the entire course with Avocodos! You can now
           redeem your free NFT.
         </p>
-        <ClientSideNFTButton userData={userData} courseId={courseId} />
+        <ClientSideNFTButton
+          disabled={(hasAsset?.length ?? 0) > 0}
+          userData={userData}
+          courseId={courseId}
+        />
       </div>
     </main>
   );
