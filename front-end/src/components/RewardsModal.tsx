@@ -32,10 +32,15 @@ import { UserData } from "@/lib/types";
 import Confetti from "react-confetti";
 import { AVOCODOS_WELCOME_REWARD_ID } from "@/lib/constants";
 import { motion } from "framer-motion";
+import { validateRequest } from "@/auth";
+import { User as LuciaUser } from "lucia";
+
 interface RewardsModalProps {
   isOpen: boolean;
   onClose: () => void;
   user: UserData;
+  loggedInUserId: string;
+  defaultOpen?: boolean;
 }
 
 interface ExtendedUserReward extends UserReward {
@@ -45,7 +50,9 @@ interface ExtendedUserReward extends UserReward {
 export default function RewardsModal({
   isOpen,
   onClose,
-  user
+  user,
+  loggedInUserId,
+  defaultOpen = false
 }: RewardsModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -99,7 +106,7 @@ export default function RewardsModal({
   } = useQuery({
     queryKey: ["rewards"],
     queryFn: fetchRewards,
-    enabled: isOpen,
+    enabled: isOpen || defaultOpen,
     staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
@@ -110,20 +117,20 @@ export default function RewardsModal({
   } = useQuery({
     queryKey: ["userRewardsCount", user.id],
     queryFn: fetchUserRewardsCount,
-    enabled: isOpen
+    enabled: isOpen || defaultOpen
   });
 
   const { data: userData } = useQuery({
     queryKey: ["userData", user.id],
     queryFn: () =>
       kyInstance.get(`/api/users/username/${user.username}`).json<User>(),
-    enabled: isOpen
+    enabled: isOpen || defaultOpen
   });
 
   const { data: userClaimedRewards } = useQuery({
     queryKey: ["userClaimedRewards", user.id],
     queryFn: fetchUserClaimedRewards,
-    enabled: isOpen
+    enabled: isOpen || defaultOpen
   });
 
   const claimRewardMutation = useMutation({
@@ -199,11 +206,11 @@ export default function RewardsModal({
 
   if (error)
     return (
-      <p className="text-center text-destructive">Error loading rewards</p>
+      <p className="text-center text-destructive">Error loading rewards...</p>
     );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen || defaultOpen} onOpenChange={onClose}>
       {showConfetti && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -220,7 +227,10 @@ export default function RewardsModal({
           />
         </motion.div>
       )}
-      <DialogContent className="h-[80dvh] min-w-[90dvw] bg-background p-8 lg:min-w-[60dvw]">
+      <DialogContent
+        disableCloseButton={defaultOpen}
+        className="h-[80dvh] min-w-[90dvw] bg-background p-8 focus-visible:!border-0 focus-visible:!outline-none focus-visible:!ring-0 lg:min-w-[60dvw]"
+      >
         <ScrollArea className="relative h-full">
           <DialogHeader className="sticky top-0 z-10 bg-background/90 pb-8 backdrop-blur-sm">
             <DialogTitle asChild>
@@ -406,7 +416,7 @@ export default function RewardsModal({
                               </div>
                               {percentage >= 100 &&
                                 !isClaimed &&
-                                user.id !== userReward.userId && (
+                                loggedInUserId !== userReward.userId && (
                                   <Badge variant={"light"}>
                                     Owned but not claimed yet.
                                   </Badge>
@@ -435,7 +445,7 @@ export default function RewardsModal({
                               )}
                               {percentage >= 100 &&
                                 !isClaimed &&
-                                user.id === userReward.userId && (
+                                loggedInUserId === userReward.userId && (
                                   <Button
                                     onClick={() =>
                                       claimRewardMutation.mutate(

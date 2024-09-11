@@ -10,9 +10,15 @@ import { Badge } from "./ui/badge";
 
 interface RewardsButtonProps {
   user: UserData;
+  showRewards: boolean;
+  loggedInUserId: string;
 }
 
-export default function RewardsButton({ user }: RewardsButtonProps) {
+export default function RewardsButton({
+  user,
+  showRewards,
+  loggedInUserId
+}: RewardsButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -28,6 +34,8 @@ export default function RewardsButton({ user }: RewardsButtonProps) {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         user={user}
+        defaultOpen={showRewards}
+        loggedInUserId={loggedInUserId}
       />
       <Link href={`/users/${user.username}/rewards`} passHref>
         <Badge

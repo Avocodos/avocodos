@@ -20,7 +20,7 @@ import {
 } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { Metadata, ResolvingMetadata, Viewport } from "next";
-import { notFound } from "next/navigation";
+import { notFound, useSearchParams } from "next/navigation";
 import { cache } from "react";
 import EditProfileButton from "./EditProfileButton";
 import UserPosts from "./UserPosts";
@@ -33,6 +33,7 @@ import UserBanner from "@/components/UserBanner";
 
 interface PageProps {
   params: { username: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export async function generateStaticParams(): Promise<
@@ -257,8 +258,13 @@ export function generateViewport(): Viewport {
   };
 }
 
-export default async function Page({ params: { username } }: PageProps) {
+export default async function Page({
+  params: { username },
+  searchParams
+}: PageProps) {
   const { user: loggedInUser } = await validateRequest();
+  const showRewards = searchParams.showRewards === "true";
+
   if (!loggedInUser) {
     return (
       <p className="text-destructive">
@@ -266,13 +272,16 @@ export default async function Page({ params: { username } }: PageProps) {
       </p>
     );
   }
+
   const user = await getUser(decodeURI(username), loggedInUser.id);
+
   return (
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-8">
         <UserProfile
           user={user as unknown as UserData}
           loggedInUserId={loggedInUser.id}
+          showRewards={showRewards}
         />
         <UserPosts userId={user.id} />
       </div>
@@ -283,9 +292,14 @@ export default async function Page({ params: { username } }: PageProps) {
 interface UserProfileProps {
   user: UserData;
   loggedInUserId: string;
+  showRewards: boolean;
 }
 
-async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
+async function UserProfile({
+  user,
+  loggedInUserId,
+  showRewards
+}: UserProfileProps) {
   const followerInfo: FollowerInfo = {
     followers: getKandMString(user._count.followers),
     isFollowedByUser: user.followers.some(
@@ -302,7 +316,7 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
         <UserAvatar
           avatarUrl={user.avatarUrl}
           size={152}
-          className="-mt-[14%] ml-6 mr-auto rounded-full border-8 border-card"
+          className="-mt-[14%] ml-6 mr-auto select-none rounded-full border-8 border-card"
         />
       </div>
       <div className="p-6 pt-0">
@@ -343,11 +357,15 @@ async function UserProfile({ user, loggedInUserId }: UserProfileProps) {
                       initialState={followerInfo}
                     />
                   )}
-                  <RewardsButton user={user} />
+                  <RewardsButton
+                    loggedInUserId={loggedInUserId}
+                    user={user}
+                    showRewards={showRewards}
+                  />
                 </div>
               </div>
             </div>
-            <div className="xs:grid-cols-3 grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 xs:grid-cols-3">
               <PostsCount count={user._count.posts} />
               <FollowerCount userId={user.id} initialState={followerInfo} />
               <FollowingCount

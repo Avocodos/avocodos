@@ -68,7 +68,7 @@ export default function RewardsGrid({
         <SpinningImageDialog
           isOpen={!!selectedReward}
           onClose={() => setSelectedReward(null)}
-          imageUrl="/auth.webp"
+          imageUrl={selectedReward.reward.imageUrl ?? "/auth.webp"}
           rewardName={selectedReward.reward.name}
           username={username}
           reward={selectedReward.reward}

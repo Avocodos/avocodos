@@ -1,7 +1,6 @@
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { Google } from "arctic";
 import { Lucia, Session, User } from "lucia";
-import { cookies } from "next/headers";
 import { cache } from "react";
 import prisma from "./lib/prisma";
 
@@ -50,7 +49,9 @@ export const validateRequest = cache(
   async (): Promise<
     { user: User; session: Session } | { user: null; session: null }
   > => {
-    const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+    const { cookies } = await import('next/headers')
+    const cookieManager = cookies()
+    const sessionId = cookieManager.get(lucia.sessionCookieName)?.value ?? null;
 
     if (!sessionId) {
       return {
