@@ -41,7 +41,7 @@ export async function POST(
         const { communityName } = params;
 
         const community = await prisma?.community.findUnique({
-            where: { name: communityName },
+            where: { name: decodeURI(communityName) },
             include: { members: true },
         });
 
