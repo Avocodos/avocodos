@@ -58,6 +58,7 @@ export default function RewardsModal({
     const data = await kyInstance
       .get(`/api/rewards/user/${user.id}`)
       .json<ExtendedUserReward[]>();
+
     const res = data.reduce(
       (acc, reward) => {
         if (!acc[reward.reward.requirementType]) {
