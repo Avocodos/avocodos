@@ -4,12 +4,41 @@ import { cn } from "@/lib/utils";
 import { NotificationType } from "@prisma/client";
 import { Gift, Heart, MessageCircle, User2 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 interface NotificationProps {
   notification: NotificationData;
+  onVisible: () => void;
 }
 
-export default function Notification({ notification }: NotificationProps) {
+export default function Notification({
+  notification,
+  onVisible
+}: NotificationProps) {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          onVisible();
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [onVisible]);
+
   const notificationTypeMap: Record<
     NotificationType,
     { message: string; icon: JSX.Element; href: string }
@@ -32,7 +61,7 @@ export default function Notification({ notification }: NotificationProps) {
     REWARD_PROGRESS: {
       message: notification.message ?? "",
       icon: <Gift className="size-7 text-primary" />,
-      href: `/users/${notification.recipient.username}`
+      href: `/users/${notification.recipient.username}?showRewards=true`
     },
     MENTION: {
       message: notification.message ?? "",
@@ -46,6 +75,7 @@ export default function Notification({ notification }: NotificationProps) {
   return (
     <Link href={href} className="block">
       <article
+        ref={ref}
         className={cn(
           "flex gap-3 rounded-2xl bg-card p-5 shadow-sm transition-colors hover:bg-card/70",
           !notification.read && "bg-primary/10"

@@ -85,7 +85,6 @@ export async function GET(req: NextRequest, { params }: { params: { channelId: s
             },
             // take: PAGE_SIZE,
         });
-
         return NextResponse.json(messages);
     } catch (error) {
         console.error("Error fetching messages:", error);

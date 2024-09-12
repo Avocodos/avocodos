@@ -41,7 +41,7 @@ import { randomUUID } from "crypto";
 import { User as UserLucia } from "lucia";
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import Spinner from "@/components/Spinner";
-import { ExtendedMessage, MessagesPage } from "@/lib/types";
+import { ExtendedMessage, MessageCountInfo, MessagesPage } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { FormField } from "@/components/ui/form";
 
@@ -72,37 +72,31 @@ export default function Chat({ user }: ChatProps) {
       link?: string;
     }[]
   >([]);
+
   const topScrollRef = useRef<HTMLDivElement>(null); // Reference for the top of the chat
 
-  const {
-    data,
-    fetchNextPage,
-    fetchPreviousPage,
-    hasNextPage,
-    hasPreviousPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-    refetch
-  } = useInfiniteQuery({
-    queryKey: ["messages", selectedChannel?.id],
-    queryFn: ({ pageParam }) =>
-      kyInstance
-        .get(
-          `/api/messages/${selectedChannel?.id}`,
-          pageParam ? { searchParams: { cursor: pageParam } } : {}
-        )
-        .json<MessagesPage>(),
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => {
-      return lastPage.nextCursor || null; // Return null if no nextCursor
-    },
-    getPreviousPageParam: (firstPage) => {
-      return firstPage.prevCursor || null; // Return null if no prevCursor
+  const getMessages = async () => {
+    const response = await kyInstance
+      .get<any>(`/api/messages/${selectedChannel?.id}`)
+      .json<any>();
+
+    if (response.length > 0) {
+      try {
+        await kyInstance.post(`/api/messages/${selectedChannel?.id}/mark-read`);
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
     }
+    return { messages: response };
+  };
+
+  const { data, isFetching, status, refetch } = useQuery({
+    queryKey: ["messages", selectedChannel?.id],
+    queryFn: getMessages,
+    enabled: !!selectedChannel?.id
   });
 
-  const messages: any[] = data?.pages.flatMap((page) => page) || [];
+  const messages = data?.messages || [];
 
   const { data: channels, isLoading: channelsLoading } = useQuery<{
     channels: ExtendedChannel[];
@@ -156,13 +150,42 @@ export default function Chat({ user }: ChatProps) {
     }
   });
 
+  const { data: unreadCounts, refetch: refetchUnreadCounts } =
+    useQuery<MessageCountInfo>({
+      queryKey: ["unread-message-counts"],
+      queryFn: async () => {
+        const data = await kyInstance
+          .get("/api/messages/unread-count")
+          .json<MessageCountInfo>();
+        if (selectedChannel) {
+          data.unreadCount -= data.channelUnreadCounts[selectedChannel.id] || 0;
+          data.channelUnreadCounts[selectedChannel.id] = 0;
+        }
+        return data;
+      },
+      refetchInterval: 60000
+    });
+
+  useEffect(() => {
+    if (selectedChannel) {
+      refetchUnreadCounts();
+    }
+  }, [selectedChannel, refetchUnreadCounts]);
+
   useEffect(() => {
     const socket = io();
-    socket.on("new_message", refetch);
+    socket.on("new_message", (data) => {
+      if (data.recipientId === user.id) {
+        if (!selectedChannel || data.channelId !== selectedChannel.id) {
+          refetchUnreadCounts();
+        }
+      }
+      refetch();
+    });
     return () => {
-      socket.off("new_message", refetch);
+      socket.off("new_message");
     };
-  }, [refetch]);
+  }, [user.id, refetchUnreadCounts, refetch, selectedChannel]);
 
   const { control, handleSubmit, reset } = useForm<ChatFormValues>({
     defaultValues: {
@@ -240,54 +263,33 @@ export default function Chat({ user }: ChatProps) {
 
   useEffect(scrollToBottom, [selectedChannel, data]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (topScrollRef.current) {
-        const { scrollTop } = topScrollRef.current;
-        if (scrollTop === 0 && hasPreviousPage && !isFetching) {
-          fetchPreviousPage(); // Fetch previous messages when scrolled to the top
-        }
-      }
-    };
-    const currentRef = topScrollRef.current;
-    if (currentRef) {
-      currentRef.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      if (currentRef) {
-        currentRef.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [hasPreviousPage, isFetching, fetchPreviousPage]);
-
-  // useEffect(() => {
-  //   const fetchReadReceipts = async () => {
-  //     const messageIds = messages.map((msg: any) => msg.id);
-  //     const response = await kyInstance.get<MessageReadReceipt[]>(
-  //       `/api/messages/read-receipts?messageIds=${messageIds.join(",")}`
-  //     );
-  //     const readReceipts = await response.json();
-
-  //     // Update the messages state with read receipts
-  //     messages.push(
-  //       messages.map((msg: any) => ({
-  //         ...msg,
-  //         read: readReceipts.some(
-  //           (receipt: any) => receipt.messageId === msg.id
-  //         )
-  //       }))
-  //     );
-  //   };
-
-  //   fetchReadReceipts();
-  // }, [messages]);
-
   return (
-    <div className="chat-container flex w-full flex-row gap-0 rounded-2xl border-2 border-muted bg-card">
+    <div className="chat-container flex w-full flex-row gap-0 rounded-2xl border-2 border-muted bg-card md:min-h-[60dvh] 2xl:min-h-[1000px]">
       <React.Fragment>
         <div className="chat-sidebar hidden h-full min-h-full w-full max-w-[280px] flex-col overflow-y-auto rounded-lg border-r-2 border-muted md:flex lg:max-w-[300px] xl:max-w-[320px]">
-          <div className="flex w-full flex-row justify-between border-b-2 border-muted p-6 lg:p-8">
-            <h4 className="mt-1.5">Messages</h4>
+          <div className="flex w-full flex-row items-center justify-between border-b-2 border-muted p-6 lg:p-8">
+            <div className="flex items-center gap-2">
+              {console.log("unreadCounts:", unreadCounts) as ReactNode}
+              {unreadCounts?.unreadCount && unreadCounts.unreadCount >= 1 && (
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                  {(() => {
+                    const totalUnread =
+                      unreadCounts.unreadCount -
+                      (selectedChannel
+                        ? unreadCounts.channelUnreadCounts[
+                            selectedChannel.id
+                          ] || 0
+                        : 0);
+                    return totalUnread > 0
+                      ? totalUnread > 99
+                        ? "99+"
+                        : totalUnread
+                      : null;
+                  })()}
+                </span>
+              )}
+              <h4 className="">Messages</h4>
+            </div>
             <div className="flex flex-row gap-2">
               <NewChatDialog channels={channels!} />
               <NewGroupDialog />
@@ -321,16 +323,27 @@ export default function Chat({ user }: ChatProps) {
                       className="rounded-full"
                     />
                   )}
-                  <span className="line-clamp-2">
-                    {channel.members.length === 2
-                      ? channel.members
-                          .filter((member) => member.id !== user.id)
-                          .map((member) => member.displayName)
-                          .join(", ")
-                      : channel.members
-                          .map((member) => member.displayName)
-                          .join(", ")}
-                  </span>
+                  <div className="flex flex-1 items-center justify-between">
+                    <span className="line-clamp-2">
+                      {channel.members.length === 2
+                        ? channel.members
+                            .filter((member) => member.id !== user.id)
+                            .map((member) => member.displayName)
+                            .join(", ")
+                        : channel.members
+                            .map((member) => member.displayName)
+                            .join(", ")}
+                    </span>
+                    {unreadCounts?.channelUnreadCounts &&
+                      unreadCounts.channelUnreadCounts[channel.id] > 0 &&
+                      selectedChannel?.id !== channel.id && (
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                          {unreadCounts.channelUnreadCounts[channel.id] > 99
+                            ? "99+"
+                            : unreadCounts.channelUnreadCounts[channel.id]}
+                        </span>
+                      )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -462,12 +475,7 @@ export default function Chat({ user }: ChatProps) {
               </div>
             </div>
           </Link>
-          <InfiniteScrollContainer
-            className="h-full max-h-[450px] flex-1 lg:max-h-[380px] xl:max-h-[400px]"
-            onBottomReached={() =>
-              hasPreviousPage && !isFetching && fetchPreviousPage()
-            }
-          >
+          <div className="h-full max-h-[450px] flex-1 lg:max-h-[380px] xl:max-h-[400px]">
             <div
               ref={topScrollRef}
               className="chat-messages-body flex h-full flex-1 flex-col gap-4 overflow-y-auto p-6 lg:p-8"
@@ -482,8 +490,7 @@ export default function Chat({ user }: ChatProps) {
                     message={message}
                   />
                 ))}
-              {isFetchingNextPage && <Spinner />}
-              {!isFetching && !isFetchingNextPage && messages.length === 0 && (
+              {!isFetching && messages.length === 0 && (
                 <div className="flex items-center justify-center">
                   <p className="text-foreground/80">No messages yet...</p>
                 </div>
@@ -494,7 +501,7 @@ export default function Chat({ user }: ChatProps) {
                 </div>
               )}
             </div>
-          </InfiniteScrollContainer>
+          </div>
           {attachments.length > 0 && (
             <div className="flex max-h-[150px] flex-row flex-wrap gap-4 overflow-y-auto px-4 pb-4 pt-12 lg:max-h-[200px]">
               {attachments.map((attachment) => (

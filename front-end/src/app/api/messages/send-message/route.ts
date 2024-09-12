@@ -19,6 +19,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Content and channelId are required" }, { status: 400 });
     }
     try {
+
+        const channel = await prisma.channel.findUnique({
+            where: { id: channelId },
+            include: { members: true }
+        });
+
+        if (!channel) {
+            return NextResponse.json({ error: "Channel not found" }, { status: 404 });
+        }
+
+        if (!channel.members.some(member => member.id === user.id)) {
+            return NextResponse.json({ error: "User is not a member of this channel" }, { status: 403 });
+        }
+
         const message = await prisma.message.create({
             data: {
                 content,
@@ -38,10 +52,22 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        // Emit the new message event
+        for (const member of channel.members) {
+            const messageReadReceipt = await prisma.messageReadReceipt.create({
+                data: {
+                    messageId: message.id,
+                    userId: member.id,
+                    channelId,
+                    read: false,
+                }
+            });
+            console.log("messageReadReceipt:", messageReadReceipt);
+        }
+
         io.emit("new_message", message);
 
         return NextResponse.json(message);
+
     } catch (error) {
         console.error('Error sending message:', error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

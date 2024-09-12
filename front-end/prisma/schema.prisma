@@ -56,6 +56,7 @@ model User {
   communityRoles        CommunityRole[]      @relation("UserRoles")
   Message               Message[]
   MessageReadReceipt    MessageReadReceipt[]
+  unreadMessageCount    Int                  @default(0)
 
   @@map("users")
 }
@@ -375,12 +376,13 @@ model UserReward {
 
 // Channel model for both direct and group chats
 model Channel {
-  id       String      @id @default(cuid())
-  type     ChannelType
-  name     String?
-  members  User[]      @relation("ChannelMembers")
-  messages Message[]
-  Media    Media[]
+  id                 String               @id @default(cuid())
+  type               ChannelType
+  name               String?
+  members            User[]               @relation("ChannelMembers")
+  messages           Message[]
+  Media              Media[]
+  MessageReadReceipt MessageReadReceipt[]
 
   @@index([name, id])
   @@map("channels")
@@ -394,22 +396,22 @@ enum ChannelType {
 
 // Message model for storing messages
 model Message {
-  id           String               @id @default(cuid())
-  content      String
-  userId       String
-  channelId    String
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  type         MessageType
-  read         Boolean              @default(false)
-  attachments  MessageMedia[]
-  channel      Channel              @relation(fields: [channelId], references: [id])
-  reactions    Reaction[]
-  Notification Notification[]
-  user         User                 @relation(fields: [userId], references: [id])
-  userMessages User[]               @relation("UserMessages")
-  Media        Media[]
-  readReceipts MessageReadReceipt[]
+  id                  String               @id @default(cuid())
+  content             String
+  userId              String
+  channelId           String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  type                MessageType
+  read                Boolean              @default(false)
+  attachments         MessageMedia[]
+  channel             Channel              @relation(fields: [channelId], references: [id])
+  reactions           Reaction[]
+  Notification        Notification[]
+  user                User                 @relation(fields: [userId], references: [id])
+  userMessages        User[]               @relation("UserMessages")
+  Media               Media[]
+  messageReadReceipts MessageReadReceipt[]
 
   @@index([channelId])
   @@map("messages")
@@ -445,15 +447,18 @@ model MessageMedia {
 }
 
 model MessageReadReceipt {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
+  channelId String
   messageId String
   userId    String
-  readAt    DateTime @default(now()) // Timestamp when the message was read
-  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  read      Boolean   @default(false)
+  readAt    DateTime?
+  message   Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel   Channel   @relation(fields: [channelId], references: [id])
 
-  @@unique([messageId, userId])
-  @@index([messageId, userId])
+  @@unique([userId, messageId])
+  @@index([userId, channelId])
   @@map("message_read_receipts")
 }
 

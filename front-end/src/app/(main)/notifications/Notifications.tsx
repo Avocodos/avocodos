@@ -10,10 +10,16 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import Spinner from "@/components/Spinner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Notification from "./Notification";
+import { useNotificationSocket } from "@/hooks/useNotificationSocket";
 
 export default function Notifications() {
+  const [visibleNotifications, setVisibleNotifications] = useState<string[]>(
+    []
+  );
+  useNotificationSocket();
+
   const {
     data,
     fetchNextPage,
@@ -36,11 +42,14 @@ export default function Notifications() {
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
-    mutationFn: () => kyInstance.patch("/api/notifications/mark-as-read"),
+  const { mutate: markAsRead } = useMutation({
+    mutationFn: (notificationIds: string[]) =>
+      kyInstance.patch("/api/notifications/mark-as-read", {
+        json: { notificationIds }
+      }),
     onSuccess: () => {
-      queryClient.setQueryData(["unread-notification-count"], {
-        unreadCount: 0
+      queryClient.invalidateQueries({
+        queryKey: ["unread-notification-count"]
       });
     },
     onError(error) {
@@ -49,8 +58,10 @@ export default function Notifications() {
   });
 
   useEffect(() => {
-    mutate();
-  }, [mutate]);
+    if (visibleNotifications.length > 0) {
+      markAsRead(visibleNotifications);
+    }
+  }, [visibleNotifications, markAsRead]);
 
   const notifications = data?.pages.flatMap((page) => page.notifications) || [];
 
@@ -80,7 +91,13 @@ export default function Notifications() {
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {notifications.map((notification) => (
-        <Notification key={notification.id} notification={notification} />
+        <Notification
+          key={notification.id}
+          notification={notification}
+          onVisible={() =>
+            setVisibleNotifications((prev) => [...prev, notification.id])
+          }
+        />
       ))}
       {isFetchingNextPage && <Spinner />}
     </InfiniteScrollContainer>

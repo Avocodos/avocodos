@@ -36,7 +36,7 @@ import { ExtendedChannel } from "./Chat";
 export default function NewChatDialog({
   channels
 }: {
-  channels: {channels: ExtendedChannel[]};
+  channels: { channels: ExtendedChannel[] };
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [recipientId, setRecipientId] = useState("");
@@ -120,6 +120,7 @@ export default function NewChatDialog({
                     )) || []}
                 </Autocomplete>
               </ModalBody>
+              {console.log("channels", channels) as ReactNode}
               <ModalFooter>
                 <Button onClick={handleCreateChat}>Create</Button>
               </ModalFooter>

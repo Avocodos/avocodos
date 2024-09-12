@@ -229,6 +229,7 @@ export interface NotificationCountInfo {
 
 export interface MessageCountInfo {
   unreadCount: number;
+  channelUnreadCounts: { [channelId: string]: number };
 }
 
 export interface CoursesPage {
@@ -247,3 +248,4 @@ export interface MessagesPage {
   nextCursor: string | null;
   prevCursor: string | null;
 }
+

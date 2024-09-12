@@ -1,24 +1,35 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
 import { MessageCountInfo } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { Mail } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 interface MessagesButtonProps {
   initialState: MessageCountInfo;
 }
 
 export default function MessagesButton({ initialState }: MessagesButtonProps) {
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["unread-messages-count"],
     queryFn: () =>
       kyInstance.get("/api/messages/unread-count").json<MessageCountInfo>(),
     initialData: initialState,
     refetchInterval: 120 * 1000
   });
+
+  useEffect(() => {
+    const handleMessageRead = () => {
+      refetch();
+    };
+
+    window.addEventListener("message-read", handleMessageRead);
+
+    return () => {
+      window.removeEventListener("message-read", handleMessageRead);
+    };
+  }, [refetch]);
 
   return (
     <Button

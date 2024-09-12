@@ -7,22 +7,25 @@ import { useQuery } from "@tanstack/react-query";
 import { Bell } from "lucide-react";
 import Link from "next/link";
 
-interface NotificationsButtonProps {
-  initialState: NotificationCountInfo;
-}
-
-export default function NotificationsButton({
-  initialState
-}: NotificationsButtonProps) {
-  const { data } = useQuery({
+export default function NotificationsButton() {
+  const { data, isLoading, error } = useQuery<NotificationCountInfo>({
     queryKey: ["unread-notification-count"],
-    queryFn: () =>
-      kyInstance
-        .get("/api/notifications/unread-count")
-        .json<NotificationCountInfo>(),
-    initialData: initialState,
-    refetchInterval: 120 * 1000
+    queryFn: () => kyInstance.get("/api/notifications/unread-count").json(),
+    refetchInterval: 60000 // Refetch every minute
   });
+
+  if (isLoading)
+    return (
+      <Button variant="ghost">
+        <Bell />
+      </Button>
+    );
+  if (error)
+    return (
+      <Button variant="ghost">
+        <Bell />
+      </Button>
+    );
 
   return (
     <Button
@@ -34,7 +37,7 @@ export default function NotificationsButton({
       <Link href="/notifications">
         <div className="relative">
           <Bell />
-          {!!data.unreadCount && (
+          {!!data?.unreadCount && (
             <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs font-medium tabular-nums text-primary-foreground">
               {data.unreadCount}
             </span>
