@@ -84,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(release): update changelog [`eb0216b`](https://github.com/avocodos/avocodos/commit/eb0216becdf3d99da05fe62cc9cab12a30c93347)
 - add: .vercel in .gitignore [`55a587e`](https://github.com/avocodos/avocodos/commit/55a587e9b0c791e09c5c1c9c6a9326db937e4c7d)
 - update: package.json with new deps [`f2836a9`](https://github.com/avocodos/avocodos/commit/f2836a94f59695cb9849e201684b501f38319dc0)
+- chore(release): update changelog [`43ae630`](https://github.com/avocodos/avocodos/commit/43ae6303448f4481de9cfea97d8f046ccc148f6a)
 - chore(release): update changelog [`35a96ea`](https://github.com/avocodos/avocodos/commit/35a96eaf7f5ad53a63fa6b56910dddf2178453c5)
 - chore(release): update changelog [`fcf896b`](https://github.com/avocodos/avocodos/commit/fcf896b605abb69fd75175b985931efe84b8ca7a)
 - chore(release): update changelog [`16b517a`](https://github.com/avocodos/avocodos/commit/16b517a73fac4374a7f8a55e66bc72f0629b1796)
