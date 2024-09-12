@@ -382,7 +382,7 @@ model Channel {
   members            User[]               @relation("ChannelMembers")
   messages           Message[]
   Media              Media[]
-  MessageReadReceipt MessageReadReceipt[]
+  messageReadReceipt MessageReadReceipt[]
 
   @@index([name, id])
   @@map("channels")

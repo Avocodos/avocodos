@@ -60,10 +60,8 @@ export default function MenuBar({
           <span className="hidden lg:block">Communities</span>
         </Link>
       </Button>
-      <NotificationsButton
-        initialState={{ unreadCount: unreadNotificationsCount }}
-      />
-      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
+      <NotificationsButton />
+      <MessagesButton />
       <Button
         variant="ghost"
         className={cn("flex items-center justify-start gap-3")}

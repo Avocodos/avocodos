@@ -52,7 +52,7 @@ export async function POST(
                 id: channelId
             },
             data: {
-                messageReadReceipts: {
+                messageReadReceipt: {
                     updateMany: {
                         where: {
                             userId: user.id,

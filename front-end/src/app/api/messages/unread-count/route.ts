@@ -20,8 +20,6 @@ export async function GET() {
       }
     });
 
-    console.log("messageReadReceipts:", messageReadReceipts);
-
     const channelUnreadCounts = messageReadReceipts.reduce((acc, receipt) => {
       const channelId = receipt.channelId;
       if (!acc[channelId as any]) {
@@ -30,8 +28,6 @@ export async function GET() {
       acc[channelId as any]++;
       return acc;
     }, {} as { [channelId: string]: number });
-
-    console.log("channelUnreadCounts:", channelUnreadCounts);
 
     const totalUnreadCount = Object.values(channelUnreadCounts).reduce((a, b) => a + b, 0);
 

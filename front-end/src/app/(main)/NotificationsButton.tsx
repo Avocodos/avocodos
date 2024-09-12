@@ -18,12 +18,14 @@ export default function NotificationsButton() {
     return (
       <Button variant="ghost">
         <Bell />
+        <span className="hidden lg:inline">Notifications</span>
       </Button>
     );
   if (error)
     return (
       <Button variant="ghost">
         <Bell />
+        <span className="hidden lg:inline">Notifications</span>
       </Button>
     );
 

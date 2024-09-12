@@ -6,16 +6,11 @@ import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 
-interface MessagesButtonProps {
-  initialState: MessageCountInfo;
-}
-
-export default function MessagesButton({ initialState }: MessagesButtonProps) {
+export default function MessagesButton() {
   const { data, refetch } = useQuery({
     queryKey: ["unread-messages-count"],
     queryFn: () =>
       kyInstance.get("/api/messages/unread-count").json<MessageCountInfo>(),
-    initialData: initialState,
     refetchInterval: 120 * 1000
   });
 
@@ -41,7 +36,7 @@ export default function MessagesButton({ initialState }: MessagesButtonProps) {
       <Link href="/messages">
         <div className="relative">
           <Mail />
-          {!!data.unreadCount && (
+          {!!data?.unreadCount && (
             <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs font-medium tabular-nums text-primary-foreground">
               {data.unreadCount}
             </span>

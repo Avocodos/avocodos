@@ -1,7 +1,11 @@
 "use client";
 
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useQueryClient
+} from "@tanstack/react-query";
 import kyInstance from "@/lib/ky";
 import {
   Channel,
@@ -16,7 +20,15 @@ import UserAvatar from "@/components/UserAvatar";
 import NewGroupDialog from "./NewGroupDialog";
 import NewChatDialog from "./NewChatDialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Menu, Paperclip, Send, Trash2, X } from "lucide-react";
+import {
+  CheckCheck,
+  Loader2,
+  Menu,
+  Paperclip,
+  Send,
+  Trash2,
+  X
+} from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -39,8 +51,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { randomUUID } from "crypto";
 import { User as UserLucia } from "lucia";
-import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
-import Spinner from "@/components/Spinner";
 import { ExtendedMessage, MessageCountInfo, MessagesPage } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { FormField } from "@/components/ui/form";
@@ -49,9 +59,13 @@ interface ChatProps {
   user: UserLucia;
 }
 
+interface ChannelExtendedMessage extends MessageType {
+  user: User;
+}
+
 export interface ExtendedChannel extends Channel {
   members: User[];
-  messages: MessageType[];
+  messages: ChannelExtendedMessage[];
 }
 
 // Define the form values type
@@ -72,6 +86,7 @@ export default function Chat({ user }: ChatProps) {
       link?: string;
     }[]
   >([]);
+  const [readStatus, setReadStatus] = useState<Record<string, boolean>>({});
 
   const topScrollRef = useRef<HTMLDivElement>(null); // Reference for the top of the chat
 
@@ -87,6 +102,14 @@ export default function Chat({ user }: ChatProps) {
         console.error("Error marking messages as read:", error);
       }
     }
+
+    // Update read status
+    const newReadStatus: Record<string, boolean> = {};
+    response.forEach((message: ExtendedMessage) => {
+      newReadStatus[message.id] = message.read;
+    });
+    setReadStatus(newReadStatus);
+
     return { messages: response };
   };
 
@@ -98,6 +121,8 @@ export default function Chat({ user }: ChatProps) {
 
   const messages = data?.messages || [];
 
+  const queryClient = useQueryClient();
+
   const { data: channels, isLoading: channelsLoading } = useQuery<{
     channels: ExtendedChannel[];
   }>({
@@ -105,7 +130,8 @@ export default function Chat({ user }: ChatProps) {
     queryFn: () =>
       kyInstance
         .get(`/api/messages/channels/${user.username}`)
-        .json<{ channels: ExtendedChannel[] }>()
+        .json<{ channels: ExtendedChannel[] }>(),
+    staleTime: 1000 * 60 * 1
   });
 
   const { startUpload, isUploading } = useUploadThing("message_attachments", {
@@ -181,11 +207,12 @@ export default function Chat({ user }: ChatProps) {
         }
       }
       refetch();
+      queryClient.invalidateQueries({ queryKey: ["channels"] });
     });
     return () => {
       socket.off("new_message");
     };
-  }, [user.id, refetchUnreadCounts, refetch, selectedChannel]);
+  }, [user.id, refetchUnreadCounts, refetch, selectedChannel, queryClient]);
 
   const { control, handleSubmit, reset } = useForm<ChatFormValues>({
     defaultValues: {
@@ -270,7 +297,7 @@ export default function Chat({ user }: ChatProps) {
           <div className="flex w-full flex-row items-center justify-between border-b-2 border-muted p-6 lg:p-8">
             <div className="flex items-center gap-2">
               {console.log("unreadCounts:", unreadCounts) as ReactNode}
-              {unreadCounts?.unreadCount && unreadCounts.unreadCount >= 1 && (
+              {unreadCounts?.unreadCount && unreadCounts.unreadCount >= 1 ? (
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                   {(() => {
                     const totalUnread =
@@ -287,7 +314,7 @@ export default function Chat({ user }: ChatProps) {
                       : null;
                   })()}
                 </span>
-              )}
+              ) : null}
               <h4 className="">Messages</h4>
             </div>
             <div className="flex flex-row gap-2">
@@ -299,53 +326,84 @@ export default function Chat({ user }: ChatProps) {
             <MessagesChannelsSkeleton />
           ) : (
             <div className="flex-1 divide-y-2 divide-muted overflow-y-auto">
-              {channels?.channels.map((channel) => (
-                <div
-                  key={channel.id}
-                  className="flex cursor-pointer items-center gap-4 px-6 py-3 avocodos-transition hover:bg-muted lg:px-8"
-                  onClick={() => setSelectedChannel(channel)}
-                >
-                  {channel.members.length === 2 ? (
-                    <UserAvatar
-                      avatarUrl={
-                        channel.members.filter(
-                          (member) => member.id !== user.id
-                        )[0]?.avatarUrl ?? "/avatar-placeholder.png"
-                      }
-                      size={44}
-                    />
-                  ) : (
-                    <Image
-                      src="/group-placeholder.png"
-                      alt="Group Avatar"
-                      width={39.2}
-                      height={39.2}
-                      className="rounded-full"
-                    />
-                  )}
-                  <div className="flex flex-1 items-center justify-between">
-                    <span className="line-clamp-2">
-                      {channel.members.length === 2
-                        ? channel.members
-                            .filter((member) => member.id !== user.id)
-                            .map((member) => member.displayName)
-                            .join(", ")
-                        : channel.members
-                            .map((member) => member.displayName)
-                            .join(", ")}
-                    </span>
-                    {unreadCounts?.channelUnreadCounts &&
-                      unreadCounts.channelUnreadCounts[channel.id] > 0 &&
-                      selectedChannel?.id !== channel.id && (
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                          {unreadCounts.channelUnreadCounts[channel.id] > 99
-                            ? "99+"
-                            : unreadCounts.channelUnreadCounts[channel.id]}
+              {channels?.channels.map((channel) => {
+                const latestMessage = channel.messages.sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )[0];
+                return (
+                  <div
+                    key={channel.id}
+                    className="flex cursor-pointer items-center gap-4 px-6 py-3 avocodos-transition hover:bg-muted lg:px-8"
+                    onClick={() => setSelectedChannel(channel)}
+                  >
+                    {channel.members.length === 2 ? (
+                      <UserAvatar
+                        avatarUrl={
+                          channel.members.filter(
+                            (member) => member.id !== user.id
+                          )[0]?.avatarUrl ?? "/avatar-placeholder.png"
+                        }
+                        size={44}
+                      />
+                    ) : (
+                      <Image
+                        src="/group-placeholder.png"
+                        alt="Group Avatar"
+                        width={39.2}
+                        height={39.2}
+                        className="rounded-full"
+                      />
+                    )}
+                    <div className="flex flex-1 items-center justify-between">
+                      <div className="flex flex-col gap-0">
+                        <span className="line-clamp-2">
+                          {channel.members.length === 2
+                            ? channel.members
+                                .filter((member) => member.id !== user.id)
+                                .map((member) => member.displayName)
+                                .join(", ")
+                            : channel.members
+                                .map((member) => member.displayName)
+                                .join(", ")}
                         </span>
-                      )}
+
+                        <span className="line-clamp-1 inline-flex items-center gap-1 text-xs text-foreground/80">
+                          <CheckCheck
+                            className={`size-3.5 ${
+                              channel.messages.length > 0 &&
+                              latestMessage.user.id === user.id
+                                ? "block"
+                                : "hidden"
+                            } ${
+                              readStatus[latestMessage.id]
+                                ? "text-sky-600 dark:text-sky-400"
+                                : "text-foreground/80"
+                            }`}
+                          />
+                          {channel.messages.length > 0
+                            ? `${
+                                latestMessage.user.id === user.id
+                                  ? "You"
+                                  : latestMessage.user.displayName
+                              }: ${latestMessage.content}`
+                            : "No messages yet..."}
+                        </span>
+                      </div>
+                      {unreadCounts?.channelUnreadCounts &&
+                        unreadCounts.channelUnreadCounts[channel.id] > 0 &&
+                        selectedChannel?.id !== channel.id && (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                            {unreadCounts.channelUnreadCounts[channel.id] > 99
+                              ? "99+"
+                              : unreadCounts.channelUnreadCounts[channel.id]}
+                          </span>
+                        )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -372,7 +430,7 @@ export default function Chat({ user }: ChatProps) {
                   channels?.channels.map((channel) => (
                     <div
                       key={channel.id}
-                      className="flex cursor-pointer items-center gap-4 rounded-xl p-2 py-3 avocodos-transition hover:bg-muted"
+                      className="flex cursor-pointer items-center gap-4 rounded-xl p-2 px-4 py-3 avocodos-transition hover:bg-muted"
                       onClick={() => {
                         setSelectedChannel(channel);
                         setSidebarOpen(false);
@@ -406,6 +464,15 @@ export default function Chat({ user }: ChatProps) {
                               .map((member) => member.displayName)
                               .join(", ")}
                       </span>
+                      {unreadCounts?.channelUnreadCounts &&
+                        unreadCounts.channelUnreadCounts[channel.id] > 0 &&
+                        selectedChannel?.id !== channel.id && (
+                          <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                            {unreadCounts.channelUnreadCounts[channel.id] > 99
+                              ? "99+"
+                              : unreadCounts.channelUnreadCounts[channel.id]}
+                          </span>
+                        )}
                     </div>
                   ))
                 )}
@@ -426,7 +493,7 @@ export default function Chat({ user }: ChatProps) {
             }`}
             className="w-full avocodos-transition hover:underline"
           >
-            <div className="inline-flex w-full items-center gap-4 border-b-2 border-muted p-6 lg:p-8">
+            <div className="inline-flex w-full items-center gap-4 border-b-2 border-muted p-[20px] lg:p-[28px]">
               {selectedChannel.members.length === 2 ? (
                 <UserAvatar
                   avatarUrl={
