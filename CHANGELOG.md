@@ -104,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(release): update changelog [`5344c1a`](https://github.com/avocodos/avocodos/commit/5344c1ae03193f2bf7c00cf412dc757fee727480)
 - fix: #12 (issue was fixed in previous commit but I forgot to add the issue tag) [`2ecf8df`](https://github.com/avocodos/avocodos/commit/2ecf8df4bcd5320377db038e9e733d239187af14)
 - update: .gcloudignore [`5d74a2e`](https://github.com/avocodos/avocodos/commit/5d74a2e42f7e746b4a78690b69700b98ec3496e8)
+- chore(release): update changelog [`f0b025f`](https://github.com/avocodos/avocodos/commit/f0b025fc28c228156a605e4423560dac83594d85)
 - chore(release): update changelog [`cc49765`](https://github.com/avocodos/avocodos/commit/cc497659831db7fe8cba35bc1994b152961df93b)
 - fix: #11 [`d18b22e`](https://github.com/avocodos/avocodos/commit/d18b22e4d93123afa24b4b9f6227aa5e8046e020)
 - fix: #8 [`93f9a33`](https://github.com/avocodos/avocodos/commit/93f9a334a52e20b6448479d6ec8828574b39ddad)
