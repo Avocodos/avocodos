@@ -93,7 +93,7 @@ export const sendOTPEmail = async (to: string, otp: string) => {
           </head>
           <body>
             <div class="container">
-              <img src="https://avocodos-web.vercel.app/auth.webp" alt="Avocodos Logo" style="width: 100%; display: block; margin: 0 auto 30px; border-radius: 20px;">
+              <img src="https://avocodos.com/auth.webp" alt="Avocodos Logo" style="width: 100%; display: block; margin: 0 auto 30px; border-radius: 20px;">
               <h1>Welcome to Avocodos!</h1>
               <p>We're thrilled to have you join our <strong>Avocodos community</strong>! 🎉 Your journey into the world of web3-based social media and learning starts here. We can't wait for you to experience our innovative platform.</p>
               <p>To get started, please verify your email address using the following OTP:</p>

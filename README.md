@@ -1,16 +1,16 @@
-<img src="https://raw.githubusercontent.com/HarjjotSinghh/avocodos-web/master/frontend/public/auth.webp" alt="Avocodos Logo" style="border-radius:16px;">
+<img src="https://avocodos.com/auth.webp" alt="Avocodos Logo" style="border-radius:16px;">
 
 [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 ---
 [![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/green?icon=github)](https://github.com/Naereen/badges/)
-[![GitHub stars](https://badgen.net/github/stars/Avocodos/avocodos?color=green)](https://GitHub.com/HarjjotSinghh/avocodos-web/stargazers/)
+[![GitHub stars](https://badgen.net/github/stars/Avocodos/avocodos?color=green)](https://GitHub.com/avocodos/avocodos/stargazers/)
 [![Maintainer](https://badgen.net/badge/maintainer/Harjot%20Singh%20Rana/green)](https://harjot.pro)
-[![GitHub branches](https://badgen.net/github/branches/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web)
-[![GitHub commits](https://badgen.net/github/commits/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web/commits/main)
-[![GitHub last commit](https://badgen.net/github/last-commit/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web/commits/main)
-[![GitHub issues](https://badgen.net/github/issues/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web/issues)
-[![GitHub pull requests](https://badgen.net/github/prs/HarjjotSinghh/avocodos-web?color=green)](https://github.com/HarjjotSinghh/avocodos-web/pulls)
-[![GitHub watchers](https://badgen.net/github/watchers/HarjjotSinghh/avocodos-web?color=green)](https://GitHub.com/HarjjotSinghh/avocodos-web/watchers/)
+[![GitHub branches](https://badgen.net/github/branches/avocodos/avocodos?color=green)](https://github.com/avocodos/avocodos)
+[![GitHub commits](https://badgen.net/github/commits/avocodos/avocodos?color=green)](https://github.com/avocodos/avocodos/commits/main)
+[![GitHub last commit](https://badgen.net/github/last-commit/avocodos/avocodos?color=green)](https://github.com/avocodos/avocodos/commits/main)
+[![GitHub issues](https://badgen.net/github/issues/avocodos/avocodos?color=green)](https://github.com/avocodos/avocodos/issues)
+[![GitHub pull requests](https://badgen.net/github/prs/avocodos/avocodos?color=green)](https://github.com/avocodos/avocodos/pulls)
+[![GitHub watchers](https://badgen.net/github/watchers/avocodos/avocodos?color=green)](https://GitHub.com/avocodos/avocodos/watchers/)
 
 [cc-by-nc]: LICENSE
 [cc-by-nc-image]: https://licensebuttons.net/l/by-nc/4.0/88x31.png
