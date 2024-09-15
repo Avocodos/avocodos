@@ -295,7 +295,7 @@ export default function Chat({ user }: ChatProps) {
   return (
     <div className="chat-container flex w-full flex-row gap-0 rounded-2xl border-2 border-muted bg-card md:min-h-[60dvh] 2xl:min-h-[1000px]">
       <React.Fragment>
-        <div className="chat-sidebar hidden h-full min-h-full w-full max-w-[280px] flex-col overflow-y-auto rounded-lg border-r-2 border-muted md:flex lg:max-w-[300px] xl:max-w-[320px]">
+        <div className="chat-sidebar hidden h-full max-h-[80dvh] min-h-full w-full max-w-[280px] flex-col overflow-y-auto rounded-lg border-r-2 border-muted md:flex lg:max-w-[300px] xl:max-w-[320px]">
           <div className="flex w-full flex-row items-center justify-between border-b-2 border-muted p-6 lg:p-8">
             <div className="flex items-center gap-2">
               {console.log("unreadCounts:", unreadCounts) as ReactNode}
@@ -447,7 +447,7 @@ export default function Chat({ user }: ChatProps) {
                   <h3>Messages</h3>
                 </DrawerTitle>
               </DrawerHeader>
-              <div className="flex flex-col gap-2">
+              <div className="flex h-full max-h-[80dvh] flex-col gap-2 overflow-y-auto">
                 {channelsLoading ? (
                   <MessagesChannelsSkeleton />
                 ) : (
