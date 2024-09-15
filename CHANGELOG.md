@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
-- fix: build error [`3df004a`](https://github.com/avocodos/avocodos/commit/3df004a759be1f84ac7cb325e6fad7d6fa99b8e1)
-- chore(release): update changelog [`85f6ee5`](https://github.com/avocodos/avocodos/commit/85f6ee570713a6dd2c25c95983531c3462331c63)
-- Merge branches 'master' and 'master' of https://github.com/avocodos/avocodos [`9511c68`](https://github.com/avocodos/avocodos/commit/9511c688ae3b6c9c3b0b54d07898ae850650bca6)
 - create: Avocodos PWA [`d4ba22e`](https://github.com/avocodos/avocodos/commit/d4ba22e533abdeddbe6d27ab326426728f4a9c4c)
+- fix: build error [`3df004a`](https://github.com/avocodos/avocodos/commit/3df004a759be1f84ac7cb325e6fad7d6fa99b8e1)
 - chore(release): update changelog [`ab15362`](https://github.com/avocodos/avocodos/commit/ab15362750f1d8081279c93377bd93495336cdde)
 - Update README.md [`8249ce4`](https://github.com/avocodos/avocodos/commit/8249ce45b7cf28de1034125e902fa8e1b461b046)
+- chore(release): update changelog [`85f6ee5`](https://github.com/avocodos/avocodos/commit/85f6ee570713a6dd2c25c95983531c3462331c63)
+- chore(release): update changelog [`43db654`](https://github.com/avocodos/avocodos/commit/43db654146500551862860493b4ec64dbc6ca991)
+- Merge branches 'master' and 'master' of https://github.com/avocodos/avocodos [`9511c68`](https://github.com/avocodos/avocodos/commit/9511c688ae3b6c9c3b0b54d07898ae850650bca6)
 - Update README.md [`769b046`](https://github.com/avocodos/avocodos/commit/769b0468837071f65a4a0fbe0249ccbaf2c3545e)
 
 ## [v1.1.0-alpha](https://github.com/avocodos/avocodos/compare/v1.0.0-alpha...v1.1.0-alpha) - 2024-09-15
