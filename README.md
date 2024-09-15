@@ -24,7 +24,7 @@ Avocodos is a completely web3-based social media and learning platform. Avocodos
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [Submit an Issue](#submit-an-issue)
-- [Contribute](#contribute)
+- [Contribute](#contribute-to-this-repository)
 
 ## Features
 - View and enroll in courses
