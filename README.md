@@ -24,7 +24,7 @@ Avocodos is a completely web3-based social media and learning platform. Avocodos
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [Submit an Issue](#submit-an-issue)
-- [Contribute](#contribute)
+- [Contribute](#contribute-to-this-repository)
 
 ## Features
 - View and enroll in courses
@@ -38,6 +38,16 @@ Avocodos is a completely web3-based social media and learning platform. Avocodos
 - Community flair/badges
 - Community Roles
 - Community NFTs
+- Self-created messaging system with reactions and attachments
+- Course management system for instructors
+- Community badges creation and management
+- Community roles creation and management
+- Welcome NFT reward for new users
+- Course enrollment and payment system (demo)
+- Community creation feature
+- Rewards system for user achievements
+- Enhanced SEO and metadata for various pages
+- Community member and moderator management
 
 ## Tech Stack
 1. <strong>Next.js</strong>: React framework for server-side rendering and static site generation.
