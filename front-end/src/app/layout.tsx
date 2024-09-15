@@ -10,6 +10,7 @@ import { Archivo } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { listenForMessages } from "@/lib/messages";
 import { NextUIProvider } from "@nextui-org/react";
+import { registerServiceWorker } from "@/registerServiceWorker";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -32,8 +33,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   listenForMessages();
+  registerServiceWorker();
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#3bf019" />
+        <link rel="apple-touch-icon" href="/android-chrome-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Avocodos" />
+      </head>
       <body
         className={`${instrumentSans.className} ${instrumentSans.variable}`}
       >

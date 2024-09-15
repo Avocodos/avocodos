@@ -1,6 +1,11 @@
 {
     "name": "Avocodos",
     "short_name": "Avocodos",
+    "description": "A completely web3-based social media and learning platform, built on the Aptos blockchain.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3bf019",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -12,8 +17,5 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ],
-    "theme_color": "#3bf019",
-    "background_color": "#ffffff",
-    "display": "standalone"
+    ]
 }

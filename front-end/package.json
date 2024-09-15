@@ -99,6 +99,7 @@
     "lucia": "^3.2.0",
     "lucide-react": "^0.436.0",
     "next": "^15.0.0-canary.141",
+    "next-pwa": "^5.6.0",
     "next-themes": "^0.3.0",
     "node-cron": "^3.0.3",
     "node-webscrap": "^1.2.1",
