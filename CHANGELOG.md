@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: build error [`3df004a`](https://github.com/avocodos/avocodos/commit/3df004a759be1f84ac7cb325e6fad7d6fa99b8e1)
 - chore(release): update changelog [`ab15362`](https://github.com/avocodos/avocodos/commit/ab15362750f1d8081279c93377bd93495336cdde)
 - Update README.md [`8249ce4`](https://github.com/avocodos/avocodos/commit/8249ce45b7cf28de1034125e902fa8e1b461b046)
+- chore(release): update changelog [`c2b1718`](https://github.com/avocodos/avocodos/commit/c2b1718c30d5ced4fab1c16b0bd397988cb4c358)
 - chore(release): update changelog [`85f6ee5`](https://github.com/avocodos/avocodos/commit/85f6ee570713a6dd2c25c95983531c3462331c63)
 - chore(release): update changelog [`43db654`](https://github.com/avocodos/avocodos/commit/43db654146500551862860493b4ec64dbc6ca991)
 - Merge branches 'master' and 'master' of https://github.com/avocodos/avocodos [`9511c68`](https://github.com/avocodos/avocodos/commit/9511c688ae3b6c9c3b0b54d07898ae850650bca6)
