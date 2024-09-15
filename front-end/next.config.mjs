@@ -3,6 +3,6 @@ import createJiti from "jiti";
 const jiti = createJiti(fileURLToPath(import.meta.url));
 jiti("./src/env");
 
-import nextPWAConfig from "./next-pwa.config";
+import nextPWAConfig from "./next-pwa.config.js";
 
 export default nextPWAConfig;
