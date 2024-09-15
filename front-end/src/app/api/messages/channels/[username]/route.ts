@@ -41,6 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
                     id: true,
                     content: true,
                     createdAt: true,
+                    updatedAt: true,
                     type: true,
                     user: {
                         select: {

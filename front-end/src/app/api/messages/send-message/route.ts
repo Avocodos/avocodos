@@ -61,7 +61,6 @@ export async function POST(req: NextRequest) {
                     read: false,
                 }
             });
-            console.log("messageReadReceipt:", messageReadReceipt);
         }
 
         io.emit("new_message", message);

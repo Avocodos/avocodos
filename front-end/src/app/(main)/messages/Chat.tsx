@@ -61,6 +61,7 @@ interface ChatProps {
 
 interface ChannelExtendedMessage extends MessageType {
   user: User;
+  createdAt: Date;
 }
 
 export interface ExtendedChannel extends Channel {
@@ -131,7 +132,8 @@ export default function Chat({ user }: ChatProps) {
       kyInstance
         .get(`/api/messages/channels/${user.username}`)
         .json<{ channels: ExtendedChannel[] }>(),
-    staleTime: 1000 * 60 * 1
+    staleTime: 1000 * 60 * 1,
+    refetchInterval: 1000 * 60 * 1
   });
 
   const { startUpload, isUploading } = useUploadThing("message_attachments", {
@@ -326,84 +328,106 @@ export default function Chat({ user }: ChatProps) {
             <MessagesChannelsSkeleton />
           ) : (
             <div className="flex-1 divide-y-2 divide-muted overflow-y-auto">
-              {channels?.channels.map((channel) => {
-                const latestMessage = channel.messages.sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                )[0];
-                return (
-                  <div
-                    key={channel.id}
-                    className="flex cursor-pointer items-center gap-4 px-6 py-3 avocodos-transition hover:bg-muted lg:px-8"
-                    onClick={() => setSelectedChannel(channel)}
-                  >
-                    {channel.members.length === 2 ? (
-                      <UserAvatar
-                        avatarUrl={
-                          channel.members.filter(
-                            (member) => member.id !== user.id
-                          )[0]?.avatarUrl ?? "/avatar-placeholder.png"
-                        }
-                        size={44}
-                      />
-                    ) : (
-                      <Image
-                        src="/group-placeholder.png"
-                        alt="Group Avatar"
-                        width={39.2}
-                        height={39.2}
-                        className="rounded-full"
-                      />
-                    )}
-                    <div className="flex flex-1 items-center justify-between">
-                      <div className="flex flex-col gap-0">
-                        <span className="line-clamp-2">
-                          {channel.members.length === 2
-                            ? channel.members
-                                .filter((member) => member.id !== user.id)
-                                .map((member) => member.displayName)
-                                .join(", ")
-                            : channel.members
-                                .map((member) => member.displayName)
-                                .join(", ")}
-                        </span>
-
-                        <span className="line-clamp-1 inline-flex items-center gap-1 text-xs text-foreground/80">
-                          <CheckCheck
-                            className={`size-3.5 ${
-                              channel.messages.length > 0 &&
-                              latestMessage.user.id === user.id
-                                ? "block"
-                                : "hidden"
-                            } ${
-                              readStatus[latestMessage.id]
-                                ? "text-sky-600 dark:text-sky-400"
-                                : "text-foreground/80"
-                            }`}
-                          />
-                          {channel.messages.length > 0
-                            ? `${
-                                latestMessage.user.id === user.id
-                                  ? "You"
-                                  : latestMessage.user.displayName
-                              }: ${latestMessage.content}`
-                            : "No messages yet..."}
-                        </span>
-                      </div>
-                      {unreadCounts?.channelUnreadCounts &&
-                        unreadCounts.channelUnreadCounts[channel.id] > 0 &&
-                        selectedChannel?.id !== channel.id && (
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                            {unreadCounts.channelUnreadCounts[channel.id] > 99
-                              ? "99+"
-                              : unreadCounts.channelUnreadCounts[channel.id]}
+              {channels?.channels
+                .sort((a, b) => {
+                  const aUnread = unreadCounts?.channelUnreadCounts[a.id] || 0;
+                  const bUnread = unreadCounts?.channelUnreadCounts[b.id] || 0;
+                  return bUnread - aUnread;
+                })
+                .sort((a, b) => {
+                  const aLatestMessage = a.messages.sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )[0];
+                  const bLatestMessage = b.messages.sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )[0];
+                  return aLatestMessage && bLatestMessage
+                    ? bLatestMessage.createdAt.getTime() -
+                        aLatestMessage.createdAt.getTime()
+                    : aLatestMessage
+                      ? -1
+                      : bLatestMessage
+                        ? 1
+                        : 0;
+                })
+                .map((channel) => {
+                  const latestMessage = channel.messages.sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )[0];
+                  return (
+                    <div
+                      key={channel.id}
+                      className="flex cursor-pointer items-center gap-4 px-6 py-3 avocodos-transition hover:bg-muted lg:px-8"
+                      onClick={() => setSelectedChannel(channel)}
+                    >
+                      {channel.members.length === 2 ? (
+                        <UserAvatar
+                          avatarUrl={
+                            channel.members.filter(
+                              (member) => member.id !== user.id
+                            )[0]?.avatarUrl ?? "/avatar-placeholder.png"
+                          }
+                          size={44}
+                        />
+                      ) : (
+                        <Image
+                          src="/group-placeholder.png"
+                          alt="Group Avatar"
+                          width={39.2}
+                          height={39.2}
+                          className="rounded-full"
+                        />
+                      )}
+                      <div className="flex flex-1 items-center justify-between">
+                        <div className="flex flex-col gap-0">
+                          <span className="line-clamp-2">
+                            {channel.members.length === 2
+                              ? channel.members
+                                  .filter((member) => member.id !== user.id)
+                                  .map((member) => member.displayName)
+                                  .join(", ")
+                              : channel.members
+                                  .map((member) => member.displayName)
+                                  .join(", ")}
                           </span>
-                        )}
+
+                          <span className="line-clamp-1 inline-flex items-center gap-1 text-xs text-foreground/80">
+                            <CheckCheck
+                              className={`size-3.5 ${
+                                channel.messages.length > 0 &&
+                                latestMessage.user.id === user.id
+                                  ? "block"
+                                  : "hidden"
+                              } `}
+                            />
+                            {channel.messages.length > 0
+                              ? `${
+                                  latestMessage.user.id === user.id
+                                    ? "You"
+                                    : latestMessage.user.displayName
+                                }: ${latestMessage.content}`
+                              : "No messages yet..."}
+                          </span>
+                        </div>
+                        {unreadCounts?.channelUnreadCounts &&
+                          unreadCounts.channelUnreadCounts[channel.id] > 0 &&
+                          selectedChannel?.id !== channel.id && (
+                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                              {unreadCounts.channelUnreadCounts[channel.id] > 99
+                                ? "99+"
+                                : unreadCounts.channelUnreadCounts[channel.id]}
+                            </span>
+                          )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           )}
         </div>
@@ -542,7 +566,7 @@ export default function Chat({ user }: ChatProps) {
               </div>
             </div>
           </Link>
-          <div className="h-full max-h-[450px] flex-1 lg:max-h-[380px] xl:max-h-[400px]">
+          <div className="h-full max-h-[90dvh] flex-1 md:max-h-[80dvh]">
             <div
               ref={topScrollRef}
               className="chat-messages-body flex h-full flex-1 flex-col gap-4 overflow-y-auto p-6 lg:p-8"

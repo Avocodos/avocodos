@@ -19,7 +19,7 @@ export default async function Page() {
 
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2">
-      <p className="text-left text-xs text-destructive">
+      {/* <p className="text-left text-xs text-destructive">
         This feature is still in development. <br />
         <span className="text-foreground">
           If you find any bugs, please report them{" "}
@@ -32,7 +32,7 @@ export default async function Page() {
           </Link>
           .
         </span>
-      </p>
+      </p> */}
       <Chat user={user} />
     </div>
   );

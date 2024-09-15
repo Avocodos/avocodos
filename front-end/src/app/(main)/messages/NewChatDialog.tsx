@@ -1,68 +1,60 @@
 "use client";
 
-import { Key, ReactNode, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from "@nextui-org/modal";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, MailPlus, PlusCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-
-import { Channel, User } from "@prisma/client";
-import { useDisclosure } from "@nextui-org/react";
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage
-} from "../../../components/ui/avatar";
-import { toast } from "@/components/ui/use-toast";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
+import { MailPlus } from "lucide-react";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure
+} from "@nextui-org/react";
+import { User } from "@prisma/client";
+import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
+import { toast } from "@/components/ui/use-toast";
 import { ExtendedChannel } from "./Chat";
+import { useRouter } from "next/navigation";
 
 export default function NewChatDialog({
   channels
 }: {
-  channels: { channels: ExtendedChannel[] };
+  channels?: { channels: ExtendedChannel[] };
 }) {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [recipientId, setRecipientId] = useState("");
+  const [recipientId, setRecipientId] = useState<Option[]>([]);
+  const [isTriggered, setIsTriggered] = useState(false);
+  const router = useRouter();
+
+  const { onClose, isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleCreateChat = async () => {
+    if (recipientId.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select a user to chat with.",
+        variant: "destructive"
+      });
+      return;
+    }
     await kyInstance.post("/api/messages/create-channel", {
-      json: { recipientId }
+      json: { recipientId: recipientId[0].value }
     });
     onClose();
-    setRecipientId("");
+    window.location.reload();
+    setRecipientId([]);
     toast({
       title: "Chat created",
       description: "You have successfully created a new chat."
     });
   };
-  const { data: users, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => kyInstance.get("/api/users").json<User[]>()
-  });
-
-  if (isLoading)
-    return (
-      <div className="flex size-full items-center justify-center">
-        <Loader2 className="size-4 animate-spin text-primary" />
-      </div>
-    );
 
   return (
     <>
@@ -80,52 +72,61 @@ export default function NewChatDialog({
           <TooltipContent>Create a new chat</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Create New Chat</ModalHeader>
-              <ModalBody>
-                <Autocomplete
-                  label="User"
-                  placeholder="Search for a user"
-                  defaultItems={users?.map((user) => ({
-                    label: user.displayName,
-                    value: user.displayName
-                  }))}
-                  className="flex flex-col gap-0"
-                  onSelectionChange={(value: Key | null) => {
-                    if (value) {
-                      setRecipientId(value.toString());
-                    }
-                  }}
-                >
-                  {users
-                    ?.filter(
+      <Modal onOpenChange={onOpenChange} isOpen={isOpen} onClose={onClose}>
+        <ModalContent className="h-[40dvh]">
+          <ModalHeader>Create New Chat</ModalHeader>
+          <ModalBody>
+            <MultipleSelector
+              onSearch={async (value) => {
+                try {
+                  setIsTriggered(true);
+                  const res = await kyInstance
+                    .get("/api/users", {
+                      searchParams: {
+                        q: value
+                      }
+                    })
+                    .json<User[]>();
+                  setIsTriggered(false);
+                  return res
+                    .filter(
                       (user) =>
-                        !channels.channels.some((channel) =>
+                        !channels?.channels.some((channel) =>
                           channel.members
                             .map((member) => member.id)
                             .includes(user.id)
                         )
                     )
-                    .map((user) => (
-                      <AutocompleteItem
-                        key={user.id}
-                        value={user.id}
-                        className="flex flex-row items-center gap-2"
-                      >
-                        {user.displayName}
-                      </AutocompleteItem>
-                    )) || []}
-                </Autocomplete>
-              </ModalBody>
-              {console.log("channels", channels) as ReactNode}
-              <ModalFooter>
-                <Button onClick={handleCreateChat}>Create</Button>
-              </ModalFooter>
-            </>
-          )}
+                    .map((user) => ({
+                      value: user.id,
+                      label: user.displayName
+                    }));
+                } catch (error: any) {
+                  console.error(error);
+                  toast({
+                    title: "Error",
+                    description: error.message,
+                    variant: "destructive"
+                  });
+                  return [];
+                }
+              }}
+              placeholder="Search for a user..."
+              loadingIndicator={
+                <p className="py-2 text-center text-lg leading-10 text-muted-foreground">
+                  Loading...
+                </p>
+              }
+              emptyIndicator={
+                <p className="w-full text-center text-lg leading-10 text-muted-foreground">
+                  No results found.
+                </p>
+              }
+              onChange={setRecipientId}
+              maxSelected={1}
+            />
+            <Button onClick={handleCreateChat}>Create Chat</Button>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

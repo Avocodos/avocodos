@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -12,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
-import { Loader2, UserRoundPlus, Users2 } from "lucide-react";
+import { UserRoundPlus } from "lucide-react";
 import {
   Modal,
   ModalBody,
@@ -20,9 +18,7 @@ import {
   ModalHeader,
   useDisclosure
 } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
 import { User } from "@prisma/client";
-import { Tag, TagInput } from "emblor";
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import { toast } from "@/components/ui/use-toast";
 
