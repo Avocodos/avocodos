@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- Merge branches 'master' and 'master' of https://github.com/avocodos/avocodos [`9511c68`](https://github.com/avocodos/avocodos/commit/9511c688ae3b6c9c3b0b54d07898ae850650bca6)
 - create: Avocodos PWA [`d4ba22e`](https://github.com/avocodos/avocodos/commit/d4ba22e533abdeddbe6d27ab326426728f4a9c4c)
+- chore(release): update changelog [`ab15362`](https://github.com/avocodos/avocodos/commit/ab15362750f1d8081279c93377bd93495336cdde)
+- Update README.md [`8249ce4`](https://github.com/avocodos/avocodos/commit/8249ce45b7cf28de1034125e902fa8e1b461b046)
+- Update README.md [`769b046`](https://github.com/avocodos/avocodos/commit/769b0468837071f65a4a0fbe0249ccbaf2c3545e)
 
 ## [v1.1.0-alpha](https://github.com/avocodos/avocodos/compare/v1.0.0-alpha...v1.1.0-alpha) - 2024-09-15
 
