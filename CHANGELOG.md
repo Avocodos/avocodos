@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [Unreleased](https://github.com/avocodos/avocodos/compare/v1.1.0-alpha...HEAD)
+
+### Commits
+
+- create: Avocodos PWA [`d4ba22e`](https://github.com/avocodos/avocodos/commit/d4ba22e533abdeddbe6d27ab326426728f4a9c4c)
+
+## [v1.1.0-alpha](https://github.com/avocodos/avocodos/compare/v1.0.0-alpha...v1.1.0-alpha) - 2024-09-15
+
+## v1.0.0-alpha - 2024-09-15
 
 ### Commits
 
@@ -88,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(release): update changelog [`eb0216b`](https://github.com/avocodos/avocodos/commit/eb0216becdf3d99da05fe62cc9cab12a30c93347)
 - add: .vercel in .gitignore [`55a587e`](https://github.com/avocodos/avocodos/commit/55a587e9b0c791e09c5c1c9c6a9326db937e4c7d)
 - update: package.json with new deps [`f2836a9`](https://github.com/avocodos/avocodos/commit/f2836a94f59695cb9849e201684b501f38319dc0)
+- chore(release): update changelog [`80ccada`](https://github.com/avocodos/avocodos/commit/80ccada442e86da65bfb259cfbdf05fe663b4081)
 - chore(release): update changelog [`43ae630`](https://github.com/avocodos/avocodos/commit/43ae6303448f4481de9cfea97d8f046ccc148f6a)
 - chore(release): update changelog [`35a96ea`](https://github.com/avocodos/avocodos/commit/35a96eaf7f5ad53a63fa6b56910dddf2178453c5)
 - chore(release): update changelog [`fcf896b`](https://github.com/avocodos/avocodos/commit/fcf896b605abb69fd75175b985931efe84b8ca7a)
