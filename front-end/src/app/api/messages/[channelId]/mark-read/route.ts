@@ -13,7 +13,7 @@ export async function POST(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { channelId } = params;
+        const { channelId } = await params;
 
         if (!prisma) {
             return NextResponse.json({ error: "Internal server error" }, { status: 500 });

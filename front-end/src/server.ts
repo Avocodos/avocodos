@@ -4,8 +4,9 @@ import { Server } from "socket.io";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
-const port = 3000;
-const app = next({ dev, hostname, port });
+// ! MAKE SURE TO CHANGE BACK TO 3000
+const port = 3003;
+const app = next({ dev, hostname, port, turbo: true, turbopack: true });
 const handler = app.getRequestHandler();
 
 app.prepare().then(() => {

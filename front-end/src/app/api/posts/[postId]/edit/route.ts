@@ -12,7 +12,7 @@ export async function PUT(
     }
 
     const { content } = await req.json();
-    const postId = params.postId;
+    const { postId } = await params;
 
     try {
         const post = await prisma?.post.findUnique({

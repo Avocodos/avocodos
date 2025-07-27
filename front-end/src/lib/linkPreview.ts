@@ -48,7 +48,32 @@ export async function webscrap(url: string) {
     };
     const response = await request(url);
     if (response.statusCode >= 400) {
-        throw new Error(`Failed to fetch resource at ${url} (status ${response.statusCode} : ${response.statusMessage})`);
+        return {
+            metadata: {
+                title: "Not Found",
+                description: "The resource you are looking for does not exist.",
+                themeColor: "#000000",
+                favicons: [],
+            },
+            openGraph: {
+                image: "https://avocodos-web.vercel.app/bg.png",
+                imageAlt: "Avocodos",
+                imageWidth: 100,
+                imageHeight: 100,
+                name: "Avocodos",
+            },
+            socials: {
+                twitter: {
+                    card: "summary",
+                    title: "Avocodos",
+                    description: "Avocodos",
+                    site: "https://avocodos.com",
+                    image: "https://avocodos-web.vercel.app/bg.png",
+                    creator: "@avocodos",
+                }
+            }
+        }
+        // throw new Error(`Failed to fetch resource at ${url} (status ${response.statusCode} : ${response.statusMessage})`);
     }
     const data = response.data;
     const headTagIndexStart = data.indexOf('<head');

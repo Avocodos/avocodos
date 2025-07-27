@@ -11,7 +11,7 @@ export async function POST(
         if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
         const { name, color } = await req.json();
-        const { communityName } = params;
+        const { communityName } = await params;
 
         if (typeof communityName !== "string") return Response.json({ error: "Invalid community name" }, { status: 400 });
 
@@ -46,7 +46,7 @@ export async function GET(
     try {
         const { user } = await validateRequest();
         if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-        const { communityName } = params;
+        const { communityName } = await params;
         const badges = await prisma?.communityBadge.findMany({
             where: { communityName }
         });

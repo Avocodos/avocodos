@@ -17,7 +17,7 @@ async function retryFunction(fun: () => Promise<any>, retries: number = 3, delay
 }
 
 export async function GET(request: Request, { params }: { params: { userId: string } }) {
-    const userId = params.userId;
+    const { userId } = await params;
     const followingInfo: number | null | undefined = await retryFunction(async () => {
         return await prisma?.follow.count({
             where: {

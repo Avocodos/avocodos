@@ -79,7 +79,7 @@ export function generateMetadata(): Metadata {
       title: "Sign Up for Avocodos",
       description:
         "Join the Avocodos community and start your Web3 journey on the Aptos blockchain.",
-      url: "https://avocodos.com/signup",
+      url: "https://avocodos-web.vercel.app/signup",
       siteName: "Avocodos",
       images: ["/api/og?page=signup"],
       locale: "en_US",

@@ -87,10 +87,11 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { username } = await params;
   const user = await prisma?.user.findFirst({
     where: {
       username: {
-        equals: params.username,
+        equals: username,
         mode: "insensitive"
       }
     },
@@ -116,22 +117,22 @@ export async function generateMetadata(
   const description = `Check out ${user.displayName}'s profile on Avocodos. ${user.bio || ""} Followers: ${user._count.followers}, Following: ${user._count.following}, Posts: ${user._count.posts}`;
 
   return {
-    title: `${user.displayName} (@${user.username})`,
+    title: `${user.displayName} (@${username})`,
     description,
     authors: [{ name: "Harjot Singh Rana", url: "https://harjot.pro" }],
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
     alternates: {
-      canonical: `/users/${user.username}`
+      canonical: `/users/${username}`
     },
     openGraph: {
-      title: `${user.displayName} (@${user.username})`,
+      title: `${user.displayName} (@${username})`,
       description,
-      url: `https://avocodos.com/users/${user.username}`,
+      url: `https://avocodos-web.vercel.app/users/${username}`,
       siteName: "Avocodos",
       images: [
-        `/api/og?username=${user.username}`,
-        user.avatarUrl ?? `/api/og?username=${user.username}`,
+        `/api/og?username=${username}`,
+        user.avatarUrl ?? `/api/og?username=${username}`,
         ...previousImages
       ],
       locale: "en_US",
@@ -139,12 +140,12 @@ export async function generateMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: `${user.displayName} (@${user.username})`,
+      title: `${user.displayName} (@${username})`,
       description,
       creator: "@HarjjotSinghh",
       images: [
-        `/api/og?username=${user.username}`,
-        user.avatarUrl ?? `/api/og?username=${user.username}`
+        `/api/og?username=${username}`,
+        user.avatarUrl ?? `/api/og?username=${username}`
       ]
     },
     category: "Web3 Social Platform",
@@ -259,11 +260,13 @@ export function generateViewport(): Viewport {
 }
 
 export default async function Page({
-  params: { username },
+  params,
   searchParams
 }: PageProps) {
+  const { username } = await params;
   const { user: loggedInUser } = await validateRequest();
-  const showRewards = searchParams.showRewards === "true";
+  const { showRewards } = await searchParams;
+  const showRewardsBoolean = showRewards === "true";
 
   if (!loggedInUser) {
     return (
@@ -281,7 +284,7 @@ export default async function Page({
         <UserProfile
           user={user as unknown as UserData}
           loggedInUserId={loggedInUser.id}
-          showRewards={showRewards}
+          showRewards={showRewardsBoolean}
         />
         <UserPosts userId={user.id} />
       </div>
@@ -307,7 +310,7 @@ async function UserProfile({
     )
   };
   const color = await getMostProminentColorFromImage(
-    user.avatarUrl ?? "https://avocodos.com/avatar-placeholder.png"
+    user.avatarUrl ?? "https://avocodos-frontend.vercel.app/avatar-placeholder.png"
   );
   return (
     <div className="flex h-fit w-full flex-col gap-5 rounded-2xl border-2 border-muted bg-card shadow-sm">

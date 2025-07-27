@@ -39,7 +39,7 @@ export async function createNotification(userId: string, rewardId: string, rewar
             metadata: {
                 // rewardId: rewardId, // Uncomment if defined in the schema
             },
-            imageUrl: "https://avocodos.com/auth.webp",
+            imageUrl: "https://avocodos-web.vercel.app/auth.webp",
         },
     });
 }

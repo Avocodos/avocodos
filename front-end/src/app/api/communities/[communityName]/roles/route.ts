@@ -10,7 +10,7 @@ export async function POST(
         const { user } = await validateRequest();
         if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
         const { name, color } = await req.json();
-        const { communityName } = params;
+        const { communityName } = await params;
 
         const community = await prisma?.community.findUnique({
             where: { name: communityName },
@@ -42,7 +42,7 @@ export async function GET(
     try {
         const { user } = await validateRequest();
         if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-        const { communityName } = params;
+        const { communityName } = await params;
         const roles = await prisma?.communityRole.findMany({
             where: { communityName: communityName }
         });

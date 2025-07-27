@@ -42,7 +42,8 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const course = await getCourse(params.courseId);
+  const { courseId } = await params;
+  const course = await getCourse(courseId);
 
   const previousImages = (await parent).openGraph?.images || [];
 
@@ -55,14 +56,14 @@ export async function generateMetadata(
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
     alternates: {
-      canonical: `/lms/${course.id}`
+      canonical: `/lms/${courseId}`
     },
     openGraph: {
       title: `${course.title} | Avocodos LMS`,
       description,
-      url: `https://avocodos.com/lms/${course.id}`,
+      url: `https://avocodos-web.vercel.app/lms/${courseId}`,
       siteName: "Avocodos",
-      images: [`/api/og?courseId=${course.id}`, ...previousImages],
+      images: [`/api/og?courseId=${courseId}`, ...previousImages],
       locale: "en_US",
       type: "website"
     },
@@ -71,7 +72,7 @@ export async function generateMetadata(
       title: `${course.title} | Avocodos LMS`,
       description,
       creator: "@HarjjotSinghh",
-      images: [`/api/og?courseId=${course.id}`]
+      images: [`/api/og?courseId=${courseId}`]
     },
     category: "Web3 Education",
     keywords: [
@@ -163,7 +164,8 @@ async function getAssets(userId: string, courseId: string) {
   return assets;
 }
 
-export default async function LMSPage({ params: { courseId } }: PageProps) {
+export default async function LMSPage({ params }: PageProps) {
+  const { courseId } = await params;
   const { user } = await validateRequest();
   const userData = await prisma?.user.findUnique({
     where: { id: user?.id }

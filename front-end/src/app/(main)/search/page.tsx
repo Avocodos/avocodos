@@ -26,7 +26,7 @@ export function generateMetadata({ searchParams: { q } }: PageProps): Metadata {
     openGraph: {
       title,
       description,
-      url: "https://avocodos.com/search",
+      url: "https://avocodos-web.vercel.app/search",
       siteName: "Avocodos",
       images: [`/api/og?page=search${q ? `&q=${encodeURIComponent(q)}` : ""}`],
       locale: "en_US",

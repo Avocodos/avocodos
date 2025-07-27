@@ -66,8 +66,9 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { postId } = await params;
   const post = await prisma?.post.findUnique({
-    where: { id: params.postId },
+    where: { id: postId },
     include: {
       user: {
         select: {
@@ -98,15 +99,15 @@ export async function generateMetadata(
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
     alternates: {
-      canonical: `/posts/${post.id}`
+      canonical: `/posts/${postId}`
     },
     openGraph: {
       title: `${post.user.displayName}: ${post.content?.slice(0, 50)}...`,
       description,
-      url: `https://avocodos.com/posts/${post.id}`,
+      url: `https://avocodos-web.vercel.app/posts/${postId}`,
       siteName: "Avocodos",
       images: [
-        post.user.avatarUrl || `/api/og?postId=${post.id}`,
+        post.user.avatarUrl || `/api/og?postId=${postId}`,
         ...previousImages
       ],
       locale: "en_US",
@@ -117,7 +118,7 @@ export async function generateMetadata(
       title: `${post.user.displayName}: ${post.content?.slice(0, 50)}...`,
       description,
       creator: "@HarjjotSinghh",
-      images: [post.user.avatarUrl || `/api/og?postId=${post.id}`]
+      images: [post.user.avatarUrl || `/api/og?postId=${postId}`]
     },
     category: "Web3 Social Platform",
     keywords: [
@@ -263,7 +264,8 @@ export function generateViewport(): Viewport {
   };
 }
 
-export default async function Page({ params: { postId } }: PageProps) {
+export default async function Page({ params }: PageProps) {
+  const { postId } = await params;
   const { user } = await validateRequest();
 
   if (!user) {

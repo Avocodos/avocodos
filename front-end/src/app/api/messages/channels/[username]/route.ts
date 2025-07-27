@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
 
     if (!prisma) return NextResponse.json({ error: "Prisma client not initialized" }, { status: 500 });
 
-    const { username } = params;
+    const { username } = await params;
 
     const channels = await prisma.channel.findMany({
         where: {

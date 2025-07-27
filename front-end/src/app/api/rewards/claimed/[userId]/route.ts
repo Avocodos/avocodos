@@ -13,7 +13,7 @@ export async function GET(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { userId } = params;
+        const { userId } = await params;
 
         const claimedRewards = await prisma?.userReward.findMany({
             where: {

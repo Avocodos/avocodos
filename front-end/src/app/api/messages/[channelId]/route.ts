@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { channelId: s
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { channelId } = params;
+    const { channelId } = await params;
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined; // Get cursor from query params
 
     try {

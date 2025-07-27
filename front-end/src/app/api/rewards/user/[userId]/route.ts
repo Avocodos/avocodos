@@ -13,7 +13,7 @@ export async function GET(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { userId } = params;
+        const { userId } = await params;
 
         if (!prisma) {
             return NextResponse.json({ error: "Internal server error" }, { status: 500 });

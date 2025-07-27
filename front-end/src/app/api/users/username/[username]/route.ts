@@ -18,13 +18,14 @@ export async function GET(
 ) {
   try {
     const { user: currentUser } = await validateRequest();
-    const username = decodeURI(params.username);
+    const { username } = await params;
+    const decodedUsername = decodeURI(username);
     if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Generate a unique cache key
-    const cacheKey = `user:${username}`;
+    const cacheKey = `user:${decodedUsername}`;
 
     // Try to get results from Redis cache
     const cachedUser = await redis.get<string>(cacheKey);

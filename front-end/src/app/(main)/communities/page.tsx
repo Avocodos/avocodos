@@ -17,7 +17,7 @@ export function generateMetadata(): Metadata {
       title: "Communities",
       description:
         "Explore and join Web3 communities on Avocodos - The Social Platform For Aspiring Developers.",
-      url: "https://avocodos.com/communities",
+      url: "https://avocodos-web.vercel.app/communities",
       siteName: "Avocodos",
       images: ["/api/og?page=communities"],
       locale: "en_US",

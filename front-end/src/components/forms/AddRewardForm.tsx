@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "Add New Reward",
       description: "Add a new reward to the platform",
-      url: "https://www.avocodos.com/rewards/add",
+      url: "https://www.avocodos-web.vercel.app/rewards/add",
       images: ["/auth.webp"]
     }
   };
@@ -71,7 +71,7 @@ export default function AddRewardForm() {
       description: "",
       requirement: 1,
       requirementType: "OTHER",
-      imageUrl: "https://avocodos.com/auth.webp"
+      imageUrl: "https://avocodos-web.vercel.app/auth.webp"
     }
   });
 

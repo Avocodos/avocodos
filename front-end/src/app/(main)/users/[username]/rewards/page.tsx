@@ -45,8 +45,9 @@ export async function generateStaticParams(): Promise<{ username: string }[]> {
 export async function generateMetadata({
   params
 }: PageProps): Promise<Metadata> {
+  const { username } = await params;
   const user = await prisma?.user.findFirst({
-    where: { username: params.username },
+    where: { username },
     select: {
       displayName: true,
       username: true,
@@ -70,15 +71,15 @@ export async function generateMetadata({
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
     alternates: {
-      canonical: `/users/${user.username}/rewards`
+      canonical: `/users/${username}/rewards`
     },
     openGraph: {
       title: `${user.displayName}'s Rewards`,
       description,
-      url: `https://avocodos.com/users/${user.username}/rewards`,
+      url: `https://avocodos-web.vercel.app/users/${username}/rewards`,
       siteName: "Avocodos",
       images: [
-        user.avatarUrl || `/api/og?username=${user.username}&type=rewards`
+        user.avatarUrl || `/api/og?username=${username}&type=rewards`
       ],
       locale: "en_US",
       type: "profile"
@@ -89,13 +90,13 @@ export async function generateMetadata({
       description,
       creator: "@HarjjotSinghh",
       images: [
-        user.avatarUrl || `/api/og?username=${user.username}&type=rewards`
+        user.avatarUrl || `/api/og?username=${username}&type=rewards`
       ]
     },
     category: "Web3 Social Platform",
     keywords: [
       user.displayName,
-      user.username,
+      username,
       "Avocodos",
       "Web3 Rewards",
       "Blockchain Achievements",
@@ -245,8 +246,9 @@ export function generateViewport(): Viewport {
 }
 
 export default async function UserRewardsPage({
-  params: { username }
+  params
 }: PageProps) {
+  const { username } = await params;
   const { user: loggedInUser } = await validateRequest();
   if (!loggedInUser) {
     return (

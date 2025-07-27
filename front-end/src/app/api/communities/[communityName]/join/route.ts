@@ -11,7 +11,7 @@ async function handleCommunityAction(
     const { user } = await validateRequest();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
     if (!prisma) return Response.json({ error: "Internal server error" }, { status: 500 });
-    const { communityName } = params;
+    const { communityName } = await params;
     const community = await prisma.community.findUnique({
         where: { name: communityName },
         include: { members: true },

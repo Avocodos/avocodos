@@ -41,9 +41,10 @@ async function getReward(username: string, rewardId: string) {
 }
 
 export async function generateMetadata(
-  { params: { username, rewardId } }: PageProps,
+  { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { username, rewardId } = await params;
   const reward = await getReward(username, rewardId);
   const previousImages = (await parent).openGraph?.images || [];
   const description = `${reward.user.displayName} earned the ${reward.reward?.name} reward on Avocodos. ${reward.reward?.description || ""}`;
@@ -60,7 +61,7 @@ export async function generateMetadata(
     openGraph: {
       title: `${reward.reward?.name} - ${reward.user.displayName}'s Reward`,
       description,
-      url: `https://avocodos.com/users/${username}/rewards/${rewardId}`,
+      url: `https://avocodos-web.vercel.app/users/${username}/rewards/${rewardId}`,
       siteName: "Avocodos",
       images: [`/api/og?rewardId=${rewardId}`, ...previousImages],
       locale: "en_US",
@@ -147,11 +148,12 @@ const getUserIdFromUsername = async (username: string) => {
 };
 
 export default async function RewardPage({ params }: PageProps) {
-  const userId = await getUserIdFromUsername(params.username);
+  const { username, rewardId } = await params;
+  const userId = await getUserIdFromUsername(username);
 
   const userReward = await prisma?.userReward.findFirst({
     where: {
-      rewardId: params.rewardId,
+      rewardId: rewardId,
       userId: userId
     },
     include: {
@@ -165,7 +167,7 @@ export default async function RewardPage({ params }: PageProps) {
 
   return (
     <div className="flex h-fit w-full flex-col items-start justify-start gap-6">
-      <Link href={`/users/${params.username}/rewards`}>
+      <Link href={`/users/${username}/rewards`}>
         <Button
           className="inline-flex w-fit items-center gap-2"
           variant="default"
@@ -183,7 +185,7 @@ export default async function RewardPage({ params }: PageProps) {
         owned={userReward.progress >= userReward.reward.requirement}
         reward={userReward.reward}
         progress={userReward.progress}
-        username={params.username}
+        username={username}
         type="page"
       />
     </div>

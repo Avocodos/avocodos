@@ -77,7 +77,7 @@ model Asset {
   description      String?
   aptosExplorerUrl String?
   courseId         String?
-  course           Course?   @relation(fields: [courseId], references: [id])
+  course           Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("assets")
@@ -115,9 +115,9 @@ model Post {
   likes               Like[]
   linkedNotifications Notification[]
   attachments         Media[]
-  badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id])
+  badge               CommunityBadge? @relation("PostBadge", fields: [badgeId], references: [id], onDelete: Cascade)
   CommunityBadge      CommunityBadge? @relation("PostCommunityBadge", fields: [communityBadgeId], references: [id])
-  community           Community?      @relation(fields: [communityName], references: [name])
+  community           Community?      @relation(fields: [communityName], references: [name], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
@@ -129,12 +129,12 @@ model Media {
   type         MediaType
   url          String
   createdAt    DateTime       @default(now())
-  post         Post?          @relation(fields: [postId], references: [id])
+  post         Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
   messageId    String?
   channelId    String?
-  Channel      Channel?       @relation(fields: [channelId], references: [id])
+  Channel      Channel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
   MessageMedia MessageMedia[]
-  Message      Message?       @relation(fields: [messageId], references: [id])
+  Message      Message?       @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
   @@map("post_media")
 }
@@ -146,7 +146,7 @@ model Comment {
   postId        String
   createdAt     DateTime   @default(now())
   communityName String?
-  community     Community? @relation(fields: [communityName], references: [name])
+  community     Community? @relation(fields: [communityName], references: [name], onDelete: Cascade)
   post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -157,7 +157,7 @@ model Like {
   userId        String
   postId        String
   communityName String?
-  community     Community? @relation(fields: [communityName], references: [name])
+  community     Community? @relation(fields: [communityName], references: [name], onDelete: Cascade)
   post          Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -187,7 +187,7 @@ model Notification {
   message           String?
   messageId         String?
   user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userMessage       Message?         @relation(fields: [messageId], references: [id])
+  userMessage       Message?         @relation(fields: [messageId], references: [id], onDelete: Cascade)
   type              NotificationType
   read              Boolean          @default(false)
   createdAt         DateTime         @default(now())
@@ -220,7 +220,7 @@ model Course {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   assets          Asset[]
-  instructor      User         @relation(fields: [instructorId], references: [id])
+  instructor      User         @relation(fields: [instructorId], references: [id], onDelete: Cascade)
   enrollments     Enrollment[]
   lessons         Lesson[]
   reviews         Review[]
@@ -308,8 +308,8 @@ model Community {
   communityName      String?              @default(dbgenerated("name"))
   userId             String?
   Comment            Comment[]
-  creator            User                 @relation("CreatedCommunities", fields: [creatorId], references: [id])
-  User               User?                @relation(fields: [userId], references: [id])
+  creator            User                 @relation("CreatedCommunities", fields: [creatorId], references: [id], onDelete: Cascade)
+  User               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
   badges             CommunityBadge[]
   CommunityMember    CommunityMember[]
   CommunityModerator CommunityModerator[]
@@ -327,8 +327,8 @@ model CommunityMember {
   userId        String
   communityName String
   communityId   String
-  Community     Community @relation(fields: [communityId], references: [id])
-  user          User      @relation(fields: [userId], references: [id])
+  Community     Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, communityName])
   @@map("community_members")
@@ -339,8 +339,8 @@ model CommunityModerator {
   userId        String
   communityName String
   communityId   String
-  Community     Community @relation(fields: [communityId], references: [id])
-  user          User      @relation(fields: [userId], references: [id])
+  Community     Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, communityName])
   @@map("community_moderators")
@@ -405,10 +405,10 @@ model Message {
   type                MessageType
   read                Boolean              @default(false)
   attachments         MessageMedia[]
-  channel             Channel              @relation(fields: [channelId], references: [id])
+  channel             Channel              @relation(fields: [channelId], references: [id], onDelete: Cascade)
   reactions           Reaction[]
   Notification        Notification[]
-  user                User                 @relation(fields: [userId], references: [id])
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userMessages        User[]               @relation("UserMessages")
   Media               Media[]
   messageReadReceipts MessageReadReceipt[]
@@ -424,8 +424,8 @@ model Reaction {
   userId    String
   reaction  String // e.g., emoji or text representation of the reaction
   createdAt DateTime @default(now())
-  message   Message  @relation(fields: [messageId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([messageId, userId])
   @@map("reactions")
@@ -455,7 +455,7 @@ model MessageReadReceipt {
   readAt    DateTime?
   message   Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  channel   Channel   @relation(fields: [channelId], references: [id])
+  channel   Channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
   @@unique([userId, messageId])
   @@index([userId, channelId])

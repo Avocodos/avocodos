@@ -68,9 +68,10 @@ export async function generateStaticParams(): Promise<{ courseId: string }[]> {
 }
 
 export async function generateMetadata(
-  { params: { courseId } }: PageProps,
+  { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { courseId } = await params;
   const course = await getCourse(courseId);
   const previousImages = (await parent).openGraph?.images || [];
 
@@ -88,7 +89,7 @@ export async function generateMetadata(
     openGraph: {
       title: course.title,
       description,
-      url: `https://avocodos.com/courses/${course.id}`,
+      url: `https://avocodos-web.vercel.app/courses/${course.id}`,
       siteName: "Avocodos Learning Admin",
       images: [`/api/og?courseId=${course.id}`, ...previousImages],
       locale: "en_US",
@@ -161,7 +162,8 @@ export function generateViewport(): Viewport {
   };
 }
 
-export default function CoursePage({ params: { courseId } }: PageProps) {
+export default async function CoursePage({ params }: PageProps) {
+  const { courseId } = await params;
   return (
     <main className="container mx-auto py-8">
       <Suspense fallback={<CourseDetailsSkeleton />}>

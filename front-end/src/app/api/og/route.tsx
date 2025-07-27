@@ -69,7 +69,8 @@ export async function GET(req: NextRequest) {
           }}
         />
         <img
-          src={`https://avocodos.com/bg.png`}
+          src={`https://avocodos-web.vercel.app/bg.png`}
+          alt="Avocodos background"
           width={"1920"}
           height={"1080"}
           style={{
@@ -86,6 +87,7 @@ export async function GET(req: NextRequest) {
           width={850}
           height={480}
           src={`${baseURL}/icon-white.png`}
+          alt="Avocodos icon"
           style={{
             position: "absolute",
             top: 64,
@@ -144,7 +146,8 @@ export async function GET(req: NextRequest) {
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`https://avocodos.com/bg.png`}
+          src={`https://avocodos-web.vercel.app/bg.png`}
+          alt="Avocodos background"
           width={"1920"}
           height={"1080"}
           style={{
@@ -161,6 +164,7 @@ export async function GET(req: NextRequest) {
           width={850}
           height={480}
           src={`${baseURL}/icon-white.png`}
+          alt="Avocodos icon"
           style={{
             position: "absolute",
             top: 64,
@@ -188,6 +192,7 @@ export async function GET(req: NextRequest) {
               post.user.avatarUrl ??
               "https://i.ibb.co/YNn4h3N/avatar-placeholder.png"
             }
+            alt="User avatar"
             width={84}
             height={84}
             tw="rounded-full object-cover mr-4"
@@ -233,9 +238,10 @@ export async function GET(req: NextRequest) {
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`https://avocodos.com/bg.png`}
+          src={`https://avocodos-web.vercel.app/bg.png`}
           width={"1920"}
           height={"1080"}
+          alt="Avocodos background"
           style={{
             position: "absolute",
             top: 70,
@@ -249,6 +255,7 @@ export async function GET(req: NextRequest) {
         <img
           width={850}
           height={480}
+          alt="Avocodos icon"
           src={`${baseURL}/icon-white.png`}
           style={{
             position: "absolute",
@@ -277,6 +284,7 @@ export async function GET(req: NextRequest) {
               user.avatarUrl ??
               "https://i.ibb.co/YNn4h3N/avatar-placeholder.png"
             }
+            alt="User avatar"
             width={128}
             height={128}
             tw="rounded-full object-cover mr-9"
@@ -337,9 +345,10 @@ export async function GET(req: NextRequest) {
     imageContent = (
       <div tw="flex h-full w-full flex-col bg-[#101110] p-16 relative">
         <img
-          src={`https://avocodos.com/bg.png`}
+          src={`https://avocodos-web.vercel.app/bg.png`}
           width={"1920"}
           height={"1080"}
+          alt="Avocodos background"
           style={{
             position: "absolute",
             top: 70,
@@ -354,6 +363,7 @@ export async function GET(req: NextRequest) {
           width={850}
           height={480}
           src={`${baseURL}/icon-white.png`}
+          alt="Avocodos icon"
           style={{
             position: "absolute",
             top: 64,
@@ -381,6 +391,7 @@ export async function GET(req: NextRequest) {
             src={`${baseURL}/auth.jpg`}
             width={128}
             height={128}
+            alt="Avocodos background"
             style={{
               objectFit: "cover",
               borderRadius: "16px",
@@ -403,6 +414,7 @@ export async function GET(req: NextRequest) {
               width={128}
               height={128}
               tw="rounded-full object-cover mr-4"
+              alt="User avatar"
             />
             <div tw="flex flex-col">
               <p tw="text-2xl font-bold text-[#fafafa]">

@@ -42,8 +42,9 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { communityName } = await params;
   const community = await prisma?.community.findUnique({
-    where: { name: params.communityName },
+    where: { name: communityName },
     include: {
       _count: {
         select: {
@@ -67,27 +68,27 @@ export async function generateMetadata(
     creator: "Harjot Singh Rana",
     metadataBase: new URL("https://avocodos.com"),
     alternates: {
-      canonical: `/communities/${community.name}`
+      canonical: `/communities/${communityName}`
     },
     openGraph: {
-      title: `${community.name} Community`,
+      title: `${communityName} Community`,
       description,
-      url: `https://avocodos.com/communities/${community.name}`,
+      url: `https://avocodos-web.vercel.app/communities/${communityName}`,
       siteName: "Avocodos",
-      images: [`/api/og?communityName=${community.name}`, ...previousImages],
+      images: [`/api/og?communityName=${communityName}`, ...previousImages],
       locale: "en_US",
       type: "website"
     },
     twitter: {
       card: "summary_large_image",
-      title: `${community.name} Community`,
+      title: `${communityName} Community`,
       description,
       creator: "@HarjjotSinghh",
-      images: [`/api/og?communityName=${community.name}`]
+      images: [`/api/og?communityName=${communityName}`]
     },
     category: "Web3 Social Platform",
     keywords: [
-      community.name,
+      communityName,
       "Avocodos",
       "Web3 Community",
       "Blockchain Social",
@@ -155,6 +156,7 @@ export function generateViewport(): Viewport {
   };
 }
 
-export default function Page({ params: { communityName } }: PageProps) {
+export default async function Page({ params }: PageProps) {
+  const { communityName } = await params;
   return <CommunityPage communityName={communityName} />;
 }

@@ -19,7 +19,7 @@ export function generateMetadata(): Metadata {
       title: "Notifications",
       description:
         "Stay updated with your latest notifications on Avocodos - The Web3 Social Platform For Aspiring Developers.",
-      url: "https://avocodos.com/notifications",
+      url: "https://avocodos-web.vercel.app/notifications",
       siteName: "Avocodos",
       images: ["/api/og?page=notifications"],
       locale: "en_US",

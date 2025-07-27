@@ -18,7 +18,7 @@ export function generateMetadata(): Metadata {
       title: "Bookmarks",
       description:
         "Access your saved content on Avocodos - The Web3 Social Platform For Aspiring Developers.",
-      url: "https://avocodos.com/bookmarks",
+      url: "https://avocodos-web.vercel.app/bookmarks",
       siteName: "Avocodos",
       images: ["/api/og?page=bookmarks"],
       locale: "en_US",
