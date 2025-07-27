@@ -1,4 +1,4 @@
-<img src="https://avocodos.vercel.app/auth.webp" alt="Avocodos Logo" style="border-radius:16px;">
+<img src="https://avocodos-web.vercel.app/auth.webp" alt="Avocodos Logo" style="border-radius:16px;">
 
 [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 ---
