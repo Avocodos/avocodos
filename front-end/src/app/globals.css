@@ -1,38 +1,219 @@
-@tailwind base;
-html {
-  scroll-behavior: smooth !important;
-  scroll-padding-top: 60px;
-  word-break: normal;
-  text-wrap: pretty;
+@import 'tailwindcss';
+
+@source '../../node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}';
+@source '../../node_modules/@uploadthing/react/dist/**';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --font-avocodos: Avocodos, sans-serif;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary-0: #f7fff5;
+  --color-primary-50: #ecffe6;
+  --color-primary-100: #d4ffc8;
+  --color-primary-200: #abff97;
+  --color-primary-300: #76fb5b;
+  --color-primary-400: #3bf019;
+  --color-primary-500: #27d70b;
+  --color-primary-600: #19ac04;
+  --color-primary-700: #158308;
+  --color-primary-800: #16670d;
+  --color-primary-900: #155710;
+  --color-primary-950: #043102;
+  --color-primary-1000: #011200;
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-dark-popover: #181b18;
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-shine: shine 8s ease-in-out infinite;
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  --animate-skeleton: skeleton 5s infinite;
+  --animate-bg: bg 10s ease-in-out infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes shine {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes move {
+    to {
+      stroke-dashoffset: 1000;
+    }
+  }
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes skeleton {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  @keyframes bg {
+    0%,
+    100% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 1000% 1000%;
+    }
+  }
 }
 
-::selection {
-  /* color: hsl(var(--foreground) / 0.95); */
-  background: hsl(var(--primary) / 0.2);
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-xs)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
 }
 
-* {
-  scrollbar-width: thin !important;
-  scrollbar-color: hsl(var(--primary) / 0.9) hsl(var(--background)) !important;
+@utility avocodos-transition {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
-*::-webkit-scrollbar {
-  width: 10px !important;
+@utility avocodos-shadow-lg {
+  box-shadow: 0px 0px 50px 0px hsl(var(--primary)/0.04);
 }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 10px;
+@utility avocodos-shadow-md {
+  box-shadow: 0px 0px 30px 0px hsl(var(--primary)/0.20);
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--accent));
-  border-radius: 24px;
-  border: 10px solid hsl(var(--primary));
+@utility avocodos-shadow-sm {
+  box-shadow: 0px 0px 20px 0px hsl(var(--primary)/0.10);
 }
 
-@tailwind components;
-@tailwind utilities;
+@utility bg-cross {
+  background-color: hsl(var(--background));
+  opacity: 1;
+  background: radial-gradient(circle, transparent 20%, hsl(var(--background)) 20%, hsl(var(--background)) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, hsl(var(--background)) 20%, hsl(var(--background)) 80%, transparent 80%, transparent) 27.5px 27.5px, linear-gradient(hsl(var(--primary)/0.05) 2.2px, transparent 2.2px) 0 -1.1px, linear-gradient(90deg, hsl(var(--primary)/0.05) 2.2px, hsl(var(--background)) 2.2px) -1.1px 0;
+  background-size: 55px 55px, 55px 55px, 27.5px 27.5px, 27.5px 27.5px;
+  background-position: 0 0, 27.5px 27.5px, 0 0, 27.5px 27.5px;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth !important;
+    scroll-padding-top: 60px;
+    word-break: normal;
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    /* color: hsl(var(--foreground) / 0.95); */
+    background: hsl(var(--primary) / 0.2);
+  }
+
+  * {
+    scrollbar-width: thin !important;
+    scrollbar-color: hsl(var(--primary) / 0.9) hsl(var(--background)) !important;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px !important;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--accent));
+    border-radius: 24px;
+    border: 10px solid hsl(var(--primary));
+  }
+}
 
 @layer base {
   :root {
@@ -109,7 +290,7 @@ html {
 
 @layer base {
   * {
-    @apply !scroll-smooth border-border sm:!scroll-mt-[80px] md:!scroll-mt-[80px] lg:!scroll-mt-[80px] xl:!scroll-mt-[80px];
+    @apply scroll-smooth! border-border sm:scroll-mt-[80px]! md:scroll-mt-[80px]! lg:scroll-mt-[80px]! xl:scroll-mt-[80px]!;
   }
   body {
     @apply bg-background text-foreground;
@@ -118,22 +299,22 @@ html {
       "calt" 1;
   }
   h1 {
-    @apply !text-4xl !font-extrabold tracking-tighter sm:!text-5xl lg:!text-5xl xl:!text-6xl;
+    @apply text-4xl! font-extrabold! tracking-tighter sm:text-5xl! lg:text-5xl! xl:text-6xl!;
   }
   h2 {
-    @apply !text-3xl !font-extrabold tracking-tighter sm:!text-4xl lg:!text-4xl xl:!text-4xl;
+    @apply text-3xl! font-extrabold! tracking-tighter sm:text-4xl! lg:text-4xl! xl:text-4xl!;
   }
   h3 {
-    @apply !text-2xl !font-extrabold tracking-tighter sm:!text-3xl lg:!text-3xl xl:!text-3xl;
+    @apply text-2xl! font-extrabold! tracking-tighter sm:text-3xl! lg:text-3xl! xl:text-3xl!;
   }
   h4 {
-    @apply !text-xl !font-extrabold tracking-tight sm:!text-2xl lg:!text-2xl xl:!text-3xl;
+    @apply text-xl! font-extrabold! tracking-tight sm:text-2xl! lg:text-2xl! xl:text-3xl!;
   }
   h5 {
-    @apply !text-lg !font-extrabold tracking-tight sm:!text-xl lg:!text-xl xl:!text-2xl;
+    @apply text-lg! font-extrabold! tracking-tight sm:text-xl! lg:text-xl! xl:text-2xl!;
   }
   h6 {
-    @apply !text-base !font-extrabold tracking-tight sm:!text-lg lg:!text-lg xl:!text-xl;
+    @apply text-base! font-extrabold! tracking-tight sm:text-lg! lg:text-lg! xl:text-xl!;
   }
   makeStyles-title-2 {
     display: none !important;

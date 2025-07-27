@@ -77,7 +77,7 @@ export default function Notification({
       <article
         ref={ref}
         className={cn(
-          "flex gap-3 rounded-2xl bg-card p-5 shadow-sm transition-colors hover:bg-card/70",
+          "flex gap-3 rounded-2xl bg-card p-5 shadow-xs transition-colors hover:bg-card/70",
           !notification.read && "bg-primary/10"
         )}
       >

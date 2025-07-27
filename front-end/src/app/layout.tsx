@@ -8,8 +8,8 @@ import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { Archivo } from "next/font/google";
 import { listenForMessages } from "@/lib/messages";
-import { NextUIProvider } from "@nextui-org/react";
 import Script from "next/script";
+import NextUIProviderWrapper from "./NextUIProvider";
 
 const instrumentSans = Archivo({
   subsets: ["latin"],
@@ -220,7 +220,7 @@ export default function RootLayout({
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
 
         <ReactQueryProvider>
-          <NextUIProvider>
+          <NextUIProviderWrapper>
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"
@@ -228,13 +228,13 @@ export default function RootLayout({
               disableTransitionOnChange={false}
             >
               <main className="relative bg-cross">
-                {/* <div className="absolute left-0 top-0 -z-[0] h-full w-full bg-background bg-cross"></div> */}
-                <div className="fixed left-0 top-0 -z-[1] h-full w-full bg-background bg-gradient-to-b from-background from-50% to-primary/[0.03]"></div>
+                {/* <div className="absolute left-0 top-0 -z-0 h-full w-full bg-background bg-cross"></div> */}
+                <div className="fixed left-0 top-0 -z-1 h-full w-full bg-background bg-linear-to-b from-background from-50% to-primary/3"></div>
                 {children}
               </main>
               <Toaster />
             </ThemeProvider>
-          </NextUIProvider>
+          </NextUIProviderWrapper>
         </ReactQueryProvider>
       </body>
     </html>

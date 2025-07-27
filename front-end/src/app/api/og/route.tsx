@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
           }}
         />
 
-        <div tw="flex flex-grow flex-col">
+        <div tw="flex grow flex-col">
           <h1 tw="text-6xl font-bold text-[#fafafa]">{community.name}</h1>
           <p tw="mb-8 text-2xl -mt-4 text-[#fafafa]/90">
             {community.description}
@@ -204,7 +204,7 @@ export async function GET(req: NextRequest) {
             <p tw="text-base -mt-3 text-[#fafafa]/90">@{post.user.username}</p>
           </div>
         </div>
-        <p tw="flex-grow text-2xl text-[#fafafa]/90 max-w-[800px] -mt-6 break-words">
+        <p tw="grow text-2xl text-[#fafafa]/90 max-w-[800px] -mt-6 break-words">
           {post.content}
         </p>
         <div tw="flex text-xl text-[#fafafa]/90">Post on Avocodos</div>
@@ -309,7 +309,7 @@ export async function GET(req: NextRequest) {
             following
           </span>
         </div>
-        <p tw="flex-grow text-2xl text-[#fafafa]/90">
+        <p tw="grow text-2xl text-[#fafafa]/90">
           {user.bio || "No bio set by the user currently."}
         </p>
         <div tw="flex text-xl text-[#fafafa]/90">
@@ -398,7 +398,7 @@ export async function GET(req: NextRequest) {
               marginRight: "32px"
             }}
           />
-          <div tw="flex flex-grow flex-col">
+          <div tw="flex grow flex-col">
             <h1 tw="mb-0 text-5xl font-bold text-[#fafafa]">{reward.name}</h1>
             <p tw="text-2xl text-[#fafafa]/90">{reward.description}</p>
           </div>

@@ -31,12 +31,15 @@ async function WhoToFollow() {
   const usersToFollow = await prisma?.user.findMany({
     where: {
       NOT: {
-        id: user.id
+        id: user.id,
       },
       followers: {
         none: {
           followerId: user.id
         }
+      },
+      username: {
+        not: ""
       }
     },
     select: getUserDataSelect(user.id),
@@ -44,7 +47,7 @@ async function WhoToFollow() {
   });
 
   return (
-    <div className="space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
+    <div className="space-y-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-xs">
       <div className="inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
         {" "}
         <Rss className="size-5" />
@@ -117,7 +120,7 @@ async function TrendingTopics() {
   const trendingTopics = await getTrendingTopics();
 
   return (
-    <div className="rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
+    <div className="rounded-2xl border-2 border-muted bg-card p-5 shadow-xs">
       <div className="mb-4 inline-flex flex-row items-center gap-2 text-xl font-bold capitalize">
         {" "}
         <ChartNoAxesCombined className="size-5" />
@@ -134,7 +137,7 @@ async function TrendingTopics() {
             >
               <Button
                 variant="ghost"
-                className="flex h-full w-full flex-col items-start justify-start !pl-0 hover:bg-transparent"
+                className="flex h-full w-full flex-col items-start justify-start pl-0! hover:bg-transparent"
               >
                 <p
                   className="line-clamp-1 break-all font-semibold avocodos-transition group-hover:text-primary"

@@ -229,10 +229,10 @@ export default function RewardsModal({
       )}
       <DialogContent
         disableCloseButton={defaultOpen}
-        className="h-[80dvh] min-w-[90dvw] bg-background p-8 focus-visible:!border-0 focus-visible:!outline-none focus-visible:!ring-0 lg:min-w-[60dvw]"
+        className="h-[80dvh] min-w-[90dvw] bg-background p-8 focus-visible:border-0! focus-visible:outline-hidden! focus-visible:ring-0! lg:min-w-[60dvw]"
       >
         <ScrollArea className="relative h-full">
-          <DialogHeader className="sticky top-0 z-10 bg-background/90 pb-8 backdrop-blur-sm">
+          <DialogHeader className="sticky top-0 z-10 bg-background/90 pb-8 backdrop-blur-xs">
             <DialogTitle asChild>
               <div className="flex items-center justify-between">
                 <h3 className="inline-flex items-center gap-3">

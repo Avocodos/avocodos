@@ -97,7 +97,7 @@ export default function Page() {
   return (
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
+        <div className="rounded-2xl bg-card p-5 shadow-xs">
           <h3 className="inline-flex items-center gap-2">
             <Bookmark className="size-8" /> Bookmarks
           </h3>

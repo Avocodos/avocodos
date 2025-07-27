@@ -26,7 +26,7 @@ export default function MenuBar({
   return (
     <div
       className={cn(
-        "border-2 border-muted [&>*]:!px-0.5 lg:[&>*]:!px-4",
+        "border-2 border-muted *:px-0.5! lg:*:px-4!",
         className
       )}
     >

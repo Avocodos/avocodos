@@ -641,7 +641,7 @@ export default function Chat({ user }: ChatProps) {
           )}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="my-4 flex items-center gap-2 bg-background/80 px-4 backdrop-blur-sm"
+            className="my-4 flex items-center gap-2 bg-background/80 px-4 backdrop-blur-xs"
           >
             <FormField
               name="message"
@@ -649,7 +649,7 @@ export default function Chat({ user }: ChatProps) {
               render={({ field }) => (
                 <Textarea
                   placeholder="Send a message"
-                  className="!h-[39px] min-h-[39px] w-full resize-none rounded-full"
+                  className="h-[39px]! min-h-[39px] w-full resize-none rounded-full"
                   rows={1}
                   {...field}
                   onKeyDown={(e) => {

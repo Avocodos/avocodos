@@ -31,7 +31,7 @@ const ReactionPicker: React.FC<ReactionPickerProps> = ({
       {showPicker && (
         <div
           className={cn(
-            "absolute z-10 -translate-y-[6px] [&_div]:overflow-visible [&_div]:rounded-lg [&_div]:!bg-primary-0 [&_div]:dark:!bg-[#181b18]",
+            "absolute z-10 -translate-y-[6px] [&_div]:overflow-visible [&_div]:rounded-lg [&_div]:bg-primary-0! dark:[&_div]:bg-primary-dark-popover!",
             !reversed ? "left-10" : "right-10"
           )}
         >

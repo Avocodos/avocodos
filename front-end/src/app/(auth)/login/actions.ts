@@ -4,7 +4,7 @@ import { lucia } from "@/auth";
 import prisma from "@/lib/prisma";
 import { loginSchema, LoginValues } from "@/lib/validation";
 import { verify } from "@node-rs/argon2";
-import { isRedirectError } from "next/dist/client/components/redirect";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -13,7 +13,7 @@ export async function login(
 ): Promise<{ error: string }> {
   try {
     const { username, password } = loginSchema.parse(credentials);
-
+    const cookieStore = await cookies();
     const existingUser = await prisma?.user.findFirst({
       where: {
         username: {
@@ -44,7 +44,7 @@ export async function login(
 
     const session = await lucia.createSession(existingUser.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
+    cookieStore.set(
       sessionCookie.name,
       sessionCookie.value,
       sessionCookie.attributes,

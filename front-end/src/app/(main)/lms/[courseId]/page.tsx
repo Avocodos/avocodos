@@ -185,7 +185,7 @@ export default async function LMSPage({ params }: PageProps) {
       <h1 className="mb-8 text-3xl font-bold">Avocodos LMS</h1>
       <div className="mb-8">
         <h2 className="mb-4 text-2xl font-semibold">{course.title}</h2>
-        <ul className="list-none space-y-2 marker:!mt-2">
+        <ul className="list-none space-y-2 marker:mt-2!">
           {course.lessons.map((lesson) => (
             <li key={lesson.id} className="flex items-center gap-2">
               <Image src="/check.svg" alt="Check" width={16} height={16} />

@@ -20,13 +20,13 @@ export default function CommunityCard({
   return (
     <div className="flex h-full flex-col items-stretch justify-between overflow-hidden rounded-2xl border-2 border-muted bg-card avocodos-transition avocodos-shadow-lg hover:border-primary/40">
       <div className="relative">
-        <div className="absolute inset-0 z-[1] h-full w-full bg-gradient-to-b from-transparent from-40% to-card" />
+        <div className="absolute inset-0 z-1 h-full w-full bg-linear-to-b from-transparent from-40% to-card" />
         <Image
           src="/auth.webp"
           alt={community.name}
           width={300}
           height={200}
-          className="-z-[1] hidden aspect-video h-auto w-full select-none object-cover dark:block"
+          className="-z-1 hidden aspect-video h-auto w-full select-none object-cover dark:block"
           draggable={false}
         />
         <Image
@@ -34,7 +34,7 @@ export default function CommunityCard({
           alt={community.name}
           width={300}
           height={200}
-          className="-z-[1] block aspect-video h-auto w-full select-none object-cover dark:hidden"
+          className="-z-1 block aspect-video h-auto w-full select-none object-cover dark:hidden"
           draggable={false}
         />
       </div>

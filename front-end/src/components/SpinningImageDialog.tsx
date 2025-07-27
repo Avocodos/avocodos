@@ -143,7 +143,7 @@ export default function SpinningImageDialog({
               >
                 <CheckCircle className="size-4 min-h-4 min-w-4" />
                 Reward claimed by{" "}
-                <span className="font-[700]">@{username}</span>
+                <span className="font-bold">@{username}</span>
                 on {formatDatePretty(reward.createdAt)}.
               </Badge>
               <ShareDropdown

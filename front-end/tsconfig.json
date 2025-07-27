@@ -29,5 +29,5 @@
     ".next/types/**/*.ts",
     "index.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next", "dist"]
 }

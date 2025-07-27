@@ -87,14 +87,14 @@ export default function Page() {
             <LoginForm />
             <Link
               href="/signup"
-              className="!mt-4 block text-center hover:underline"
+              className="mt-4! block text-center hover:underline"
             >
               Don&apos;t have an account? Sign up here
             </Link>
           </div>
         </div>
         <div className="relative hidden w-full md:block">
-          <div className="absolute inset-0 z-10 h-full w-full bg-gradient-to-l from-transparent from-60% to-background"></div>
+          <div className="absolute inset-0 z-10 h-full w-full bg-linear-to-l from-transparent from-60% to-background"></div>
           <Image
             src={"/auth.webp"}
             alt=""

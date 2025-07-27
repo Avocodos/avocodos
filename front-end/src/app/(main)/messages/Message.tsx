@@ -120,7 +120,7 @@ export default function Message({ message, reversed }: MessageProps) {
       </div>
       <div className="message-content flex flex-col">
         <Linkify>
-          <div className="inline-flex flex-col gap-2 rounded-lg bg-foreground/[0.05] px-3 py-2 text-foreground">
+          <div className="inline-flex flex-col gap-2 rounded-lg bg-foreground/5 px-3 py-2 text-foreground">
             <Linkify>{message.content}</Linkify>
             {message.attachments && !!message.attachments.length && (
               <MediaPreviews attachments={message.attachments} />
@@ -170,7 +170,7 @@ export default function Message({ message, reversed }: MessageProps) {
             />
           </div>
         </div>
-        <div className="inline-flex flex-col gap-2 rounded-lg bg-foreground/[0.05] px-3 py-2 text-foreground">
+        <div className="inline-flex flex-col gap-2 rounded-lg bg-foreground/5 px-3 py-2 text-foreground">
           <Linkify>{message.content}</Linkify>
           {message.attachments && !!message.attachments.length && (
             <MediaPreviews attachments={message.attachments} />

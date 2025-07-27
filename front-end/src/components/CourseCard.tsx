@@ -27,7 +27,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
         <div className="space-y-2 p-6 md:p-8">
           <h4>{title}</h4>
           <p className="text-foreground/80">{description}</p>
-          <div className="!mt-8 flex items-center justify-between">
+          <div className="mt-8! flex items-center justify-between">
             <span className="text-lg font-bold">$9.99 / ₹800</span>
             <Button variant={"default"} size={"lg"}>
               Buy Now

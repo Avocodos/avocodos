@@ -16,14 +16,14 @@ export default function Page() {
               alt="Avocodos"
               width={800}
               height={200}
-              className="!mb-6 block h-10 w-auto dark:hidden"
+              className="mb-6! block h-10 w-auto dark:hidden"
             />
             <Image
               src={"/logo-text-white.svg"}
               alt="Avocodos"
               width={800}
               height={200}
-              className="!mb-6 hidden h-10 w-auto dark:block"
+              className="mb-6! hidden h-10 w-auto dark:block"
             /> */}
             <h3 className="text-3xl font-bold capitalize">
               We&apos;re glad you&apos;re here
@@ -41,7 +41,7 @@ export default function Page() {
           </div>
         </div>
         <div className="relative hidden w-full md:block">
-          <div className="absolute inset-0 z-10 h-full w-full bg-gradient-to-l from-transparent from-60% to-background"></div>
+          <div className="absolute inset-0 z-10 h-full w-full bg-linear-to-l from-transparent from-60% to-background"></div>
           <Image
             src={"/auth.webp"}
             alt=""

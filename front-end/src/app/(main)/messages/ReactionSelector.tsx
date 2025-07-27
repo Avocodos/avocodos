@@ -12,7 +12,7 @@ export default function ReactionSelector({
 }: ReactionSelectorProps) {
   return (
     <FloatingDock
-      desktopClassName="z-[200]"
+      desktopClassName="z-200"
       items={reactions}
       onSelect={onSelect}
     />

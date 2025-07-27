@@ -5,7 +5,7 @@ import { default as flattenColorPalette } from 'tailwindcss/lib/util/flattenColo
 import { nextui } from "@nextui-org/theme";
 
 const config = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -129,7 +129,8 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), plugin(function ({ addUtilities }) {
+  plugins: [require("tailwindcss-animate"),
+     plugin(({ addUtilities }) => {
     addUtilities({
       '.avocodos-transition': {
         'transition-property': 'all',
@@ -153,7 +154,9 @@ const config = {
         'background-position': '0 0, 27.5px 27.5px, 0 0, 27.5px 27.5px',
       }
     })
-  }), addVariablesForColors, nextui({
+  }),
+   addVariablesForColors,
+   nextui({
     themes: {
       light: {
         colors: {
@@ -194,7 +197,8 @@ const config = {
         extend: "dark"
       },
     },
-  })],
+  })
+],
 } satisfies Config;
 
 export default withUt(config);

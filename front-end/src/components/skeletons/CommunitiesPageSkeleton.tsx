@@ -2,7 +2,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export function CommunityCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-2xl bg-foreground/[0.02] p-8 dark:bg-card/50">
+    <div className="flex flex-col rounded-2xl bg-foreground/2 p-8 dark:bg-card/50">
       <Skeleton className="mb-4 h-56 w-full" /> {/* Logo placeholder */}
       <Skeleton className="mb-2 h-6 w-3/4" /> {/* Community name */}
       <Skeleton className="mb-4 h-4 w-1/2" /> {/* Tagline */}

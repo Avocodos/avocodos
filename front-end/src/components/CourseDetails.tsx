@@ -68,7 +68,7 @@ export default function CourseDetails({ course }: CourseDetailsProps) {
               className="w-full rounded-t-lg object-cover"
             />
 
-            <CardContent className="p-6 !pt-0 md:p-8">
+            <CardContent className="p-6 pt-0! md:p-8">
               <h4 className="mb-3 pt-6">{course.title}</h4>
               <p className="mb-4 text-foreground/80">{course.description}</p>
               <h6 className="mb-3 inline-flex items-center gap-2">

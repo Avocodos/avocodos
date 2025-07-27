@@ -180,14 +180,14 @@ export default function PostEditor({
   };
 
   return (
-    <div className="mb-4 flex flex-col gap-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm md:p-6">
+    <div className="mb-4 flex flex-col gap-5 rounded-2xl border-2 border-muted bg-card p-5 shadow-xs md:p-6">
       <div className="flex gap-5">
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
         <div {...rootProps} className="w-full max-w-full">
           <EditorContent
             editor={editor}
             className={cn(
-              "max-h-[20rem] max-w-full overflow-y-auto rounded-2xl bg-background px-5 py-3",
+              "max-h-80 max-w-full overflow-y-auto rounded-2xl bg-background px-5 py-3",
               isDragActive && "outline-dashed"
             )}
             onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
@@ -340,10 +340,10 @@ function AttachmentPreview({
           alt="Attachment preview"
           width={500}
           height={500}
-          className="size-fit max-h-[30rem] rounded-2xl"
+          className="size-fit max-h-120 rounded-2xl"
         />
       ) : (
-        <video controls className="size-fit max-h-[30rem] rounded-2xl">
+        <video controls className="size-fit max-h-120 rounded-2xl">
           <source src={src} type={file.type} />
         </video>
       )}

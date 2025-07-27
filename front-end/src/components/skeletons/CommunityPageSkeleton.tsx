@@ -2,7 +2,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export default function CommunityPageSkeleton() {
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col space-y-4 rounded-2xl bg-foreground/[0.02] dark:bg-card/50">
+    <div className="mx-auto flex w-full max-w-4xl flex-col space-y-4 rounded-2xl bg-foreground/2 dark:bg-card/50">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Skeleton className="h-16 w-80" /> {/* Community name */}
@@ -20,7 +20,7 @@ export default function CommunityPageSkeleton() {
       {/* Post creation area */}
       <div className="flex items-center space-x-3 rounded-lg p-3">
         <Skeleton className="h-12 w-12 rounded-full" /> {/* User avatar */}
-        <Skeleton className="h-7 flex-grow" /> {/* Post input */}
+        <Skeleton className="h-7 grow" /> {/* Post input */}
         <Skeleton className="h-10 w-10" /> {/* Image upload icon */}
         <Skeleton className="h-11 w-16 rounded-md" /> {/* Post button */}
       </div>
@@ -30,7 +30,7 @@ export default function CommunityPageSkeleton() {
         <div key={index} className="flex flex-col space-y-4 rounded-lg p-3">
           <div className="flex items-center space-x-4">
             <Skeleton className="h-12 w-12 rounded-full" /> {/* User avatar */}
-            <div className="flex flex-grow flex-col">
+            <div className="flex grow flex-col">
               <div className="flex items-center space-x-4">
                 <Skeleton className="h-6 w-32" /> {/* Username */}
                 <Skeleton className="h-6 w-36" />{" "}
@@ -50,7 +50,7 @@ export default function CommunityPageSkeleton() {
               <Skeleton className="size-5" /> {/* Comment icon */}
               <Skeleton className="h-5 w-10" /> {/* Comment count */}
             </div>
-            <div className="flex-grow"></div>
+            <div className="grow"></div>
             <Skeleton className="size-5" /> {/* Bookmark icon */}
           </div>
         </div>

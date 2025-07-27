@@ -100,7 +100,7 @@ export default function Post({
 
   return (
     <>
-      <article className="group/post space-y-3 rounded-2xl border-2 border-muted bg-card p-5 shadow-sm">
+      <article className="group/post space-y-3 rounded-2xl border-2 border-muted bg-card p-5 shadow-xs">
         <div className="flex justify-between gap-3">
           <div className="flex flex-wrap gap-3">
             <UserTooltip user={post.user as unknown as UserData}>
@@ -162,7 +162,7 @@ export default function Post({
           <React.Fragment>
             <Badge
               variant="secondary"
-              className={`!mb-4 flex w-fit items-center gap-1.5 border px-3 py-1.5 text-xs`}
+              className={`mb-4! flex w-fit items-center gap-1.5 border px-3 py-1.5 text-xs`}
               style={{ borderColor: communityBadge.color }}
             >
               <div
@@ -256,7 +256,7 @@ function MediaPreview({ media }: MediaPreviewProps) {
         alt="Attachment"
         width={500}
         height={500}
-        className="mx-auto size-fit max-h-[30rem] select-none rounded-2xl"
+        className="mx-auto size-fit max-h-120 select-none rounded-2xl"
         draggable={false}
       />
     );
@@ -269,7 +269,7 @@ function MediaPreview({ media }: MediaPreviewProps) {
           src={media.url}
           controls
           draggable={false}
-          className="mx-auto size-fit max-h-[30rem] select-none rounded-2xl"
+          className="mx-auto size-fit max-h-120 select-none rounded-2xl"
         />
       </div>
     );

@@ -19,12 +19,12 @@ export default function UserBanner({
         <img
           src={user.bannerUrl}
           alt={`${user.displayName}'s banner`}
-          className="aspect-[3/1] w-full select-none rounded-t-2xl object-cover"
+          className="aspect-3/1 w-full select-none rounded-t-2xl object-cover"
           draggable={false}
         />
       ) : (
         <div
-          className="z-[1] h-52 w-full rounded-t-2xl"
+          className="z-1 h-52 w-full rounded-t-2xl"
           style={{
             backgroundColor: bannerColor
           }}

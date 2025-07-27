@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export async function logout() {
   const { session } = await validateRequest();
-
+  const cookieStore = await cookies();
   if (!session) {
     throw new Error("Unauthorized");
   }
@@ -15,7 +15,7 @@ export async function logout() {
 
   const sessionCookie = lucia.createBlankSessionCookie();
 
-  cookies().set(
+  cookieStore.set(
     sessionCookie.name,
     sessionCookie.value,
     sessionCookie.attributes,

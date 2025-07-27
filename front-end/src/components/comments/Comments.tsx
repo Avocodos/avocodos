@@ -47,10 +47,10 @@ export default function Comments({ post }: CommentsProps) {
       )}
       {status === "pending" && <Loader2 className="mx-auto animate-spin" />}
       {status === "success" && !comments.length && (
-        <p className="!mt-7 text-center text-foreground/80">No comments yet.</p>
+        <p className="mt-7! text-center text-foreground/80">No comments yet.</p>
       )}
       {status === "error" && (
-        <p className="!mt-7 text-center text-destructive">
+        <p className="mt-7! text-center text-destructive">
           An error occurred while loading comments.
         </p>
       )}

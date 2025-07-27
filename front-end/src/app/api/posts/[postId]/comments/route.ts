@@ -23,9 +23,10 @@ const retryFetch = async (fn: () => Promise<any>, retries: number, delay: number
 
 export async function GET(
   req: NextRequest,
-  { params: { postId } }: { params: { postId: string } },
+  { params }: { params: { postId: string } },
 ) {
   try {
+    const { postId } = await params;
     const cursor = req.nextUrl.searchParams.get("cursor") || undefined;
 
     const pageSize = 5;

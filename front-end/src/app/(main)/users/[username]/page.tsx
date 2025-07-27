@@ -20,7 +20,7 @@ import {
 } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { Metadata, ResolvingMetadata, Viewport } from "next";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import { cache } from "react";
 import EditProfileButton from "./EditProfileButton";
 import UserPosts from "./UserPosts";
@@ -313,7 +313,7 @@ async function UserProfile({
     user.avatarUrl ?? "https://avocodos-frontend.vercel.app/avatar-placeholder.png"
   );
   return (
-    <div className="flex h-fit w-full flex-col gap-5 rounded-2xl border-2 border-muted bg-card shadow-sm">
+    <div className="flex h-fit w-full flex-col gap-5 rounded-2xl border-2 border-muted bg-card shadow-xs">
       <div className="">
         <UserBanner className="rounded-t-2xl" user={user} bannerColor={color} />
         <UserAvatar
